@@ -44,13 +44,13 @@ contract ProphetsArrival is Ownable {
 
     /* ============ Modifiers ============ */
 
-    modifier eventIsOpen() {
+    modifier isEventOpen() {
         require(prophetsNft.totalSupply() <= prophetsNft.MAX_ELEMENTS(), 'Event ended');
         require(block.timestamp < EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
         _;
     }
 
-    modifier eventIsOver() {
+    modifier isEventOver() {
         require(block.timestamp > EVENT_ENDS_TS, 'Event is over');
         _;
     }
@@ -67,7 +67,7 @@ contract ProphetsArrival is Ownable {
     }
 
 
-    function claimLoot(uint256 _id) public eventIsOver {
+    function claimLoot(uint256 _id) public isEventOver {
         require(!prophetsNft.prophetBABLClaimed(_id), 'Loot already claimed');
         uint256 lootAmount;
         if (_id <= 8000) {
@@ -78,7 +78,7 @@ contract ProphetsArrival is Ownable {
         BABL.transfer(msg.sender, lootAmount);
     }
 
-    function mintRare(uint256 _id) public payable eventIsOpen {
+    function mintRare(uint256 _id) public payable isEventOpen {
         require(_id < 8000, 'Not a rare prophet');
         require(msg.value == RARE_PRICE, 'ETH amount not valid');
         require( canMintRare(msg.sender), 'User not whitelisted');
@@ -86,17 +86,17 @@ contract ProphetsArrival is Ownable {
         prophetsNft.mintRare(msg.sender);
     }
 
+    function withdrawAll() public payable onlyOwner isEventOver {
+        uint256 balance = address(this).balance;
+        require(balance > 0);
+        _widthdraw(BABYLON_TREASURY, address(this).balance);
+    }
+
     /* ============ External View Functions ============ */
 
     function price(uint256 _id) public pure returns (uint256) {
         require(_id < 8000, 'It is priceless');
         return RARE_PRICE;
-    }
-
-    function withdrawAll() public payable onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0);
-        _widthdraw(BABYLON_TREASURY, address(this).balance);
     }
 
     /* ============ Internal Write Functions ============ */
@@ -108,7 +108,7 @@ contract ProphetsArrival is Ownable {
 
     /* ============ Internal View Functions ============ */
      
-    function canMintRare(address user) {
+    function canMintRare(address user) private view returns (bool) {
        return (isFirstRound() && firstRoundWhitelist[user]) || (isSecondRound() &&
          secondRoundWhitelist[user]) || isThirdRound();
     }
