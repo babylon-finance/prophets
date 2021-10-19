@@ -24,10 +24,10 @@ contract ProphetsArrival is Ownable {
 
     /* ============ Private State Variables ============ */
 
-    mapping(uint256 => uint256) private price_per_prophetid;
+    mapping(uint256 => uint256) private pricePerProphet;
 
-    mapping(address => bool) private first_round_users;
-    mapping(address => bool) private second_round_users;
+    mapping(address => bool) private firstRoundWhitelist;
+    mapping(address => bool) private secondRoundWhitelist;
 
     Prophets private prophetsNft;
 
@@ -57,14 +57,12 @@ contract ProphetsArrival is Ownable {
 
     /* ============ External Write Functions ============ */
 
-    function addUsersToWhitelist(uint8 _index, address[] calldata _users) public onlyOwner {
-        require(_index <= 1, 'Only two lists');
-        for (uint256 i = 0; i < _users.length; i++) {
-            if (_index == 0) {
-                first_round_users[msg.sender] = true;
-            } else {
-                second_round_users[msg.sender] = true;
-            }
+    function addUsersToWhitelist(address[] calldata _firstRoundUsers, address[] calldata _secondRoundUsers) public onlyOwner {
+        for (uint256 i = 0; i < _firstRoundUsers.length; i++) {
+                firstRoundWhitelist[msg.sender] = true;
+        }
+        for (uint256 i = 0; i < _secondRoundUsers.length; i++) {
+                secondRoundWhitelist[msg.sender] = true;
         }
     }
 
@@ -84,7 +82,7 @@ contract ProphetsArrival is Ownable {
         require(_id < 8000, 'Not a rare prophet');
         require(msg.value == RARE_PRICE, 'ETH amount not valid');
         require(
-            (isFirstRound() && first_round_users[msg.sender]) || (isSecondRound() && second_round_users[msg.sender]),
+            (isFirstRound() && firstRoundWhitelist[msg.sender]) || (isSecondRound() && secondRoundWhitelist[msg.sender]),
             'User not whitelisted'
         );
         prophetsNft.mintRare(msg.sender);
@@ -121,7 +119,7 @@ contract ProphetsArrival is Ownable {
 
     function isSecondRound() private view returns (bool) {
         return
-            block.timestamp >= EVENT_STARTS_TS &&
+            block.timestamp >= (EVENT_STARTS_TS + FIRST_ROUND_DURATION) &&
             block.timestamp <= (EVENT_STARTS_TS + FIRST_ROUND_DURATION + SECOND_ROUND_DURATION);
     }
 }
