@@ -14,9 +14,9 @@ contract ProphetsArrival is Ownable {
     address public constant BABYLON_TREASURY = 0xD7AAf4676F0F52993cb33aD36784BF970f0E1259; // treasury
 
     uint256 public constant EVENT_STARTS_TS = 1627588800; // Nov 8th 2021 20:00:00 GMT+0000
+    uint256 public constant SECOND_ROUND_TS = 1627588800; // Nov 10th 2021 20:00:00 GMT+0000
+    uint256 public constant THIRD_ROUND_TS = 1627588800; // Nov 9th 2021 20:00:00 GMT+0000
     uint256 public constant EVENT_ENDS_TS = 1627588800; // Nov 12th 2021 20:00:00 GMT+0000
-    uint256 public constant FIRST_ROUND_DURATION = 3600 * 24; // In seconds
-    uint256 public constant SECOND_ROUND_DURATION = 3600 * 24; // In seconds
 
     uint256 public constant BABL_RARE = 35_000;
 
@@ -46,7 +46,7 @@ contract ProphetsArrival is Ownable {
 
     modifier eventIsOpen() {
         require(prophetsNft.totalSupply() <= prophetsNft.MAX_ELEMENTS(), 'Event ended');
-        require(block.timestamp <= EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
+        require(block.timestamp < EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
         _;
     }
 
@@ -81,21 +81,16 @@ contract ProphetsArrival is Ownable {
     function mintRare(uint256 _id) public payable eventIsOpen {
         require(_id < 8000, 'Not a rare prophet');
         require(msg.value == RARE_PRICE, 'ETH amount not valid');
-        require(
-            (isFirstRound() && firstRoundWhitelist[msg.sender]) || (isSecondRound() && secondRoundWhitelist[msg.sender]),
-            'User not whitelisted'
-        );
+        require( canMintRare(msg.sender), 'User not whitelisted');
+
         prophetsNft.mintRare(msg.sender);
     }
 
     /* ============ External View Functions ============ */
-    function price(uint256 _id) public pure returns (uint256) {
 
-        if (_id < 8000) {
-            return RARE_PRICE;
-        }
-        // Auction??/
-        return 0;
+    function price(uint256 _id) public pure returns (uint256) {
+        require(_id < 8000, 'It is priceless');
+        return RARE_PRICE;
     }
 
     function withdrawAll() public payable onlyOwner {
@@ -112,14 +107,25 @@ contract ProphetsArrival is Ownable {
     }
 
     /* ============ Internal View Functions ============ */
+     
+    function canMintRare(address user) {
+       return (isFirstRound() && firstRoundWhitelist[user]) || (isSecondRound() &&
+         secondRoundWhitelist[user]) || isThirdRound();
+    }
+
 
     function isFirstRound() private view returns (bool) {
-        return block.timestamp >= EVENT_STARTS_TS && block.timestamp <= (EVENT_STARTS_TS + FIRST_ROUND_DURATION);
+        return block.timestamp >= EVENT_STARTS_TS && block.timestamp < SECOND_ROUND_TS;
     }
 
     function isSecondRound() private view returns (bool) {
         return
-            block.timestamp >= (EVENT_STARTS_TS + FIRST_ROUND_DURATION) &&
-            block.timestamp <= (EVENT_STARTS_TS + FIRST_ROUND_DURATION + SECOND_ROUND_DURATION);
+            block.timestamp >= SECOND_ROUND_TS &&
+            block.timestamp < THIRD_ROUND_TS;
+    }
+
+    function isThirdRound() private view returns (bool) {
+        return
+            block.timestamp >= THIRD_ROUND_TS;
     }
 }
