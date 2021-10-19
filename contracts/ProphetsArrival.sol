@@ -9,7 +9,6 @@ contract ProphetsArrival is Ownable {
     /* ============ Constants ============ */
 
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
-
     uint256 public constant RARE_PRICE = 25e16; // 0.25 ETH
     address public constant BABYLON_TREASURY = 0xD7AAf4676F0F52993cb33aD36784BF970f0E1259; // treasury
 
@@ -23,8 +22,6 @@ contract ProphetsArrival is Ownable {
     /* ============ Structs ============ */
 
     /* ============ Private State Variables ============ */
-
-    mapping(uint256 => uint256) private pricePerProphet;
 
     mapping(address => bool) private firstRoundWhitelist;
     mapping(address => bool) private secondRoundWhitelist;
@@ -57,31 +54,22 @@ contract ProphetsArrival is Ownable {
 
     /* ============ External Write Functions ============ */
 
-    function addUsersToWhitelist(address[] calldata _firstRoundUsers, address[] calldata _secondRoundUsers) public onlyOwner {
+    function addUsersToWhitelist(address[] calldata _firstRoundUsers, address[] calldata _secondRoundUsers)
+        public
+        onlyOwner
+    {
         for (uint256 i = 0; i < _firstRoundUsers.length; i++) {
-                firstRoundWhitelist[msg.sender] = true;
+            firstRoundWhitelist[msg.sender] = true;
         }
         for (uint256 i = 0; i < _secondRoundUsers.length; i++) {
-                secondRoundWhitelist[msg.sender] = true;
+            secondRoundWhitelist[msg.sender] = true;
         }
-    }
-
-
-    function claimLoot(uint256 _id) public isEventOver {
-        require(!prophetsNft.prophetBABLClaimed(_id), 'Loot already claimed');
-        uint256 lootAmount;
-        if (_id <= 8000) {
-            lootAmount = BABL_RARE / prophetsNft.raresMinted();
-        } else {
-            lootAmount = prophetsNft.prophetBABLLoot(_id);
-        }
-        BABL.transfer(msg.sender, lootAmount);
     }
 
     function mintRare(uint256 _id) public payable isEventOpen {
         require(_id < 8000, 'Not a rare prophet');
         require(msg.value == RARE_PRICE, 'ETH amount not valid');
-        require( canMintRare(msg.sender), 'User not whitelisted');
+        require(canMintRare(msg.sender), 'User not whitelisted');
 
         prophetsNft.mintRare(msg.sender);
     }
@@ -107,25 +95,23 @@ contract ProphetsArrival is Ownable {
     }
 
     /* ============ Internal View Functions ============ */
-     
-    function canMintRare(address user) private view returns (bool) {
-       return (isFirstRound() && firstRoundWhitelist[user]) || (isSecondRound() &&
-         secondRoundWhitelist[user]) || isThirdRound();
-    }
 
+    function canMintRare(address user) private view returns (bool) {
+        return
+            (isFirstRound() && firstRoundWhitelist[user]) ||
+            (isSecondRound() && secondRoundWhitelist[user]) ||
+            isThirdRound();
+    }
 
     function isFirstRound() private view returns (bool) {
         return block.timestamp >= EVENT_STARTS_TS && block.timestamp < SECOND_ROUND_TS;
     }
 
     function isSecondRound() private view returns (bool) {
-        return
-            block.timestamp >= SECOND_ROUND_TS &&
-            block.timestamp < THIRD_ROUND_TS;
+        return block.timestamp >= SECOND_ROUND_TS && block.timestamp < THIRD_ROUND_TS;
     }
 
     function isThirdRound() private view returns (bool) {
-        return
-            block.timestamp >= THIRD_ROUND_TS;
+        return block.timestamp >= THIRD_ROUND_TS;
     }
 }
