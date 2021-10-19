@@ -17,8 +17,6 @@ contract ProphetsArrival is Ownable {
     uint256 public constant THIRD_ROUND_TS = 1627588800; // Nov 9th 2021 20:00:00 GMT+0000
     uint256 public constant EVENT_ENDS_TS = 1627588800; // Nov 12th 2021 20:00:00 GMT+0000
 
-    uint256 public constant BABL_RARE = 35_000;
-
     /* ============ Structs ============ */
 
     /* ============ Private State Variables ============ */
@@ -68,7 +66,7 @@ contract ProphetsArrival is Ownable {
 
     function mintRare(uint256 _id) public payable isEventOpen {
         require(_id < 8000, 'Not a rare prophet');
-        require(msg.value == RARE_PRICE, 'ETH amount not valid');
+        require(msg.value == RARE_PRICE, 'msg.value has to be 0.25');
         require(canMintRare(msg.sender), 'User not whitelisted');
 
         prophetsNft.mintRare(msg.sender);
@@ -81,11 +79,6 @@ contract ProphetsArrival is Ownable {
     }
 
     /* ============ External View Functions ============ */
-
-    function price(uint256 _id) public pure returns (uint256) {
-        require(_id < 8000, 'It is priceless');
-        return RARE_PRICE;
-    }
 
     /* ============ Internal Write Functions ============ */
 

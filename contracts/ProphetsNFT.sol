@@ -52,30 +52,35 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ External Write Functions ============ */
 
-    function mintRare(address _to) public payable onlyOwner {
-        require(_rareTracker.current()< RARE_ELEMENTS, 'Event ended');
+    function mintRare(address _to) external payable onlyOwner {
+        require(_rareTracker.current() < RARE_ELEMENTS, 'Event ended');
 
         _rareTracker.increment();
 
-        _mintAnElement(_to, _rareTracker.current());
+        _mintProphet(_to, _rareTracker.current());
     }
 
-    function mintGreatProphets(address _to) public payable onlyOwner {
-        for (uint256 i = 8000; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
-            _mintAnElement(_to, i);
-            // _setGreatProphetAttributes()
+    function mintGreatProphets(address _to) external payable onlyOwner {
+        for (uint256 i = RARE_ELEMENTS; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
+            _mintProphet(_to, i);
+            setGreatProphetAttributes(i, 0, 0, 0, 0);
         }
     }
 
-    function setGreatProphetAttribute(uint256 _id, uint256[4] calldata _atttrs) public onlyOwner {
+    function setGreatProphetAttributes(
+        uint256 _id,
+        uint256 _creatorMultiplier,
+        uint256 _lpMultiplier,
+        uint256 _voterMultiplier,
+        uint256 _strategistMultiplier
+    ) public onlyOwner {
         require(_id > RARE_ELEMENTS, 'Needs to be a great');
 
-        ProphetAttributes memory bonus = prophetsAttributes[_id];
-        bonus.creatorMultiplier = _atttrs[0];
-        bonus.lpMultiplier = _atttrs[1];
-        bonus.voterMultiplier = _atttrs[2];
-        bonus.strategistMultiplier = _atttrs[3];
-        prophetsAttributes[_id] = bonus;
+        ProphetAttributes storage attrs = prophetsAttributes[_id];
+        attrs.creatorMultiplier = _creatorMultiplier;
+        attrs.lpMultiplier = _lpMultiplier;
+        attrs.voterMultiplier = _voterMultiplier;
+        attrs.strategistMultiplier = _strategistMultiplier;
     }
 
     function setBaseURI(string memory baseURI) public onlyOwner {
@@ -85,7 +90,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     function claimLoot(uint256 _id) public {
         require(!prophetsBABLClaimed[_id], 'Loot already claimed');
 
-        uint256 lootAmount = _id <= 8000 ? BABL_RARE / raresMinted() : prophetsBABLLoot[_id];
+        uint256 lootAmount = _id <= RARE_ELEMENTS ? BABL_RARE / raresMinted() : prophetsBABLLoot[_id];
 
         require(lootAmount != 0, 'Loot can not be empty');
 
@@ -104,10 +109,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ Internal Write Functions ============ */
 
-    function _mintS(address _to, uint256 _id) private {
-    }
-
-    function _mintAnElement(address _to, uint256 _id) private {
+    function _mintProphet(address _to, uint256 _id) private {
         _safeMint(_to, _id);
         totalMinted += 1;
 
