@@ -67,6 +67,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     }
 
     function mintGreatProphet(address _to, uint256 _id) external payable onlyArrival {
+        require(_id >= RARE_ELEMENTS && _id < RARE_ELEMENTS + GREAT_ELEMENTS, 'Needs to be a great prophet');
         _mintProphet(_to, _id);
     }
 
