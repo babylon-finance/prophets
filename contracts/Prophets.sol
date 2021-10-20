@@ -35,7 +35,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ Public State Variables ============ */
 
-    string public baseTokenURI;
+    string public baseTokenURI = 'https://babylon.finance./api/v1/';
     mapping(uint256 => uint256) public prophetsBABLLoot;
     mapping(uint256 => bool) public prophetsBABLClaimed;
     mapping(uint256 => ProphetAttributes) public prophetsAttributes;
@@ -46,8 +46,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ Constructor ============ */
 
-    constructor(string memory baseURI) ERC721('Babylon Prophets', 'BPP') {
-        setBaseURI(baseURI);
+    constructor() ERC721('Babylon Prophets', 'BPP') {
     }
 
     /* ============ External Write Functions ============ */
@@ -110,7 +109,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     /* ============ Internal Write Functions ============ */
 
     function _mintProphet(address _to, uint256 _id) private {
-        _safeMint(_to, _id);
+        _mint(_to, _id);
         totalMinted += 1;
 
         emit MintProphet(_id);

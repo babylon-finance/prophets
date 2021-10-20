@@ -1,3 +1,7 @@
+require('@nomiclabs/hardhat-ethers');
+require('@nomiclabs/hardhat-waffle');
+
+
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 
 module.exports = {
