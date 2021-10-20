@@ -87,19 +87,19 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         }
     }
 
-    function setBaseURI(string memory baseURI) public onlyOwner {
+    function setBaseURI(string memory baseURI) external onlyOwner {
         baseTokenURI = baseURI;
     }
 
-    function setMinter(address _arrival) public onlyOwner {
+    function setMinter(address _arrival) external onlyOwner {
         require(address(_arrival) != address(0), 'Arrival address must exist');
         minter = _arrival;
     }
 
-    function claimLoot(uint256 _id) public {
+    function claimLoot(uint256 _id) external {
         require(!prophetsBABLClaimed[_id], 'Loot already claimed');
 
-        uint256 lootAmount = _id <= RARE_ELEMENTS ? BABL_RARE / raresMinted() : prophetsBABLLoot[_id];
+        uint256 lootAmount = _id <= RARE_ELEMENTS ? BABL_RARE / _rareTracker.current() : prophetsBABLLoot[_id];
 
         require(lootAmount != 0, 'Loot can not be empty');
 
@@ -108,12 +108,22 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ External View Functions ============ */
 
-    function totalMint() public view returns (uint256) {
+    function totalMint() external view returns (uint256) {
         return totalMinted;
     }
 
-    function raresMinted() public view returns (uint256) {
+    function raresMinted() external view returns (uint256) {
         return _rareTracker.current();
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
     /* ============ Internal Write Functions ============ */
@@ -157,15 +167,5 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         uint256 tokenId
     ) internal virtual override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        virtual
-        override(ERC721, ERC721Enumerable)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
     }
 }
