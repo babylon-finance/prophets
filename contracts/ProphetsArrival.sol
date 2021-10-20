@@ -3,14 +3,19 @@ pragma solidity 0.8.2;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import {ECDSA} from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './Prophets.sol';
 
 contract ProphetsArrival is Ownable {
     using ECDSA for bytes32;
+    using SafeERC20 for IERC20;
+
     /* ============ Constants ============ */
 
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
+    address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+
     uint256 public constant RARE_PRICE = 25e16; // 0.25 ETH
     address public constant BABYLON_TREASURY = 0xD7AAf4676F0F52993cb33aD36784BF970f0E1259; // treasury
 
@@ -84,6 +89,8 @@ contract ProphetsArrival is Ownable {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
         require(signer != address(0), 'INVALID_SIGNER');
+        // Transfer ERC20 to the garden
+        IERC20(WETH).safeTransferFrom(signer, address(this), _bid);
         prophetsNft.mintGreatProphets(signer, _id);
     }
 
