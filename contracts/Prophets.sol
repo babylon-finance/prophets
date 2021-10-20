@@ -32,6 +32,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     Counters.Counter private _rareTracker;
     uint256 private totalMinted;
+    address private minter;
 
     /* ============ Public State Variables ============ */
 
@@ -40,18 +41,24 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     mapping(uint256 => bool) public prophetsBABLClaimed;
     mapping(uint256 => ProphetAttributes) public prophetsAttributes;
 
+    /* ============ Public State Variables ============ */
+
+    modifier onlyArrival() {
+        require(msg.sender == minter, 'Minter must be the arrival contract');
+        _;
+    }
+
     /* ============ Events ============ */
 
     event MintProphet(uint256 indexed id);
 
     /* ============ Constructor ============ */
 
-    constructor() ERC721('Babylon Prophets', 'BPP') {
-    }
+    constructor() ERC721('Babylon Prophets', 'BPP') {}
 
     /* ============ External Write Functions ============ */
 
-    function mintRare(address _to) external payable onlyOwner {
+    function mintRare(address _to) external payable onlyArrival {
         require(_rareTracker.current() < RARE_ELEMENTS, 'Event ended');
 
         _rareTracker.increment();
@@ -59,31 +66,34 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         _mintProphet(_to, _rareTracker.current());
     }
 
-    function mintGreatProphets(address _to) external payable onlyOwner {
-        for (uint256 i = RARE_ELEMENTS; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
-            _mintProphet(_to, i);
-            setGreatProphetAttributes(i, 0, 0, 0, 0);
-        }
+    function mintGreatProphets(address _to, uint256 _id) external payable onlyArrival {
+        _mintProphet(_to, _id);
     }
 
-    function setGreatProphetAttributes(
-        uint256 _id,
-        uint256 _creatorMultiplier,
-        uint256 _lpMultiplier,
-        uint256 _voterMultiplier,
-        uint256 _strategistMultiplier
-    ) public onlyOwner {
-        require(_id > RARE_ELEMENTS, 'Needs to be a great');
-
-        ProphetAttributes storage attrs = prophetsAttributes[_id];
-        attrs.creatorMultiplier = _creatorMultiplier;
-        attrs.lpMultiplier = _lpMultiplier;
-        attrs.voterMultiplier = _voterMultiplier;
-        attrs.strategistMultiplier = _strategistMultiplier;
+    function setGreatProphetsAttributes(
+        uint256[1000] memory _creatorBonuses,
+        uint256[1000] memory _lpBonuses,
+        uint256[1000] memory _voterMultipliers,
+        uint256[1000] memory _strategistMultipliers
+    ) external onlyOwner {
+        for (uint256 i = RARE_ELEMENTS; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
+            _setGreatProphetAttributes(
+                i,
+                _creatorBonuses[i],
+                _lpBonuses[i],
+                _voterMultipliers[i],
+                _strategistMultipliers[i]
+            );
+        }
     }
 
     function setBaseURI(string memory baseURI) public onlyOwner {
         baseTokenURI = baseURI;
+    }
+
+    function setMinter(address _arrival) public onlyOwner {
+        require(address(_arrival) != address(0), 'Arrival address must exist');
+        minter = _arrival;
     }
 
     function claimLoot(uint256 _id) public {
@@ -113,6 +123,22 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         totalMinted += 1;
 
         emit MintProphet(_id);
+    }
+
+    function _setGreatProphetAttributes(
+        uint256 _id,
+        uint256 _creatorMultiplier,
+        uint256 _lpMultiplier,
+        uint256 _voterMultiplier,
+        uint256 _strategistMultiplier
+    ) private onlyOwner {
+        require(_id > RARE_ELEMENTS, 'Needs to be a great');
+
+        ProphetAttributes storage attrs = prophetsAttributes[_id];
+        attrs.creatorMultiplier = _creatorMultiplier;
+        attrs.lpMultiplier = _lpMultiplier;
+        attrs.voterMultiplier = _voterMultiplier;
+        attrs.strategistMultiplier = _strategistMultiplier;
     }
 
     /* ============ Internal View Functions ============ */

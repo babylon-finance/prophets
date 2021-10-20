@@ -3,9 +3,11 @@ pragma solidity 0.8.2;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {ECDSA} from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './Prophets.sol';
 
 contract ProphetsArrival is Ownable {
+    using ECDSA for bytes32;
     /* ============ Constants ============ */
 
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
@@ -16,6 +18,8 @@ contract ProphetsArrival is Ownable {
     uint256 public constant SECOND_ROUND_TS = 1627588800; // Nov 10th 2021 20:00:00 GMT+0000
     uint256 public constant THIRD_ROUND_TS = 1627588800; // Nov 9th 2021 20:00:00 GMT+0000
     uint256 public constant EVENT_ENDS_TS = 1627588800; // Nov 12th 2021 20:00:00 GMT+0000
+
+    bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _myBid)');
 
     /* ============ Structs ============ */
 
@@ -64,12 +68,23 @@ contract ProphetsArrival is Ownable {
         }
     }
 
-    function mintRare(uint256 _id) public payable isEventOpen {
-        require(_id < 8000, 'Not a rare prophet');
+    function mintRare() public payable isEventOpen {
         require(msg.value == RARE_PRICE, 'msg.value has to be 0.25');
         require(canMintRare(msg.sender), 'User not whitelisted');
-
         prophetsNft.mintRare(msg.sender);
+    }
+
+    function mintGreat(
+        uint256 _bid,
+        uint256 _id,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public payable onlyOwner isEventOver {
+        bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid)).toEthSignedMessageHash();
+        address signer = ECDSA.recover(hash, v, r, s);
+        require(signer != address(0), 'INVALID_SIGNER');
+        prophetsNft.mintGreatProphets(signer, _id);
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
