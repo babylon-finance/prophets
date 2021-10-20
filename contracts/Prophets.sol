@@ -66,15 +66,15 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         _mintProphet(_to, _rareTracker.current());
     }
 
-    function mintGreatProphets(address _to, uint256 _id) external payable onlyArrival {
+    function mintGreatProphet(address _to, uint256 _id) external payable onlyArrival {
         _mintProphet(_to, _id);
     }
 
     function setGreatProphetsAttributes(
-        uint256[1000] memory _creatorBonuses,
-        uint256[1000] memory _lpBonuses,
-        uint256[1000] memory _voterMultipliers,
-        uint256[1000] memory _strategistMultipliers
+        uint256[1000] calldata _creatorBonuses,
+        uint256[1000] calldata _lpBonuses,
+        uint256[1000] calldata _voterMultipliers,
+        uint256[1000] calldata _strategistMultipliers
     ) external onlyOwner {
         for (uint256 i = RARE_ELEMENTS; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
             _setGreatProphetAttributes(

@@ -91,7 +91,7 @@ contract ProphetsArrival is Ownable {
         require(signer != address(0), 'INVALID_SIGNER');
         require(_bid >= RARE_PRICE, 'Should never happen but just in case');
         IERC20(WETH).safeTransferFrom(signer, address(this), _bid);
-        prophetsNft.mintGreatProphets(signer, _id);
+        prophetsNft.mintGreatProphet(signer, _id);
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
