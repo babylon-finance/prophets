@@ -89,7 +89,6 @@ contract ProphetsArrival is Ownable {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
         require(signer != address(0), 'INVALID_SIGNER');
-        // Transfer ERC20 to the garden
         IERC20(WETH).safeTransferFrom(signer, address(this), _bid);
         prophetsNft.mintGreatProphets(signer, _id);
     }
