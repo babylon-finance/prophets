@@ -3,26 +3,38 @@ pragma solidity 0.8.2;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import {ECDSA} from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './Prophets.sol';
 
 contract ProphetsArrival is Ownable {
+    using ECDSA for bytes32;
+    using SafeERC20 for IERC20;
+
     /* ============ Constants ============ */
 
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
-    uint256 public constant RARE_PRICE = 25e16; // 0.25 ETH
+    address private constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+
+    uint256 public constant PROPHET_PRICE = 25e16; // 0.25 ETH
+    uint256 public constant DENOM_FLOOR_PRICE_BABL = 5e16; // 0.05 ETH
     address public constant BABYLON_TREASURY = 0xD7AAf4676F0F52993cb33aD36784BF970f0E1259; // treasury
 
-    uint256 public constant EVENT_STARTS_TS = 1627588800; // Nov 8th 2021 20:00:00 GMT+0000
-    uint256 public constant SECOND_ROUND_TS = 1627588800; // Nov 10th 2021 20:00:00 GMT+0000
-    uint256 public constant THIRD_ROUND_TS = 1627588800; // Nov 9th 2021 20:00:00 GMT+0000
-    uint256 public constant EVENT_ENDS_TS = 1627588800; // Nov 12th 2021 20:00:00 GMT+0000
+    uint256 public constant EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
+    uint256 public constant SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
+    uint256 public constant THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
+    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
+
+    bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _myBid)');
 
     /* ============ Structs ============ */
 
     /* ============ Private State Variables ============ */
 
+    mapping(address => bool) private settlerWhitelist; // Can mint a normal prophet for Free
     mapping(address => bool) private firstRoundWhitelist;
     mapping(address => bool) private secondRoundWhitelist;
+    mapping(address => bool) private mintedNormalProphet;
 
     Prophets private prophetsNft;
 
@@ -40,7 +52,7 @@ contract ProphetsArrival is Ownable {
     /* ============ Modifiers ============ */
 
     modifier isEventOpen() {
-        require(prophetsNft.totalSupply() <= prophetsNft.MAX_ELEMENTS(), 'Event ended');
+        require(prophetsNft.totalSupply() <= prophetsNft.MAX_PROPHETS(), 'Event ended');
         require(block.timestamp < EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
         _;
     }
@@ -52,10 +64,14 @@ contract ProphetsArrival is Ownable {
 
     /* ============ External Write Functions ============ */
 
-    function addUsersToWhitelist(address[] calldata _firstRoundUsers, address[] calldata _secondRoundUsers)
-        public
-        onlyOwner
-    {
+    function addUsersToWhitelist(
+        address[] calldata _settlers,
+        address[] calldata _firstRoundUsers,
+        address[] calldata _secondRoundUsers
+    ) public onlyOwner {
+        for (uint256 i = 0; i < _settlers.length; i++) {
+            settlerWhitelist[msg.sender] = true;
+        }
         for (uint256 i = 0; i < _firstRoundUsers.length; i++) {
             firstRoundWhitelist[msg.sender] = true;
         }
@@ -64,12 +80,31 @@ contract ProphetsArrival is Ownable {
         }
     }
 
-    function mintRare(uint256 _id) public payable isEventOpen {
-        require(_id < 8000, 'Not a rare prophet');
-        require(msg.value == RARE_PRICE, 'msg.value has to be 0.25');
-        require(canMintRare(msg.sender), 'User not whitelisted');
+    function mintProphet() public payable isEventOpen {
+        require(!mintedNormalProphet[msg.sender], 'User can only mint 1 normal prophet');
+        require(
+            msg.value == PROPHET_PRICE || (msg.value == 0 && settlerWhitelist[msg.sender]),
+            'msg.value has to be 0.25'
+        );
+        require(canMintProphet(msg.sender), 'User not whitelisted');
+        prophetsNft.mintProphet(msg.sender);
+        // Prevent from minting another one
+        mintedNormalProphet[msg.sender] = true;
+    }
 
-        prophetsNft.mintRare(msg.sender);
+    function mintGreat(
+        uint256 _bid,
+        uint256 _id,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public payable onlyOwner isEventOver {
+        bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid)).toEthSignedMessageHash();
+        address signer = ECDSA.recover(hash, v, r, s);
+        require(signer != address(0), 'INVALID_SIGNER');
+        require(_bid >= getStartingPrice(_id), 'Should never happen but just in case');
+        IERC20(WETH).safeTransferFrom(signer, address(this), _bid);
+        prophetsNft.mintGreatProphet(signer, _id);
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
@@ -80,6 +115,11 @@ contract ProphetsArrival is Ownable {
 
     /* ============ External View Functions ============ */
 
+    function getStartingPrice(uint256 _id) public view returns (uint256) {
+        (uint256 _loot, , , , ) = prophetsNft.getProphetAttributes(_id);
+        return _loot * DENOM_FLOOR_PRICE_BABL;
+    }
+
     /* ============ Internal Write Functions ============ */
 
     function _widthdraw(address _address, uint256 _amount) private {
@@ -89,10 +129,11 @@ contract ProphetsArrival is Ownable {
 
     /* ============ Internal View Functions ============ */
 
-    function canMintRare(address user) private view returns (bool) {
+    function canMintProphet(address _user) private view returns (bool) {
         return
-            (isFirstRound() && firstRoundWhitelist[user]) ||
-            (isSecondRound() && secondRoundWhitelist[user]) ||
+            settlerWhitelist[_user] ||
+            (isFirstRound() && firstRoundWhitelist[_user]) ||
+            ((isSecondRound() && secondRoundWhitelist[_user]) || firstRoundWhitelist[_user]) ||
             isThirdRound();
     }
 

@@ -2,7 +2,6 @@ require('@nomiclabs/hardhat-ethers');
 require('@nomiclabs/hardhat-waffle');
 require('hardhat-gas-reporter');
 
-
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 
 module.exports = {
