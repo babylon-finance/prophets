@@ -22,8 +22,8 @@ contract ProphetsArrival is Ownable {
 
     uint256 public constant EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
     uint256 public constant SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
-    uint256 public constant THIRD_ROUND_TS = 1639753200; // Nov 10th 2021 20:00:00 GMT+0000
-    uint256 public constant EVENT_ENDS_TS = 1627588800; // Nov 12th 2021 20:00:00 GMT+0000
+    uint256 public constant THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
+    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
 
     bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _myBid)');
 
