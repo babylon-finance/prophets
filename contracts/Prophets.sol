@@ -36,12 +36,12 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     Counters.Counter private _prophetTracker;
     uint256 private totalMinted;
     address private minter;
+    mapping(uint256 => ProphetAttributes) private prophetsAttributes;
 
     /* ============ Public State Variables ============ */
 
     string public baseTokenURI = 'https://babylon.finance./api/v1/';
     mapping(uint256 => bool) public prophetsBABLClaimed;
-    mapping(uint256 => ProphetAttributes) public prophetsAttributes;
 
     /* ============ Public State Variables ============ */
 
@@ -62,9 +62,15 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     function mintProphet(address _to) external payable onlyArrival {
         require(_prophetTracker.current() < NORMAL_PROPHETS, 'Event ended');
-
         _prophetTracker.increment();
-        _setProphetAttributes(_prophetTracker.current(), BABL_NORMAL / NORMAL_PROPHETS, 0, NORMAL_PROPHET_LP_BONUS, 0, 0);
+        _setProphetAttributes(
+            _prophetTracker.current(),
+            BABL_NORMAL / NORMAL_PROPHETS,
+            0,
+            NORMAL_PROPHET_LP_BONUS,
+            0,
+            0
+        );
         _mintProphet(_to, _prophetTracker.current());
     }
 
@@ -102,7 +108,9 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     }
 
     function claimLoot(uint256 _id) external {
-        require(!prophetsBABLClaimed[_id], 'Loot already claimed');
+        require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
+        require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
+        require(!prophetsBABLClaimed[_id] && _id < (NORMAL_PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
         ProphetAttributes memory attrs = prophetsAttributes[_id];
 
@@ -114,6 +122,27 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     }
 
     /* ============ External View Functions ============ */
+
+    function getProphetAttributes(uint256 _id)
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        ProphetAttributes memory attrs = prophetsAttributes[_id];
+        return (
+            attrs.bablLoot,
+            attrs.creatorMultiplier,
+            attrs.lpMultiplier,
+            attrs.voterMultiplier,
+            attrs.strategistMultiplier
+        );
+    }
 
     function totalProphetsMinted() external view returns (uint256) {
         return totalMinted;
@@ -136,6 +165,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     /* ============ Internal Write Functions ============ */
 
     function _mintProphet(address _to, uint256 _id) private {
+        require(_to != address(0), 'Recipient must exist');
         _mint(_to, _id);
         totalMinted += 1;
 
