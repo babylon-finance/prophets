@@ -13,15 +13,18 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ Constants ============ */
 
-    uint256 public constant MAX_ELEMENTS = 10000;
-    uint256 public constant RARE_ELEMENTS = 8000;
-    uint256 public constant GREAT_ELEMENTS = 1000;
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
-    uint256 public constant BABL_RARE = 35_000;
+    uint256 public constant MAX_PROPHETS = 10000;
+    uint256 public constant NORMAL_PROPHETS = 8000;
+    uint256 public constant GREAT_PROPHETS = 1000;
+    uint256 public constant FUTURE_PROPHETS = 1000;
+    uint256 public constant BABL_NORMAL = 40_000;
+    uint256 public constant NORMAL_PROPHET_LP_BONUS = 1e16; // 1%
 
     /* ============ Structs ============ */
 
     struct ProphetAttributes {
+        uint256 bablLoot;
         uint256 creatorMultiplier;
         uint256 lpMultiplier;
         uint256 voterMultiplier;
@@ -30,14 +33,13 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ Private State Variables ============ */
 
-    Counters.Counter private _rareTracker;
+    Counters.Counter private _prophetTracker;
     uint256 private totalMinted;
     address private minter;
 
     /* ============ Public State Variables ============ */
 
     string public baseTokenURI = 'https://babylon.finance./api/v1/';
-    mapping(uint256 => uint256) public prophetsBABLLoot;
     mapping(uint256 => bool) public prophetsBABLClaimed;
     mapping(uint256 => ProphetAttributes) public prophetsAttributes;
 
@@ -58,28 +60,30 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ External Write Functions ============ */
 
-    function mintRare(address _to) external payable onlyArrival {
-        require(_rareTracker.current() < RARE_ELEMENTS, 'Event ended');
+    function mintProphet(address _to) external payable onlyArrival {
+        require(_prophetTracker.current() < NORMAL_PROPHETS, 'Event ended');
 
-        _rareTracker.increment();
-
-        _mintProphet(_to, _rareTracker.current());
+        _prophetTracker.increment();
+        _setProphetAttributes(_prophetTracker.current(), BABL_NORMAL / NORMAL_PROPHETS, 0, NORMAL_PROPHET_LP_BONUS, 0, 0);
+        _mintProphet(_to, _prophetTracker.current());
     }
 
     function mintGreatProphet(address _to, uint256 _id) external payable onlyArrival {
-        require(_id >= RARE_ELEMENTS && _id < RARE_ELEMENTS + GREAT_ELEMENTS, 'Needs to be a great prophet');
+        require(_id >= NORMAL_PROPHETS && _id < NORMAL_PROPHETS + GREAT_PROPHETS, 'Needs to be a great prophet');
         _mintProphet(_to, _id);
     }
 
     function setGreatProphetsAttributes(
+        uint256[1000] calldata _bablLoots,
         uint256[1000] calldata _creatorBonuses,
         uint256[1000] calldata _lpBonuses,
         uint256[1000] calldata _voterMultipliers,
         uint256[1000] calldata _strategistMultipliers
     ) external onlyOwner {
-        for (uint256 i = RARE_ELEMENTS; i < RARE_ELEMENTS + GREAT_ELEMENTS; i++) {
-            _setGreatProphetAttributes(
+        for (uint256 i = NORMAL_PROPHETS; i < NORMAL_PROPHETS + GREAT_PROPHETS; i++) {
+            _setProphetAttributes(
                 i,
+                _bablLoots[i],
                 _creatorBonuses[i],
                 _lpBonuses[i],
                 _voterMultipliers[i],
@@ -100,7 +104,9 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     function claimLoot(uint256 _id) external {
         require(!prophetsBABLClaimed[_id], 'Loot already claimed');
 
-        uint256 lootAmount = _id <= RARE_ELEMENTS ? BABL_RARE / _rareTracker.current() : prophetsBABLLoot[_id];
+        ProphetAttributes memory attrs = prophetsAttributes[_id];
+
+        uint256 lootAmount = attrs.bablLoot;
 
         require(lootAmount != 0, 'Loot can not be empty');
 
@@ -109,12 +115,12 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
 
     /* ============ External View Functions ============ */
 
-    function totalMint() external view returns (uint256) {
+    function totalProphetsMinted() external view returns (uint256) {
         return totalMinted;
     }
 
-    function raresMinted() external view returns (uint256) {
-        return _rareTracker.current();
+    function normalProphetsMinted() external view returns (uint256) {
+        return _prophetTracker.current();
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -136,17 +142,17 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         emit MintProphet(_id);
     }
 
-    function _setGreatProphetAttributes(
+    function _setProphetAttributes(
         uint256 _id,
+        uint256 _bablLoot,
         uint256 _creatorMultiplier,
         uint256 _lpMultiplier,
         uint256 _voterMultiplier,
         uint256 _strategistMultiplier
     ) private onlyOwner {
-        require(_id > RARE_ELEMENTS, 'Needs to be a great');
-
         ProphetAttributes storage attrs = prophetsAttributes[_id];
         attrs.creatorMultiplier = _creatorMultiplier;
+        attrs.bablLoot = _bablLoot;
         attrs.lpMultiplier = _lpMultiplier;
         attrs.voterMultiplier = _voterMultiplier;
         attrs.strategistMultiplier = _strategistMultiplier;
@@ -155,7 +161,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
     /* ============ Internal View Functions ============ */
 
     function _totalSupply() internal pure returns (uint256) {
-        return MAX_ELEMENTS;
+        return MAX_PROPHETS;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
