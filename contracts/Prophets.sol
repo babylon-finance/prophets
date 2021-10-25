@@ -4,11 +4,12 @@ pragma solidity 0.8.2;
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
+import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
+contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable {
     using Counters for Counters.Counter;
 
     /* ============ Constants ============ */
@@ -107,7 +108,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         minter = _arrival;
     }
 
-    function claimLoot(uint256 _id) external {
+    function claimLoot(uint256 _id) external nonReentrant {
         require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
         require(!prophetsBABLClaimed[_id] && _id < (NORMAL_PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
@@ -117,7 +118,7 @@ contract Prophets is ERC721Enumerable, Ownable, ERC721Burnable {
         uint256 lootAmount = attrs.bablLoot;
 
         require(lootAmount != 0, 'Loot can not be empty');
-
+        prophetsBABLClaimed[_id] = true;
         BABL.transfer(msg.sender, lootAmount);
     }
 

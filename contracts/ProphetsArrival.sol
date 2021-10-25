@@ -4,10 +4,11 @@ pragma solidity 0.8.2;
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import {ECDSA} from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './Prophets.sol';
 
-contract ProphetsArrival is Ownable {
+contract ProphetsArrival is ReentrancyGuard, Ownable {
     using ECDSA for bytes32;
     using SafeERC20 for IERC20;
 
@@ -80,7 +81,7 @@ contract ProphetsArrival is Ownable {
         }
     }
 
-    function mintProphet() public payable isEventOpen {
+    function mintProphet() public payable isEventOpen nonReentrant {
         require(!mintedNormalProphet[msg.sender], 'User can only mint 1 normal prophet');
         require(
             msg.value == PROPHET_PRICE || (msg.value == 0 && settlerWhitelist[msg.sender]),
