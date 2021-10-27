@@ -4,7 +4,7 @@ pragma solidity 0.8.2;
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
-import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
@@ -46,8 +46,8 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
 
     /* ============ Public State Variables ============ */
 
-    modifier onlyArrival() {
-        require(msg.sender == minter, 'Minter must be the arrival contract');
+    modifier onlyMinter() {
+        require(msg.sender == minter, 'Caller is not the minter');
         _;
     }
 
@@ -61,7 +61,7 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
 
     /* ============ External Write Functions ============ */
 
-    function mintProphet(address _to) external payable onlyArrival {
+    function mintProphet(address _to) external payable onlyMinter {
         require(_prophetTracker.current() < NORMAL_PROPHETS, 'Event ended');
         _prophetTracker.increment();
         _setProphetAttributes(
@@ -75,7 +75,7 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         _mintProphet(_to, _prophetTracker.current());
     }
 
-    function mintGreatProphet(address _to, uint256 _id) external payable onlyArrival {
+    function mintGreatProphet(address _to, uint256 _id) external payable onlyMinter {
         require(_id >= NORMAL_PROPHETS && _id < NORMAL_PROPHETS + GREAT_PROPHETS, 'Needs to be a great prophet');
         _mintProphet(_to, _id);
     }
@@ -180,7 +180,7 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         uint256 _lpMultiplier,
         uint256 _voterMultiplier,
         uint256 _strategistMultiplier
-    ) private onlyOwner {
+    ) private {
         ProphetAttributes storage attrs = prophetsAttributes[_id];
         attrs.creatorMultiplier = _creatorMultiplier;
         attrs.bablLoot = _bablLoot;
