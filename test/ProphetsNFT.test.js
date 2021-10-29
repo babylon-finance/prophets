@@ -29,13 +29,27 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('setBaseURI', function () {
+    it('can set URI', async function () {
+      await nft.setBaseURI('url');
+      expect(await nft.baseTokenURI()).to.equal('url');
+    });
+  });
+
   describe('owner', function () {
     it('sets the right owner', async function () {
       expect(await nft.owner()).to.equal(deployer.address);
     });
   });
 
-  describe.only('mintGreatProphet', function () {
+
+  describe('owner', function () {
+    it('sets the right owner', async function () {
+      expect(await nft.owner()).to.equal(deployer.address);
+    });
+  });
+
+  describe('mintGreatProphet', function () {
     beforeEach(async () => {
       await nft.setMinter(minter.address);
     });
@@ -46,6 +60,13 @@ describe('ProphetsNFT', () => {
       expect(await nft.balanceOf(alice.address)).to.eq(1);
     });
 
+    it('can mint all great prophets', async function () {
+      for (let i = 0; i < 1000; i++) {
+        await nft.connect(minter).mintGreatProphet(alice.address, 8000 + i);
+        expect(await nft.ownerOf(8000 + i)).to.eq(alice.address);
+        expect(await nft.balanceOf(alice.address)).to.eq(1 + i);
+      }
+    });
   });
 
   describe('setGreatProphetsAttributes', function () {

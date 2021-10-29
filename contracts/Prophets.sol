@@ -15,12 +15,15 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
     /* ============ Constants ============ */
 
     IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
-    uint256 public constant MAX_PROPHETS = 10000;
-    uint256 public constant NORMAL_PROPHETS = 8000;
+
+    uint256 public constant PROPHETS = 8000;
     uint256 public constant GREAT_PROPHETS = 1000;
     uint256 public constant FUTURE_PROPHETS = 1000;
-    uint256 public constant BABL_NORMAL = 40_000;
-    uint256 public constant NORMAL_PROPHET_LP_BONUS = 1e16; // 1%
+
+    uint256 public constant MAX_PROPHETS = PROPHETS + GREAT_PROPHETS + FUTURE_PROPHETS;
+
+    uint256 public constant BABL_SUPPLY = 40_000;
+    uint256 public constant PROPHET_LP_BONUS = 1e16; // 1%
 
     /* ============ Structs ============ */
 
@@ -34,8 +37,7 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
 
     /* ============ Private State Variables ============ */
 
-    Counters.Counter private _prophetTracker;
-    uint256 private totalMinted;
+    Counters.Counter private prophetsMinted;
     address private minter;
     mapping(uint256 => ProphetAttributes) private prophetsAttributes;
 
@@ -62,21 +64,21 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
     /* ============ External Write Functions ============ */
 
     function mintProphet(address _to) external payable onlyMinter {
-        require(_prophetTracker.current() < NORMAL_PROPHETS, 'Event ended');
-        _prophetTracker.increment();
+        require(prophetsMinted.current() < PROPHETS, 'Not a prophet');
+        prophetsMinted.increment();
         _setProphetAttributes(
-            _prophetTracker.current(),
-            BABL_NORMAL / NORMAL_PROPHETS,
+            prophetsMinted.current(),
+            BABL_SUPPLY / PROPHETS,
             0,
-            NORMAL_PROPHET_LP_BONUS,
+            PROPHET_LP_BONUS,
             0,
             0
         );
-        _mintProphet(_to, _prophetTracker.current());
+        _mintProphet(_to, prophetsMinted.current());
     }
 
     function mintGreatProphet(address _to, uint256 _id) external payable onlyMinter {
-        require(_id >= NORMAL_PROPHETS && _id < NORMAL_PROPHETS + GREAT_PROPHETS, 'Needs to be a great prophet');
+        require(_id >= PROPHETS && _id < PROPHETS + GREAT_PROPHETS, 'Not a great prophet');
         _mintProphet(_to, _id);
     }
 
@@ -104,15 +106,15 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         baseTokenURI = baseURI;
     }
 
-    function setMinter(address _arrival) external onlyOwner {
-        require(address(_arrival) != address(0), 'Arrival address must exist');
-        minter = _arrival;
+    function setMinter(address _minter) external onlyOwner {
+        require(address(_minter) != address(0), 'Specify minter');
+        minter = _minter;
     }
 
     function claimLoot(uint256 _id) external nonReentrant {
         require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
-        require(!prophetsBABLClaimed[_id] && _id < (NORMAL_PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
+        require(!prophetsBABLClaimed[_id] && _id < (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
         ProphetAttributes memory attrs = prophetsAttributes[_id];
 
@@ -146,12 +148,8 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         );
     }
 
-    function totalProphetsMinted() external view returns (uint256) {
-        return totalMinted;
-    }
-
-    function normalProphetsMinted() external view returns (uint256) {
-        return _prophetTracker.current();
+    function prophetsSupply() external view returns (uint256) {
+        return prophetsMinted.current();
     }
 
     function supportsInterface(bytes4 interfaceId)
@@ -169,7 +167,6 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
     function _mintProphet(address _to, uint256 _id) private {
         require(_to != address(0), 'Recipient must exist');
         _mint(_to, _id);
-        totalMinted += 1;
 
         emit MintProphet(_id);
     }
@@ -200,11 +197,4 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         return baseTokenURI;
     }
 
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721, ERC721Enumerable) {
-        super._beforeTokenTransfer(from, to, tokenId);
-    }
 }

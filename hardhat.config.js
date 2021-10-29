@@ -75,6 +75,10 @@ module.exports = {
     },
   },
 
+  mocha: {
+    timeout: 9999999,
+  },
+
   solidity: {
     compilers: [
       {
