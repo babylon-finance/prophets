@@ -80,7 +80,7 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         _mintProphet(_to, _id);
     }
 
-    function setGreatProphetsAttributes(
+    function setProphetsAttributes(
         uint256[] calldata _ids,
         uint256[] calldata _bablLoots,
         uint256[] calldata _creatorBonuses,

@@ -59,7 +59,7 @@ describe('ProphetsNFT', () => {
         const voterMultipliers = part.map((p) => eth(p.voterBonus));
         const strategistMultipliers = part.map((p) => eth(p.strategistBonus));
 
-        await nft.setGreatProphetsAttributes(
+        await nft.setProphetsAttributes(
           Array.from(Array(100).keys(), (n) => 8000 + n + i * 100),
           bablLoots,
           creatorBonuses,
@@ -67,6 +67,16 @@ describe('ProphetsNFT', () => {
           voterMultipliers,
           strategistMultipliers,
         );
+      }
+
+      for (let i = 0; i < 1000; i++) {
+        const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8000 + i);
+        expect(babl).to.eq(eth(prophets[8000 + i].babl));
+        expect(creator).to.eq(eth(prophets[8000 + i].creatorBonus));
+        expect(lp).to.eq(eth(prophets[8000 + i].lpBonus));
+        expect(voter).to.eq(eth(prophets[8000 + i].voterBonus));
+        expect(strategist).to.eq(eth(prophets[8000 + i].strategistBonus));
+        // console.log(babl.toString(), creator.toString(), lp.toString(), voter.toString(), strategist.toString());
       }
     });
   });
