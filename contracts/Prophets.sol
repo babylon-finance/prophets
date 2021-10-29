@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity 0.8.9;
 
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
@@ -15,8 +16,6 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
     /* ============ Constants ============ */
 
-    IERC20 public constant BABL = IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74);
-
     uint256 public constant PROPHETS = 8000;
     uint256 public constant GREAT_PROPHETS = 1000;
     uint256 public constant FUTURE_PROPHETS = 1000;
@@ -25,6 +24,10 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
     uint256 public constant BABL_SUPPLY = 40_000;
     uint256 public constant PROPHET_LP_BONUS = 1e16; // 1%
+
+    /* ============ Immutables ============ */
+
+    IERC20 public immutable bablToken;
 
     /* ============ Structs ============ */
 
@@ -60,7 +63,9 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
     /* ============ Constructor ============ */
 
-    constructor() ERC721('Babylon Prophets', 'BPP') {}
+    constructor(IERC20 _bablToken) ERC721('Babylon Prophets', 'BPP') {
+      bablToken = _bablToken;
+    }
 
     /* ============ External Write Functions ============ */
 
@@ -123,7 +128,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
         require(lootAmount != 0, 'Loot can not be empty');
         prophetsBABLClaimed[_id] = true;
-        BABL.transfer(msg.sender, lootAmount);
+        bablToken.transfer(msg.sender, lootAmount);
     }
 
     /* ============ External View Functions ============ */
@@ -193,7 +198,6 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     }
 
     /* ============ Internal View Functions ============ */
-
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;

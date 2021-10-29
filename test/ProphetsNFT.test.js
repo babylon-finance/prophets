@@ -32,10 +32,14 @@ describe('ProphetsNFT', () => {
   });
 
   beforeEach(async function () {
-    const prophetsFactory = await ethers.getContractFactory('Prophets');
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
-    nft = await prophetsFactory.deploy();
+    const erc20Factory = await ethers.getContractFactory('ERC20Mock');
+    const erc20 = await erc20Factory.deploy('Babylon Finance', 'BABL', owner.address, eth(1000000));
+
+    const prophetsFactory = await ethers.getContractFactory('Prophets');
+
+    nft = await prophetsFactory.deploy(erc20.address);
 
     await nft.setMinter(minter.address);
     await nft.transferOwnership(owner.address);
