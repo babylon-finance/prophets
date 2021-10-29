@@ -81,15 +81,16 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
     }
 
     function setGreatProphetsAttributes(
-        uint256[1000] calldata _bablLoots,
-        uint256[1000] calldata _creatorBonuses,
-        uint256[1000] calldata _lpBonuses,
-        uint256[1000] calldata _voterMultipliers,
-        uint256[1000] calldata _strategistMultipliers
+        uint256[] calldata _ids,
+        uint256[] calldata _bablLoots,
+        uint256[] calldata _creatorBonuses,
+        uint256[] calldata _lpBonuses,
+        uint256[] calldata _voterMultipliers,
+        uint256[] calldata _strategistMultipliers
     ) external onlyOwner {
-        for (uint256 i = NORMAL_PROPHETS; i < NORMAL_PROPHETS + GREAT_PROPHETS; i++) {
+        for (uint256 i = 0; i < _ids.length; i++) {
             _setProphetAttributes(
-                i,
+                _ids[i],
                 _bablLoots[i],
                 _creatorBonuses[i],
                 _lpBonuses[i],
