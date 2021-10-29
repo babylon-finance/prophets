@@ -42,10 +42,27 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('totalSupply', function () {
+    it('gets correct total supply', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(alice.address);
+      expect(await nft.totalSupply()).to.equal(1);
+    });
+  });
 
-  describe('owner', function () {
-    it('sets the right owner', async function () {
-      expect(await nft.owner()).to.equal(deployer.address);
+  describe.only('prophetsSupply', function () {
+    it('gets correct total supply', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(alice.address);
+      expect(await nft.prophetsSupply()).to.equal(1);
+    });
+  });
+
+  describe('tokenURI', function () {
+    it('gets correct URI', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(alice.address);
+      expect(await nft.tokenURI(1)).to.eq('https://babylon.finance./api/v1/1');
     });
   });
 

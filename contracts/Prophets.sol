@@ -148,6 +148,10 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
         );
     }
 
+    function maxSupply() external pure returns (uint256) {
+        return MAX_PROPHETS;
+    }
+
     function prophetsSupply() external view returns (uint256) {
         return prophetsMinted.current();
     }
@@ -189,12 +193,16 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
 
     /* ============ Internal View Functions ============ */
 
-    function _totalSupply() internal pure returns (uint256) {
-        return MAX_PROPHETS;
-    }
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
     }
 
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal virtual override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
 }
