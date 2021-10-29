@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const fs = require('fs');
-const { eth } = require('../lib/helpers');
+const { unit } = require('../lib/helpers');
 
 // Prophet JSON example
 //{
@@ -25,6 +25,7 @@ describe('ProphetsNFT', () => {
   let nft;
   let prophets;
   let great;
+  let bablToken;
 
   before(async () => {
     prophets = JSON.parse(fs.readFileSync('./prophets.json'));
@@ -35,14 +36,15 @@ describe('ProphetsNFT', () => {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
     const erc20Factory = await ethers.getContractFactory('ERC20Mock');
-    const erc20 = await erc20Factory.deploy('Babylon Finance', 'BABL', owner.address, eth(1000000));
+    bablToken = await erc20Factory.deploy('Babylon Finance', 'BABL', owner.address, unit(1000000));
 
     const prophetsFactory = await ethers.getContractFactory('Prophets');
 
-    nft = await prophetsFactory.deploy(erc20.address);
+    nft = await prophetsFactory.deploy(bablToken.address);
 
     await nft.setMinter(minter.address);
     await nft.transferOwnership(owner.address);
+    await bablToken.connect(owner).transfer(nft.address, unit(40000));
   });
 
   /* ============ External Write Functions ============ */
@@ -68,11 +70,11 @@ describe('ProphetsNFT', () => {
       for (let i = 0; i < 10; i++) {
         const part = great.slice(i * 100, i * 100 + 100);
 
-        const bablLoots = part.map((p) => eth(p.babl));
-        const creatorBonuses = part.map((p) => eth(p.creatorBonus));
-        const lpBonuses = part.map((p) => eth(p.lpBonus));
-        const voterMultipliers = part.map((p) => eth(p.voterBonus));
-        const strategistMultipliers = part.map((p) => eth(p.strategistBonus));
+        const bablLoots = part.map((p) => unit(p.babl));
+        const creatorBonuses = part.map((p) => unit(p.creatorBonus));
+        const lpBonuses = part.map((p) => unit(p.lpBonus));
+        const voterMultipliers = part.map((p) => unit(p.voterBonus));
+        const strategistMultipliers = part.map((p) => unit(p.strategistBonus));
 
         await nft.connect(owner).setProphetsAttributes(
           Array.from(Array(100).keys(), (n) => 8001 + n + i * 100),
@@ -86,11 +88,11 @@ describe('ProphetsNFT', () => {
 
       for (let i = 0; i < 1000; i++) {
         const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001 + i);
-        expect(babl).to.eq(eth(prophets[8000 + i].babl));
-        expect(creator).to.eq(eth(prophets[8000 + i].creatorBonus));
-        expect(lp).to.eq(eth(prophets[8000 + i].lpBonus));
-        expect(voter).to.eq(eth(prophets[8000 + i].voterBonus));
-        expect(strategist).to.eq(eth(prophets[8000 + i].strategistBonus));
+        expect(babl).to.eq(unit(prophets[8000 + i].babl));
+        expect(creator).to.eq(unit(prophets[8000 + i].creatorBonus));
+        expect(lp).to.eq(unit(prophets[8000 + i].lpBonus));
+        expect(voter).to.eq(unit(prophets[8000 + i].voterBonus));
+        expect(strategist).to.eq(unit(prophets[8000 + i].strategistBonus));
         // console.log(babl.toString(), creator.toString(), lp.toString(), voter.toString(), strategist.toString());
       }
     });
@@ -145,7 +147,13 @@ describe('ProphetsNFT', () => {
   });
 
   describe('claimLoot', function () {
-    it('can claim loot', async function () {});
+    it('can claim loot', async function () {
+      await nft.connect(minter).mintProphet(ramon.address);
+      expect(await nft.balanceOf(ramon.address)).to.equal(1);
+
+      await nft.connect(ramon).claimLoot(1);
+      expect(await bablToken.balanceOf(ramon.address)).to.eq(unit(5));
+    });
   });
 
   /* ============ External View Functions ============ */
@@ -164,7 +172,7 @@ describe('ProphetsNFT', () => {
 
       expect(babl).to.eq(5);
       expect(creator).to.eq(0);
-      expect(lp).to.eq(eth(0.01));
+      expect(lp).to.eq(unit(0.01));
       expect(voter).to.eq(0);
       expect(strategist).to.eq(0);
     });

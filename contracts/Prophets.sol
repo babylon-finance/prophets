@@ -22,7 +22,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
     uint256 public constant MAX_PROPHETS = PROPHETS + GREAT_PROPHETS + FUTURE_PROPHETS;
 
-    uint256 public constant BABL_SUPPLY = 40_000;
+    uint256 public constant BABL_SUPPLY = 40_000e18;
     uint256 public constant PROPHET_LP_BONUS = 1e16; // 1%
 
     /* ============ Immutables ============ */
