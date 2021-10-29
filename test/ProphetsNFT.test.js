@@ -57,9 +57,7 @@ describe('ProphetsNFT', () => {
       });
 
       it("others can't mint", async function () {
-        await expect(nft.connect(alice).mintProphet(alice.address)).to.be.revertedWith(
-          'Caller is not the minter',
-        );
+        await expect(nft.connect(alice).mintProphet(alice.address)).to.be.revertedWith('Caller is not the minter');
       });
     });
   });

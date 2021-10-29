@@ -12,14 +12,16 @@
     "hardhat-gas-reporter": "^1.0.4",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
-    "solhint": "^3.3.6"
+    "solhint": "^3.3.6",
+    "solidity-coverage": "^0.7.17"
   },
   "scripts": {
     "prettier": "prettier --write .",
     "lint:contracts": "solhint contracts/**/*.sol",
     "compile": "hardhat compile",
     "test": "OPTIMIZER=false hardhat test",
-    "gas-report": "REPORT_GAS=1 hardhat test --network hardhat --max-memory 8096",
+    "gas-report": "REPORT_GAS=1 hardhat test --network hardhat",
+    "coverage": "hardhat coverage",
     "lint:tests": "eslint 'test/**/*.test.js'"
   },
   "dependencies": {
