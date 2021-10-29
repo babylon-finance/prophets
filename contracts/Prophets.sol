@@ -4,12 +4,13 @@ pragma solidity 0.8.9;
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable {
+contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721Burnable {
     using Counters for Counters.Counter;
 
     /* ============ Constants ============ */
@@ -38,13 +39,13 @@ contract Prophets is ReentrancyGuard, ERC721Enumerable, Ownable, ERC721Burnable 
     /* ============ Private State Variables ============ */
 
     Counters.Counter private prophetsMinted;
-    address private minter;
     mapping(uint256 => ProphetAttributes) private prophetsAttributes;
 
     /* ============ Public State Variables ============ */
 
     string public baseTokenURI = 'https://babylon.finance./api/v1/';
     mapping(uint256 => bool) public prophetsBABLClaimed;
+    address public minter;
 
     /* ============ Public State Variables ============ */
 

@@ -4,9 +4,10 @@ const { eth } = require('../lib/helpers');
 
 describe('ProphetsNFT', () => {
   let deployer;
-  let alice;
-  let bob;
+  let ramon;
+  let tyler;
   let minter;
+  let owner;
   let nft;
   let prophets;
   let great;
@@ -18,53 +19,14 @@ describe('ProphetsNFT', () => {
 
   beforeEach(async function () {
     const prophetsFactory = await ethers.getContractFactory('Prophets');
-    [deployer, alice, bob, minter] = await ethers.getSigners();
+    [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
     nft = await prophetsFactory.deploy();
+
+    await nft.setMinter(minter.address);
   });
 
-  describe('symbol', function () {
-    it('has correct symbol', async function () {
-      expect(await nft.symbol()).to.equal('BPP');
-    });
-  });
-
-  describe('setBaseURI', function () {
-    it('can set URI', async function () {
-      await nft.setBaseURI('url');
-      expect(await nft.baseTokenURI()).to.equal('url');
-    });
-  });
-
-  describe('owner', function () {
-    it('sets the right owner', async function () {
-      expect(await nft.owner()).to.equal(deployer.address);
-    });
-  });
-
-  describe('totalSupply', function () {
-    it('gets correct total supply', async function () {
-      await nft.setMinter(minter.address);
-      await nft.connect(minter).mintProphet(alice.address);
-      expect(await nft.totalSupply()).to.equal(1);
-    });
-  });
-
-  describe.only('prophetsSupply', function () {
-    it('gets correct total supply', async function () {
-      await nft.setMinter(minter.address);
-      await nft.connect(minter).mintProphet(alice.address);
-      expect(await nft.prophetsSupply()).to.equal(1);
-    });
-  });
-
-  describe('tokenURI', function () {
-    it('gets correct URI', async function () {
-      await nft.setMinter(minter.address);
-      await nft.connect(minter).mintProphet(alice.address);
-      expect(await nft.tokenURI(1)).to.eq('https://babylon.finance./api/v1/1');
-    });
-  });
+  /* ============ External Write Functions ============ */
 
   describe('mintGreatProphet', function () {
     beforeEach(async () => {
@@ -72,16 +34,16 @@ describe('ProphetsNFT', () => {
     });
 
     it('can mint', async function () {
-      await nft.connect(minter).mintGreatProphet(alice.address, 8000);
-      expect(await nft.ownerOf(8000)).to.eq(alice.address);
-      expect(await nft.balanceOf(alice.address)).to.eq(1);
+      await nft.connect(minter).mintGreatProphet(ramon.address, 8000);
+      expect(await nft.ownerOf(8000)).to.eq(ramon.address);
+      expect(await nft.balanceOf(ramon.address)).to.eq(1);
     });
 
     it('can mint all great prophets', async function () {
       for (let i = 0; i < 1000; i++) {
-        await nft.connect(minter).mintGreatProphet(alice.address, 8000 + i);
-        expect(await nft.ownerOf(8000 + i)).to.eq(alice.address);
-        expect(await nft.balanceOf(alice.address)).to.eq(1 + i);
+        await nft.connect(minter).mintGreatProphet(ramon.address, 8000 + i);
+        expect(await nft.ownerOf(8000 + i)).to.eq(ramon.address);
+        expect(await nft.balanceOf(ramon.address)).to.eq(1 + i);
       }
     });
   });
@@ -146,27 +108,89 @@ describe('ProphetsNFT', () => {
     });
 
     it('minter can mint to others', async function () {
-      expect(await nft.balanceOf(alice.address)).to.equal(0);
-      expect(await nft.balanceOf(bob.address)).to.equal(0);
+      expect(await nft.balanceOf(ramon.address)).to.equal(0);
+      expect(await nft.balanceOf(tyler.address)).to.equal(0);
 
-      await nft.connect(minter).mintProphet(alice.address);
-      await nft.connect(minter).mintProphet(bob.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(tyler.address);
 
-      expect(await nft.balanceOf(alice.address)).to.equal(1);
-      expect(await nft.ownerOf(1)).to.be.equal(alice.address);
-      expect(await nft.balanceOf(bob.address)).to.equal(1);
-      expect(await nft.ownerOf(2)).to.be.equal(bob.address);
+      expect(await nft.balanceOf(ramon.address)).to.equal(1);
+      expect(await nft.ownerOf(1)).to.be.equal(ramon.address);
+      expect(await nft.balanceOf(tyler.address)).to.equal(1);
+      expect(await nft.ownerOf(2)).to.be.equal(tyler.address);
     });
 
     it('creates the correct tokenURIs', async function () {
       const BASE_URI = 'https://babylon.finance./api/v1/';
-      await nft.connect(minter).mintProphet(alice.address);
+      await nft.connect(minter).mintProphet(ramon.address);
 
       expect(await nft.tokenURI(1)).to.equal(BASE_URI + '1');
     });
 
     it("others can't mint", async function () {
-      await expect(nft.connect(alice).mintProphet(alice.address)).to.be.revertedWith('Caller is not the minter');
+      await expect(nft.connect(ramon).mintProphet(ramon.address)).to.be.revertedWith('Caller is not the minter');
+    });
+  });
+
+  describe('setBaseURI', function () {
+    it('can set URI', async function () {
+      await nft.setBaseURI('url');
+      expect(await nft.baseTokenURI()).to.equal('url');
+    });
+  });
+
+  describe('setMinter', function () {
+    it('can set minter', async function () {
+      await nft.setMinter(minter.address);
+      expect(await nft.minter()).to.equal(minter.address);
+    });
+  });
+
+  describe('claimLoot', function () {
+    it('can claim loot', async function () {});
+  });
+
+  /* ============ External View Functions ============ */
+
+  describe('symbol', function () {
+    it('has correct symbol', async function () {
+      expect(await nft.symbol()).to.equal('BPP');
+    });
+  });
+
+  describe('getProphetAttributes', function () {
+    it('can get prophets attributes', async function () {
+      expect(await nft.owner()).to.equal(deployer.address);
+    });
+  });
+
+  describe('owner', function () {
+    it('sets the right owner', async function () {
+      expect(await nft.owner()).to.equal(deployer.address);
+    });
+  });
+
+  describe('totalSupply', function () {
+    it('gets correct total supply', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      expect(await nft.totalSupply()).to.equal(1);
+    });
+  });
+
+  describe('prophetsSupply', function () {
+    it('gets correct total supply', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      expect(await nft.prophetsSupply()).to.equal(1);
+    });
+  });
+
+  describe('tokenURI', function () {
+    it('gets correct URI', async function () {
+      await nft.setMinter(minter.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      expect(await nft.tokenURI(1)).to.eq('https://babylon.finance./api/v1/1');
     });
   });
 });
