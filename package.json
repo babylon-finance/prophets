@@ -20,7 +20,7 @@
     "prettier": "prettier --write .",
     "lint:contracts": "solhint contracts/**/*.sol",
     "compile": "hardhat compile",
-    "test": "hardhat test",
+    "test": "OPTIMIZER=false hardhat test",
     "gas-report": "REPORT_GAS=1 hardhat test --network hardhat",
     "coverage": "hardhat coverage",
     "lint:tests": "eslint 'test/**/*.test.js'"

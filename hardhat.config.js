@@ -83,6 +83,12 @@ module.exports = {
           optimizer: {
             enabled: OPTIMIZER,
             runs: 999,
+            details: {
+              yul: true,
+              yulDetails: {
+                stackAllocation: true,
+              },
+            },
           },
         },
       },
