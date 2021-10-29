@@ -56,6 +56,14 @@ describe('ProphetsNFT', () => {
       expect(await nft.balanceOf(ramon.address)).to.eq(1);
     });
 
+    it('can NOT mint great with wrong id', async function () {
+      await expect(nft.connect(minter).mintGreatProphet(ramon.address, 1)).to.be.revertedWith('Not a great prophet');
+    });
+
+    it('can NOT mint great with wrong id', async function () {
+      await expect(nft.connect(minter).mintGreatProphet(ethers.constants.AddressZero, 1)).to.be.revertedWith('Not a great prophet');
+    });
+
     it('can mint all great prophets', async function () {
       for (let i = 0; i < 1000; i++) {
         await nft.connect(minter).mintGreatProphet(ramon.address, 8001 + i);
@@ -100,11 +108,11 @@ describe('ProphetsNFT', () => {
 
   describe('mintProphet', function () {
     it('minter can mint to themselves', async function () {
-      await nft.connect(minter).mintProphet(deployer.address);
-      expect(await nft.balanceOf(deployer.address)).to.equal(1);
+      await nft.connect(minter).mintProphet(minter.address);
+      expect(await nft.balanceOf(minter.address)).to.equal(1);
 
-      await nft.connect(minter).mintProphet(deployer.address);
-      expect(await nft.balanceOf(deployer.address)).to.equal(2);
+      await nft.connect(minter).mintProphet(minter.address);
+      expect(await nft.balanceOf(minter.address)).to.equal(2);
     });
 
     it('minter can mint to others', async function () {
@@ -118,6 +126,21 @@ describe('ProphetsNFT', () => {
       expect(await nft.ownerOf(1)).to.be.equal(ramon.address);
       expect(await nft.balanceOf(tyler.address)).to.equal(1);
       expect(await nft.ownerOf(2)).to.be.equal(tyler.address);
+    });
+
+    it('can mint all 8000 prophets', async function () {
+      for (let i = 0; i < 8000; i++) {
+        await nft.connect(minter).mintProphet(ramon.address);
+        expect(await nft.balanceOf(ramon.address)).to.eq(i + 1);
+        expect(await nft.ownerOf(i + 1)).to.eq(ramon.address);
+      }
+    });
+
+    it('can NOT mint more than 8000 prophets', async function () {
+      for (let i = 0; i < 8000; i++) {
+        await nft.connect(minter).mintProphet(ramon.address);
+      }
+      await expect(nft.connect(minter).mintProphet(ramon.address)).to.be.revertedWith('Not a prophet');
     });
 
     it('creates the correct tokenURIs', async function () {
@@ -140,6 +163,10 @@ describe('ProphetsNFT', () => {
   });
 
   describe('setMinter', function () {
+    it('can NOT set minter to zero addrss', async function () {
+      await expect(nft.connect(owner).setMinter(ethers.constants.AddressZero)).to.be.revertedWith('Specify minter');
+    });
+
     it('can set minter', async function () {
       await nft.connect(owner).setMinter(tyler.address);
       expect(await nft.minter()).to.equal(tyler.address);
@@ -147,13 +174,35 @@ describe('ProphetsNFT', () => {
   });
 
   describe('claimLoot', function () {
-    it('can claim loot', async function () {
+    beforeEach(async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.balanceOf(ramon.address)).to.equal(1);
+    });
 
+    it('can claim loot', async function () {
       await nft.connect(ramon).claimLoot(1);
       expect(await bablToken.balanceOf(ramon.address)).to.eq(unit(5));
     });
+
+    it('can NOT claim loot if balance 0', async function () {
+      await expect(nft.connect(tyler).claimLoot(1)).to.be.revertedWith('Caller does not own a prophet');
+    });
+
+    it('can NOT claim loot if not owner', async function () {
+      await nft.connect(minter).mintProphet(tyler.address);
+      await expect(nft.connect(tyler).claimLoot(1)).to.be.revertedWith('Caller must own the prophet');
+    });
+
+    it('Loot can NOT be claimed twice', async function () {
+      await nft.connect(ramon).claimLoot(1);
+      await expect(nft.connect(ramon).claimLoot(1)).to.be.revertedWith('Loot already claimed');
+    });
+
+    it('Loot can NOT be empty', async function () {
+      await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
+      await expect(nft.connect(ramon).claimLoot(8001)).to.be.revertedWith('Loot can not be empty');
+    });
+
   });
 
   /* ============ External View Functions ============ */
@@ -170,7 +219,7 @@ describe('ProphetsNFT', () => {
 
       const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
 
-      expect(babl).to.eq(5);
+      expect(babl).to.eq(unit(5));
       expect(creator).to.eq(0);
       expect(lp).to.eq(unit(0.01));
       expect(voter).to.eq(0);
