@@ -191,6 +191,16 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('supportsInterface', function () {
+    it('supports ERC721', async function () {
+      expect(await nft.supportsInterface('0x80ac58cd')).to.eq(true);
+    });
+
+    it('supports ERC721Enumerable', async function () {
+      expect(await nft.supportsInterface('0x780e9d63')).to.eq(true);
+    });
+  });
+
   describe('tokenURI', function () {
     it('gets correct URI', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
