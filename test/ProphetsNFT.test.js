@@ -165,6 +165,12 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('maxSupply', function () {
+    it('gets the maxSupply', async function () {
+      expect(await nft.maxSupply()).to.equal(10000);
+    });
+  });
+
   describe('owner', function () {
     it('gets the owner', async function () {
       expect(await nft.owner()).to.equal(owner.address);
