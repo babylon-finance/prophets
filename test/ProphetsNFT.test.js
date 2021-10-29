@@ -2,6 +2,20 @@ const { expect } = require('chai');
 const fs = require('fs');
 const { eth } = require('../lib/helpers');
 
+// Prophet JSON example
+//{
+//  "gender": "male",
+//  "babl": 5,
+//  "floorPrice": 0.25,
+//  "number": 0,
+//  "lpBonus": 1,
+//  "voterBonus": 0,
+//  "strategistBonus": 0,
+//  "creatorBonus": 0,
+//  "name": "Prophet 0",
+//  "bonusScore": 200
+//},
+
 describe('ProphetsNFT', () => {
   let deployer;
   let ramon;
@@ -14,7 +28,7 @@ describe('ProphetsNFT', () => {
 
   before(async () => {
     prophets = JSON.parse(fs.readFileSync('./prophets.json'));
-    great = prophets.slice(8001);
+    great = prophets.slice(8000);
   });
 
   beforeEach(async function () {
@@ -47,19 +61,6 @@ describe('ProphetsNFT', () => {
 
   describe('setGreatProphetsAttributes', function () {
     it('can set attributes', async function () {
-      // Prophet JSON example
-      //{
-      //  "gender": "male",
-      //  "babl": 5,
-      //  "floorPrice": 0.25,
-      //  "number": 0,
-      //  "lpBonus": 1,
-      //  "voterBonus": 0,
-      //  "strategistBonus": 0,
-      //  "creatorBonus": 0,
-      //  "name": "Prophet 0",
-      //  "bonusScore": 200
-      //},
       for (let i = 0; i < 10; i++) {
         const part = great.slice(i * 100, i * 100 + 100);
 
@@ -81,11 +82,11 @@ describe('ProphetsNFT', () => {
 
       for (let i = 0; i < 1000; i++) {
         const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001 + i);
-        expect(babl).to.eq(eth(prophets[8001 + i].babl));
-        expect(creator).to.eq(eth(prophets[8001 + i].creatorBonus));
-        expect(lp).to.eq(eth(prophets[8001 + i].lpBonus));
-        expect(voter).to.eq(eth(prophets[8001 + i].voterBonus));
-        expect(strategist).to.eq(eth(prophets[8001 + i].strategistBonus));
+        expect(babl).to.eq(eth(prophets[8000 + i].babl));
+        expect(creator).to.eq(eth(prophets[8000 + i].creatorBonus));
+        expect(lp).to.eq(eth(prophets[8000 + i].lpBonus));
+        expect(voter).to.eq(eth(prophets[8000 + i].voterBonus));
+        expect(strategist).to.eq(eth(prophets[8000 + i].strategistBonus));
         // console.log(babl.toString(), creator.toString(), lp.toString(), voter.toString(), strategist.toString());
       }
     });
