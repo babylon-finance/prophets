@@ -24,15 +24,12 @@ describe('ProphetsNFT', () => {
     nft = await prophetsFactory.deploy();
 
     await nft.setMinter(minter.address);
+    await nft.transferOwnership(owner.address);
   });
 
   /* ============ External Write Functions ============ */
 
   describe('mintGreatProphet', function () {
-    beforeEach(async () => {
-      await nft.setMinter(minter.address);
-    });
-
     it('can mint', async function () {
       await nft.connect(minter).mintGreatProphet(ramon.address, 8000);
       expect(await nft.ownerOf(8000)).to.eq(ramon.address);
@@ -72,7 +69,7 @@ describe('ProphetsNFT', () => {
         const voterMultipliers = part.map((p) => eth(p.voterBonus));
         const strategistMultipliers = part.map((p) => eth(p.strategistBonus));
 
-        await nft.setProphetsAttributes(
+        await nft.connect(owner).setProphetsAttributes(
           Array.from(Array(100).keys(), (n) => 8000 + n + i * 100),
           bablLoots,
           creatorBonuses,
@@ -95,10 +92,6 @@ describe('ProphetsNFT', () => {
   });
 
   describe('mintProphet', function () {
-    beforeEach(async () => {
-      await nft.setMinter(minter.address);
-    });
-
     it('minter can mint to themselves', async function () {
       await nft.connect(minter).mintProphet(deployer.address);
       expect(await nft.balanceOf(deployer.address)).to.equal(1);
@@ -134,15 +127,15 @@ describe('ProphetsNFT', () => {
 
   describe('setBaseURI', function () {
     it('can set URI', async function () {
-      await nft.setBaseURI('url');
+      await nft.connect(owner).setBaseURI('url');
       expect(await nft.baseTokenURI()).to.equal('url');
     });
   });
 
   describe('setMinter', function () {
     it('can set minter', async function () {
-      await nft.setMinter(minter.address);
-      expect(await nft.minter()).to.equal(minter.address);
+      await nft.connect(owner).setMinter(tyler.address);
+      expect(await nft.minter()).to.equal(tyler.address);
     });
   });
 
@@ -160,19 +153,26 @@ describe('ProphetsNFT', () => {
 
   describe('getProphetAttributes', function () {
     it('can get prophets attributes', async function () {
-      expect(await nft.owner()).to.equal(deployer.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+
+      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
+
+      expect(babl).to.eq(5);
+      expect(creator).to.eq(0);
+      expect(lp).to.eq(eth(0.01));
+      expect(voter).to.eq(0);
+      expect(strategist).to.eq(0);
     });
   });
 
   describe('owner', function () {
-    it('sets the right owner', async function () {
-      expect(await nft.owner()).to.equal(deployer.address);
+    it('gets the owner', async function () {
+      expect(await nft.owner()).to.equal(owner.address);
     });
   });
 
   describe('totalSupply', function () {
     it('gets correct total supply', async function () {
-      await nft.setMinter(minter.address);
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.totalSupply()).to.equal(1);
     });
@@ -180,7 +180,6 @@ describe('ProphetsNFT', () => {
 
   describe('prophetsSupply', function () {
     it('gets correct total supply', async function () {
-      await nft.setMinter(minter.address);
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.prophetsSupply()).to.equal(1);
     });
@@ -188,7 +187,6 @@ describe('ProphetsNFT', () => {
 
   describe('tokenURI', function () {
     it('gets correct URI', async function () {
-      await nft.setMinter(minter.address);
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.tokenURI(1)).to.eq('https://babylon.finance./api/v1/1');
     });
