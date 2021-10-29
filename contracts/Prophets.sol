@@ -175,7 +175,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     /* ============ Internal Write Functions ============ */
 
     function _mintProphet(address _to, uint256 _id) private {
-        require(_to != address(0), 'Recipient must exist');
+        require(_to != address(0), 'Recipient is 0x0');
         _mint(_to, _id);
 
         emit MintProphet(_id);

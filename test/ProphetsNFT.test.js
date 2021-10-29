@@ -61,7 +61,11 @@ describe('ProphetsNFT', () => {
     });
 
     it('can NOT mint great with wrong id', async function () {
-      await expect(nft.connect(minter).mintGreatProphet(ethers.constants.AddressZero, 1)).to.be.revertedWith('Not a great prophet');
+      await expect(nft.connect(minter).mintGreatProphet(ramon.address, 1)).to.be.revertedWith('Not a great prophet');
+    });
+
+    it('can NOT mint great to a zero address', async function () {
+      await expect(nft.connect(minter).mintGreatProphet(ethers.constants.AddressZero, 8001)).to.be.revertedWith('Recipient is 0x0');
     });
 
     it('can mint all great prophets', async function () {
