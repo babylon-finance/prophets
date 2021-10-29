@@ -35,6 +35,19 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe.only('mintGreatProphet', function () {
+    beforeEach(async () => {
+      await nft.setMinter(minter.address);
+    });
+
+    it('can mint', async function () {
+      await nft.connect(minter).mintGreatProphet(alice.address, 8000);
+      expect(await nft.ownerOf(8000)).to.eq(alice.address);
+      expect(await nft.balanceOf(alice.address)).to.eq(1);
+    });
+
+  });
+
   describe('setGreatProphetsAttributes', function () {
     it('can set attributes', async function () {
       // Prophet JSON example
