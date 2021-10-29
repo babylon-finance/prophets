@@ -14,7 +14,7 @@ describe('ProphetsNFT', () => {
 
   before(async () => {
     prophets = JSON.parse(fs.readFileSync('./prophets.json'));
-    great = prophets.slice(8000);
+    great = prophets.slice(8001);
   });
 
   beforeEach(async function () {
@@ -31,15 +31,15 @@ describe('ProphetsNFT', () => {
 
   describe('mintGreatProphet', function () {
     it('can mint', async function () {
-      await nft.connect(minter).mintGreatProphet(ramon.address, 8000);
-      expect(await nft.ownerOf(8000)).to.eq(ramon.address);
+      await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
+      expect(await nft.ownerOf(8001)).to.eq(ramon.address);
       expect(await nft.balanceOf(ramon.address)).to.eq(1);
     });
 
     it('can mint all great prophets', async function () {
       for (let i = 0; i < 1000; i++) {
-        await nft.connect(minter).mintGreatProphet(ramon.address, 8000 + i);
-        expect(await nft.ownerOf(8000 + i)).to.eq(ramon.address);
+        await nft.connect(minter).mintGreatProphet(ramon.address, 8001 + i);
+        expect(await nft.ownerOf(8001 + i)).to.eq(ramon.address);
         expect(await nft.balanceOf(ramon.address)).to.eq(1 + i);
       }
     });
@@ -70,7 +70,7 @@ describe('ProphetsNFT', () => {
         const strategistMultipliers = part.map((p) => eth(p.strategistBonus));
 
         await nft.connect(owner).setProphetsAttributes(
-          Array.from(Array(100).keys(), (n) => 8000 + n + i * 100),
+          Array.from(Array(100).keys(), (n) => 8001 + n + i * 100),
           bablLoots,
           creatorBonuses,
           lpBonuses,
@@ -80,12 +80,12 @@ describe('ProphetsNFT', () => {
       }
 
       for (let i = 0; i < 1000; i++) {
-        const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8000 + i);
-        expect(babl).to.eq(eth(prophets[8000 + i].babl));
-        expect(creator).to.eq(eth(prophets[8000 + i].creatorBonus));
-        expect(lp).to.eq(eth(prophets[8000 + i].lpBonus));
-        expect(voter).to.eq(eth(prophets[8000 + i].voterBonus));
-        expect(strategist).to.eq(eth(prophets[8000 + i].strategistBonus));
+        const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001 + i);
+        expect(babl).to.eq(eth(prophets[8001 + i].babl));
+        expect(creator).to.eq(eth(prophets[8001 + i].creatorBonus));
+        expect(lp).to.eq(eth(prophets[8001 + i].lpBonus));
+        expect(voter).to.eq(eth(prophets[8001 + i].voterBonus));
+        expect(strategist).to.eq(eth(prophets[8001 + i].strategistBonus));
         // console.log(babl.toString(), creator.toString(), lp.toString(), voter.toString(), strategist.toString());
       }
     });

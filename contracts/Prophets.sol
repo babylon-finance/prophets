@@ -79,7 +79,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     }
 
     function mintGreatProphet(address _to, uint256 _id) external payable onlyMinter {
-        require(_id >= PROPHETS && _id < PROPHETS + GREAT_PROPHETS, 'Not a great prophet');
+        require(_id > PROPHETS && _id <= PROPHETS + GREAT_PROPHETS, 'Not a great prophet');
         _mintProphet(_to, _id);
     }
 
