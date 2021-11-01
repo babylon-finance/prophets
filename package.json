@@ -6,20 +6,23 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.6.6",
     "hardhat-gas-reporter": "^1.0.4",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
-    "solhint": "^3.3.6"
+    "solhint": "^3.3.6",
+    "solidity-coverage": "^0.7.17"
   },
   "scripts": {
     "prettier": "prettier --write .",
     "lint:contracts": "solhint contracts/**/*.sol",
     "compile": "hardhat compile",
     "test": "OPTIMIZER=false hardhat test",
-    "gas-report": "REPORT_GAS=1 hardhat test --network hardhat --max-memory 8096",
+    "gas-report": "REPORT_GAS=1 hardhat test --network hardhat",
+    "coverage": "hardhat coverage",
     "lint:tests": "eslint 'test/**/*.test.js'"
   },
   "dependencies": {
