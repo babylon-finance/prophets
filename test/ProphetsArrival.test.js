@@ -1,11 +1,12 @@
 const { expect } = require('chai');
-const fs = require('fs')
+const fs = require('fs');
 const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
 const EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
 const SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
 const THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
+const PROPHETS_NUM = 8;
 
 describe.only('ProphetsArrival', () => {
   let deployer;
@@ -54,7 +55,6 @@ describe.only('ProphetsArrival', () => {
 
     await wethToken.connect(ramon).approve(arrival.address, unit(1e10));
     await wethToken.connect(owner).transfer(ramon.address, unit(1e3));
-
   });
 
   afterEach(async () => {
@@ -109,7 +109,7 @@ describe.only('ProphetsArrival', () => {
     it('owner can mint a great prophet', async function () {
       await setTime(EVENT_ENDS_TS);
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
-      await arrival.connect(owner).mintGreat(8001, unit(), 1, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
     });
   });
 
@@ -118,6 +118,34 @@ describe.only('ProphetsArrival', () => {
       await setTime(EVENT_STARTS_TS);
 
       await arrival.connect(ramon).mintProphet();
+    });
+
+    it('can mint all prophets', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      const wallets = [];
+      for (let i = 0; i < PROPHETS_NUM; i++) {
+        const wallet = ethers.Wallet.createRandom().connect(ethers.provider);
+        wallets.push(wallet);
+        await deployer.sendTransaction({
+          to: wallet.address,
+          value: unit(0.25),
+        });
+      }
+
+      await arrival.connect(owner).addUsersToWhitelist(
+        [],
+        wallets.map((w) => w.address),
+        [],
+      );
+      for (let i = 0; i < PROPHETS_NUM; i++) {
+        await arrival.connect(wallets[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
+
+        expect(await nft.balanceOf(wallets[i].address)).to.eq(1);
+        expect(await nft.ownerOf(i + 1)).to.eq(wallets[i].address);
+      }
+
+      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('All prophets are minted');
     });
 
     it('can NOT mint if event has not started yet', async function () {
@@ -147,6 +175,7 @@ describe.only('ProphetsArrival', () => {
   });
 
   /* ============ External View Functions ============ */
+
   describe('getStartingPrice', function () {
     beforeEach(async function () {
       await setTime(EVENT_STARTS_TS);
@@ -154,7 +183,7 @@ describe.only('ProphetsArrival', () => {
 
     it('gets starting price for prophet', async function () {
       await arrival.connect(ramon).mintProphet();
-      expect(await arrival.getStartingPrice(1)).to.eq(unit(0.25));
+      expect(await arrival.getStartingPrice(1)).to.eq(unit(0.05 * 40000 / PROPHETS_NUM));
     });
   });
 });

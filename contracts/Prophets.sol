@@ -16,9 +16,9 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
 
     /* ============ Constants ============ */
 
-    uint256 public constant PROPHETS = 8000;
-    uint256 public constant GREAT_PROPHETS = 1000;
-    uint256 public constant FUTURE_PROPHETS = 1000;
+    uint256 public constant PROPHETS = 8;
+    uint256 public constant GREAT_PROPHETS = 1;
+    uint256 public constant FUTURE_PROPHETS = 1;
 
     uint256 public constant MAX_PROPHETS = PROPHETS + GREAT_PROPHETS + FUTURE_PROPHETS;
 

@@ -64,7 +64,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     /* ============ Modifiers ============ */
 
     modifier isEventOpen() {
-        require(prophetsNft.totalSupply() <= prophetsNft.MAX_PROPHETS(), 'Event is over');
+        require(prophetsNft.prophetsSupply() < prophetsNft.PROPHETS(), 'All prophets are minted');
         require(block.timestamp < EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
         _;
     }
