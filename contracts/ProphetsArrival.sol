@@ -54,7 +54,9 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     /* ============ Constructor ============ */
 
     constructor(Prophets _prophets, IERC20 _weth) {
-        require(address(_prophets) != address(0), 'Address must exist');
+        require(address(_prophets) != address(0), '0x0 NFT address');
+        require(address(_weth) != address(0), '0x0 WETH address');
+
         prophetsNft = _prophets;
         weth =_weth;
     }
@@ -62,13 +64,13 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     /* ============ Modifiers ============ */
 
     modifier isEventOpen() {
-        require(prophetsNft.totalSupply() <= prophetsNft.MAX_PROPHETS(), 'Event ended');
+        require(prophetsNft.totalSupply() <= prophetsNft.MAX_PROPHETS(), 'Event is over');
         require(block.timestamp < EVENT_ENDS_TS && block.timestamp >= EVENT_STARTS_TS, 'Event is not open');
         _;
     }
 
     modifier isEventOver() {
-        require(block.timestamp > EVENT_ENDS_TS, 'Event is over');
+        require(block.timestamp > EVENT_ENDS_TS, 'Event is not over');
         _;
     }
 
@@ -116,15 +118,14 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         require(signer != address(0), 'Invalid sig');
         require(_bid >= getStartingPrice(_id), 'Bid is too low');
 
-        weth.safeTransferFrom(signer, address(this), _bid);
+        weth.safeTransferFrom(signer, BABYLON_TREASURY, _bid);
         prophetsNft.mintGreatProphet(signer, _id);
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
-        uint256 balance = address(this).balance;
-        require(balance > 0, 'No funds');
-        Address.sendValue(BABYLON_TREASURY, address(this).balance);
+        require(address(this).balance> 0, 'No funds');
 
+        Address.sendValue(BABYLON_TREASURY, address(this).balance);
     }
 
     /* ============ External View Functions ============ */

@@ -50,7 +50,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     mapping(uint256 => bool) public prophetsBABLClaimed;
     address public minter;
 
-    /* ============ Public State Variables ============ */
+    /* ============ Modifiers ============ */
 
     modifier onlyMinter() {
         require(msg.sender == minter, 'Caller is not the minter');
