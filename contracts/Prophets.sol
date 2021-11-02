@@ -10,8 +10,10 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721Burnable {
+    using SafeERC20 for IERC20;
     using Counters for Counters.Counter;
 
     /* ============ Constants ============ */
@@ -121,7 +123,7 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
         require(lootAmount != 0, 'Loot can not be empty');
         prophetsBABLClaimed[_id] = true;
-        bablToken.transfer(msg.sender, lootAmount);
+        bablToken.safeTransfer(msg.sender, lootAmount);
     }
 
     /* ============ External View Functions ============ */
