@@ -24,10 +24,10 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     uint256 public constant DENOM_FLOOR_PRICE_BABL = 5e16; // 0.05 ETH
     address payable public constant BABYLON_TREASURY = payable(0xD7AAf4676F0F52993cb33aD36784BF970f0E1259); // treasury
 
-    uint256 public constant EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
-    uint256 public constant SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
-    uint256 public constant THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
-    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
+    uint256 public constant EVENT_STARTS_TS = 1636934400; // Mon Nov 15 2021 00:00:00 GMT+0
+    uint256 public constant SECOND_ROUND_TS = EVENT_STARTS_TS + 1 days; // Mon Nov 16 2021 00:00:00 GMT+0
+    uint256 public constant THIRD_ROUND_TS = SECOND_ROUND_TS + 1 days; //  Mon Nov 17 2021 00:00:00 GMT+0
+    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 2 days  + 8 hours; // Nov 19th 2021 4pm PST
 
     bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uin256 _nonce)');
 
@@ -118,11 +118,11 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         address signer = ECDSA.recover(hash, v, r, s);
 
         require(_bid >= getStartingPrice(_id), 'Bid is too low');
-        // require(_nonce > nonces[signer], 'Nonce is too low');
+        require(_nonce > nonces[signer], 'Nonce is too low');
 
         weth.safeTransferFrom(signer, BABYLON_TREASURY, _bid);
         prophetsNft.mintGreatProphet(signer, _id);
-        // nonces[signer] = _nonce;
+        nonces[signer] = _nonce;
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {

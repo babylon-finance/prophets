@@ -2,10 +2,10 @@ const { expect } = require('chai');
 const fs = require('fs');
 const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
-const EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
-const SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
-const THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
-const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
+const EVENT_STARTS_TS = 1636934400; // Mon Nov 15 2021 00:00:00 GMT+0
+const SECOND_ROUND_TS = EVENT_STARTS_TS + 24 * 3600;
+const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
+const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 
 describe('ProphetsArrival', () => {
@@ -108,6 +108,7 @@ describe('ProphetsArrival', () => {
 
     it('owner can mint a great prophet', async function () {
       await setTime(EVENT_ENDS_TS);
+
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
     });
@@ -128,6 +129,14 @@ describe('ProphetsArrival', () => {
       await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
         'Bid is too low',
       );
+    });
+
+    it('fails if nonce is too low', async function () {
+      await setTime(EVENT_ENDS_TS);
+
+      const sig = await getBidSig(ramon, arrival.address, unit(), 1);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
+      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s)).to.revertedWith('Nonce is too low');
     });
 
   });
