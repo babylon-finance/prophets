@@ -6,9 +6,9 @@ const EVENT_STARTS_TS = 1639580400; // Nov 15th 2021 8am PST
 const SECOND_ROUND_TS = 1639666800; // Nov 16th 2021 8am PST
 const THIRD_ROUND_TS = 1639753200; // Nov 17th 2021 8am PST
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8; // Nov 19th 2021 4pm PST
-const PROPHETS_NUM = 8;
+const PROPHETS_NUM = 8000;
 
-describe.only('ProphetsArrival', () => {
+describe('ProphetsArrival', () => {
   let deployer;
   let ramon;
   let tyler;
@@ -111,6 +111,25 @@ describe.only('ProphetsArrival', () => {
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
     });
+
+    it('fails if sig is corrupted', async function () {
+      await setTime(EVENT_ENDS_TS);
+
+      const sig = await getBidSig(ramon, arrival.address, 100, 1);
+      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
+        'ERC20: transfer amount exceeds balance',
+      );
+    });
+
+    it('fails if bid is too low', async function () {
+      await setTime(EVENT_ENDS_TS);
+      await nft.connect(owner).setProphetsAttributes([PROPHETS_NUM + 1], [unit(5)], [0], [0], [0] , [0]);
+      const sig = await getBidSig(ramon, arrival.address, 1, 1);
+      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
+        'Bid is too low',
+      );
+    });
+
   });
 
   describe('mintProphet', function () {
@@ -118,9 +137,64 @@ describe.only('ProphetsArrival', () => {
       await setTime(EVENT_STARTS_TS);
 
       await arrival.connect(ramon).mintProphet();
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(1);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
     });
 
-    it('can mint all prophets', async function () {
+    it('can be in the first round to mint', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(owner).addUsersToWhitelist([], [tyler.address], []);
+      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+
+      expect(await nft.balanceOf(tyler.address)).to.eq(1);
+      expect(await nft.ownerOf(1)).to.eq(tyler.address);
+    });
+
+    it('can be in the second round to mint', async function () {
+      await setTime(SECOND_ROUND_TS);
+
+      await arrival.connect(owner).addUsersToWhitelist([], [], [tyler.address]);
+      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+
+      expect(await nft.balanceOf(tyler.address)).to.eq(1);
+      expect(await nft.ownerOf(1)).to.eq(tyler.address);
+    });
+
+    it('anyone can mint in the third round', async function () {
+      await setTime(THIRD_ROUND_TS);
+
+      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+
+      expect(await nft.balanceOf(tyler.address)).to.eq(1);
+      expect(await nft.ownerOf(1)).to.eq(tyler.address);
+    });
+
+    it('can to be a settler to mint', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(ramon).mintProphet();
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(1);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
+    });
+
+    it('have to pay 0.25 ETH for a prophet', async function () {
+      await setTime(THIRD_ROUND_TS);
+
+      await expect(arrival.connect(tyler).mintProphet()).to.revertedWith('msg.value has to be 0.25');
+    });
+
+    it('can mint only one prophet per wallet', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(ramon).mintProphet();
+
+      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('User can only mint 1 prophet');
+    });
+
+    it.skip('can mint all prophets', async function () {
       await setTime(EVENT_STARTS_TS);
 
       const wallets = [];
@@ -138,6 +212,7 @@ describe.only('ProphetsArrival', () => {
         wallets.map((w) => w.address),
         [],
       );
+
       for (let i = 0; i < PROPHETS_NUM; i++) {
         await arrival.connect(wallets[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
 
@@ -157,6 +232,12 @@ describe.only('ProphetsArrival', () => {
 
       await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('Event is not open');
     });
+
+    it('can NOT mint if not whitelisted', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await expect(arrival.connect(tyler).mintProphet({ value: unit(0.25) })).to.revertedWith('User not whitelisted');
+    });
   });
 
   describe('addUsersToWhitelist', function () {
@@ -170,7 +251,7 @@ describe.only('ProphetsArrival', () => {
       expect(await arrival.settlerWhitelist(tyler.address)).to.eq(true);
       expect(await arrival.firstRoundWhitelist(tyler.address)).to.eq(true);
       expect(await arrival.secondRoundWhitelist(tyler.address)).to.eq(true);
-      expect(await arrival.mintedNormalProphet(tyler.address)).to.eq(false);
+      expect(await arrival.mintedProphet(tyler.address)).to.eq(false);
     });
   });
 
@@ -183,7 +264,7 @@ describe.only('ProphetsArrival', () => {
 
     it('gets starting price for prophet', async function () {
       await arrival.connect(ramon).mintProphet();
-      expect(await arrival.getStartingPrice(1)).to.eq(unit(0.05 * 40000 / PROPHETS_NUM));
+      expect(await arrival.getStartingPrice(1)).to.eq(unit((0.05 * 40000) / PROPHETS_NUM));
     });
   });
 });

@@ -134,12 +134,6 @@ describe('ProphetsNFT', () => {
         expect(await nft.balanceOf(ramon.address)).to.eq(i + 1);
         expect(await nft.ownerOf(i + 1)).to.eq(ramon.address);
       }
-    });
-
-    it('can NOT mint more than 8000 prophets', async function () {
-      for (let i = 0; i < 8000; i++) {
-        await nft.connect(minter).mintProphet(ramon.address);
-      }
       await expect(nft.connect(minter).mintProphet(ramon.address)).to.be.revertedWith('Not a prophet');
     });
 

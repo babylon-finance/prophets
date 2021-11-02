@@ -46,7 +46,8 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     mapping(address => bool) public settlerWhitelist; // Can mint a normal prophet for free
     mapping(address => bool) public firstRoundWhitelist;
     mapping(address => bool) public secondRoundWhitelist;
-    mapping(address => bool) public mintedNormalProphet;
+    mapping(address => bool) public mintedProphet;
+    mapping(address => uint256) public nonces;
 
 
     /* ============ Events ============ */
@@ -93,7 +94,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     }
 
     function mintProphet() public payable isEventOpen nonReentrant {
-        require(!mintedNormalProphet[msg.sender], 'User can only mint 1 normal prophet');
+        require(!mintedProphet[msg.sender], 'User can only mint 1 prophet');
         require(
             msg.value == PROPHET_PRICE || (msg.value == 0 && settlerWhitelist[msg.sender]),
             'msg.value has to be 0.25'
@@ -102,7 +103,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
         prophetsNft.mintProphet(msg.sender);
         // Prevent from minting another one
-        mintedNormalProphet[msg.sender] = true;
+        mintedProphet[msg.sender] = true;
     }
 
     function mintGreat(
@@ -115,11 +116,13 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     ) public payable onlyOwner isEventOver {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid, _nonce)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
-        require(signer != address(0), 'Invalid sig');
+
         require(_bid >= getStartingPrice(_id), 'Bid is too low');
+        // require(_nonce > nonces[signer], 'Nonce is too low');
 
         weth.safeTransferFrom(signer, BABYLON_TREASURY, _bid);
         prophetsNft.mintGreatProphet(signer, _id);
+        // nonces[signer] = _nonce;
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
