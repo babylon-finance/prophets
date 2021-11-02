@@ -98,9 +98,10 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         );
         require(canMintProphet(msg.sender), 'User not whitelisted');
 
-        prophetsNft.mintProphet(msg.sender);
         // Prevent from minting another one
         mintedProphet[msg.sender] = true;
+
+        prophetsNft.mintProphet(msg.sender);
     }
 
     function mintGreat(
