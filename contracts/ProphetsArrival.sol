@@ -78,7 +78,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         address[] calldata _settlers,
         address[] calldata _firstRoundUsers,
         address[] calldata _secondRoundUsers
-    ) public onlyOwner {
+    ) external onlyOwner {
         for (uint256 i = 0; i < _settlers.length; i++) {
             settlerWhitelist[_settlers[i]] = true;
         }
@@ -90,7 +90,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         }
     }
 
-    function mintProphet() public payable isEventOpen nonReentrant {
+    function mintProphet() external payable isEventOpen nonReentrant {
         require(!mintedProphet[msg.sender], 'User can only mint 1 prophet');
         require(
             msg.value == PROPHET_PRICE || (msg.value == 0 && settlerWhitelist[msg.sender]),
@@ -111,7 +111,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) public payable onlyOwner isEventOver {
+    ) external payable onlyOwner isEventOver {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid, _nonce)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
 
@@ -123,7 +123,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         nonces[signer] = _nonce;
     }
 
-    function withdrawAll() public payable onlyOwner isEventOver {
+    function withdrawAll() external payable onlyOwner isEventOver {
         require(address(this).balance > 0, 'No funds');
 
         Address.sendValue(BABYLON_TREASURY, address(this).balance);
