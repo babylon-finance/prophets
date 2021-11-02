@@ -1,8 +1,9 @@
 const { expect } = require('chai');
 const fs = require('fs');
-const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
+const { onlyFull, unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
-const EVENT_STARTS_TS = 1636934400; // Mon Nov 15 2021 00:00:00 GMT+0
+// Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+const EVENT_STARTS_TS = 1636992000;
 const SECOND_ROUND_TS = EVENT_STARTS_TS + 24 * 3600;
 const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;

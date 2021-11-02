@@ -23,10 +23,14 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     uint256 public constant DENOM_FLOOR_PRICE_BABL = 5e16; // 0.05 ETH
     address payable public constant BABYLON_TREASURY = payable(0xD7AAf4676F0F52993cb33aD36784BF970f0E1259); // treasury
 
-    uint256 public constant EVENT_STARTS_TS = 1636934400; // Mon Nov 15 2021 00:00:00 GMT+0
-    uint256 public constant SECOND_ROUND_TS = EVENT_STARTS_TS + 1 days; // Mon Nov 16 2021 00:00:00 GMT+0
-    uint256 public constant THIRD_ROUND_TS = SECOND_ROUND_TS + 1 days; //  Mon Nov 17 2021 00:00:00 GMT+0
-    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 2 days + 8 hours; // Nov 19th 2021 4pm PST
+    // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    uint256 public constant EVENT_STARTS_TS = 1636992000;
+    // Monday, 16 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    uint256 public constant SECOND_ROUND_TS = EVENT_STARTS_TS + 1 days;
+    // Monday, 17 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    uint256 public constant THIRD_ROUND_TS = SECOND_ROUND_TS + 1 days;
+    // Monday, 19 November 2021, 4:00:00 PM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 2 days + 8 hours;
 
     bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uin256 _nonce)');
 

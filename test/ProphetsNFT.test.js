@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const fs = require('fs');
-const { unit, from } = require('../lib/helpers');
+const { onlyFull, unit, from } = require('../lib/helpers');
 
 // Prophet JSON example
 //{
@@ -66,7 +66,7 @@ describe('ProphetsNFT', () => {
       );
     });
 
-    it.skip('can mint all great prophets', async function () {
+    onlyFull('can mint all great prophets', async function () {
       for (let i = 0; i < 1000; i++) {
         await nft.connect(minter).mintGreatProphet(ramon.address, 8001 + i);
         expect(await nft.ownerOf(8001 + i)).to.eq(ramon.address);
@@ -147,7 +147,7 @@ describe('ProphetsNFT', () => {
       expect(await nft.ownerOf(2)).to.be.equal(tyler.address);
     });
 
-    it.skip('can mint all 8000 prophets', async function () {
+    onlyFull('can mint all 8000 prophets', async function () {
       for (let i = 0; i < 8000; i++) {
         await nft.connect(minter).mintProphet(ramon.address);
         expect(await nft.balanceOf(ramon.address)).to.eq(i + 1);
