@@ -23,7 +23,7 @@
     "test": "OPTIMIZER=false hardhat test",
     "test:full": "FULL=true OPTIMIZER=false hardhat test",
     "gas-report": "REPORT_GAS=1 hardhat test --network hardhat",
-    "coverage": "hardhat coverage",
+    "coverage": "FULL=true hardhat coverage",
     "lint:tests": "eslint 'test/**/*.test.js'"
   },
   "dependencies": {
