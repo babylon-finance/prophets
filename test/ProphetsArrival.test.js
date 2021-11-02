@@ -112,6 +112,7 @@ describe('ProphetsArrival', () => {
 
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
+      expect(await wethToken.balanceOf('0xD7AAf4676F0F52993cb33aD36784BF970f0E1259')).to.eq(unit());
     });
 
     it('fails if sig is corrupted', async function () {
@@ -161,6 +162,7 @@ describe('ProphetsArrival', () => {
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
+      expect(await ethers.provider.getBalance(arrival.address)).to.eq(unit(0.25));
     });
 
     it('can be in the second round to mint', async function () {
