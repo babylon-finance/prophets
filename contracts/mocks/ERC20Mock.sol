@@ -39,4 +39,3 @@ contract ERC20Mock is ERC20 {
         _approve(owner, spender, value);
     }
 }
-

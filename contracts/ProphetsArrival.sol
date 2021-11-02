@@ -19,7 +19,6 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     /* ============ Constants ============ */
 
-
     uint256 public constant PROPHET_PRICE = 25e16; // 0.25 ETH
     uint256 public constant DENOM_FLOOR_PRICE_BABL = 5e16; // 0.05 ETH
     address payable public constant BABYLON_TREASURY = payable(0xD7AAf4676F0F52993cb33aD36784BF970f0E1259); // treasury
@@ -27,7 +26,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     uint256 public constant EVENT_STARTS_TS = 1636934400; // Mon Nov 15 2021 00:00:00 GMT+0
     uint256 public constant SECOND_ROUND_TS = EVENT_STARTS_TS + 1 days; // Mon Nov 16 2021 00:00:00 GMT+0
     uint256 public constant THIRD_ROUND_TS = SECOND_ROUND_TS + 1 days; //  Mon Nov 17 2021 00:00:00 GMT+0
-    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 2 days  + 8 hours; // Nov 19th 2021 4pm PST
+    uint256 public constant EVENT_ENDS_TS = THIRD_ROUND_TS + 2 days + 8 hours; // Nov 19th 2021 4pm PST
 
     bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uin256 _nonce)');
 
@@ -40,7 +39,6 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     /* ============ Private State Variables ============ */
 
-
     /* ============ Public State Variables ============ */
 
     mapping(address => bool) public settlerWhitelist; // Can mint a normal prophet for free
@@ -48,7 +46,6 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     mapping(address => bool) public secondRoundWhitelist;
     mapping(address => bool) public mintedProphet;
     mapping(address => uint256) public nonces;
-
 
     /* ============ Events ============ */
 
@@ -59,7 +56,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         require(address(_weth) != address(0), '0x0 WETH address');
 
         prophetsNft = _prophets;
-        weth =_weth;
+        weth = _weth;
     }
 
     /* ============ Modifiers ============ */
@@ -126,7 +123,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     }
 
     function withdrawAll() public payable onlyOwner isEventOver {
-        require(address(this).balance> 0, 'No funds');
+        require(address(this).balance > 0, 'No funds');
 
         Address.sendValue(BABYLON_TREASURY, address(this).balance);
     }
@@ -135,7 +132,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     function getStartingPrice(uint256 _id) public view returns (uint256) {
         (uint256 _loot, , , , ) = prophetsNft.getProphetAttributes(_id);
-        return _loot * DENOM_FLOOR_PRICE_BABL / 1e18;
+        return (_loot * DENOM_FLOOR_PRICE_BABL) / 1e18;
     }
 
     /* ============ Internal Write Functions ============ */

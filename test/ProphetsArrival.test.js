@@ -124,7 +124,7 @@ describe('ProphetsArrival', () => {
 
     it('fails if bid is too low', async function () {
       await setTime(EVENT_ENDS_TS);
-      await nft.connect(owner).setProphetsAttributes([PROPHETS_NUM + 1], [unit(5)], [0], [0], [0] , [0]);
+      await nft.connect(owner).setProphetsAttributes([PROPHETS_NUM + 1], [unit(5)], [0], [0], [0], [0]);
       const sig = await getBidSig(ramon, arrival.address, 1, 1);
       await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
         'Bid is too low',
@@ -136,9 +136,10 @@ describe('ProphetsArrival', () => {
 
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
-      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s)).to.revertedWith('Nonce is too low');
+      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s)).to.revertedWith(
+        'Nonce is too low',
+      );
     });
-
   });
 
   describe('mintProphet', function () {

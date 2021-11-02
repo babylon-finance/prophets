@@ -11,7 +11,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/utils/Counters.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721Burnable {
+contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721Burnable {
     using Counters for Counters.Counter;
 
     /* ============ Constants ============ */
@@ -64,7 +64,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     /* ============ Constructor ============ */
 
     constructor(IERC20 _bablToken) ERC721('Babylon Prophets', 'BPP') {
-      bablToken = _bablToken;
+        bablToken = _bablToken;
     }
 
     /* ============ External Write Functions ============ */
@@ -72,14 +72,7 @@ contract Prophets is  Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721
     function mintProphet(address _to) external payable onlyMinter {
         require(prophetsMinted.current() < PROPHETS, 'Not a prophet');
         prophetsMinted.increment();
-        _setProphetAttributes(
-            prophetsMinted.current(),
-            BABL_SUPPLY / PROPHETS,
-            0,
-            PROPHET_LP_BONUS,
-            0,
-            0
-        );
+        _setProphetAttributes(prophetsMinted.current(), BABL_SUPPLY / PROPHETS, 0, PROPHET_LP_BONUS, 0, 0);
         _mintProphet(_to, prophetsMinted.current());
     }
 

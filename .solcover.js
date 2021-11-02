@@ -1,6 +1,3 @@
 module.exports = {
-  skipFiles: [
-    'mocks/ERC20Mock.sol',
-  ],
+  skipFiles: ['mocks/ERC20Mock.sol'],
 };
-

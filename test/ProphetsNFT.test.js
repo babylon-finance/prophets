@@ -61,7 +61,9 @@ describe('ProphetsNFT', () => {
     });
 
     it('can NOT mint great to a zero address', async function () {
-      await expect(nft.connect(minter).mintGreatProphet(ethers.constants.AddressZero, 8001)).to.be.revertedWith('Recipient is 0x0');
+      await expect(nft.connect(minter).mintGreatProphet(ethers.constants.AddressZero, 8001)).to.be.revertedWith(
+        'Recipient is 0x0',
+      );
     });
 
     it('can mint all great prophets', async function () {
@@ -196,7 +198,6 @@ describe('ProphetsNFT', () => {
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       await expect(nft.connect(ramon).claimLoot(8001)).to.be.revertedWith('Loot can not be empty');
     });
-
   });
 
   /* ============ External View Functions ============ */
