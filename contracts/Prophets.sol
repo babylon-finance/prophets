@@ -25,7 +25,7 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
     uint256 public constant MAX_PROPHETS = PROPHETS + GREAT_PROPHETS + FUTURE_PROPHETS;
 
     uint256 public constant BABL_SUPPLY = 40_000e18;
-    uint256 public constant PROPHET_LP_BONUS = 1e16; // 1%
+    uint64 public constant PROPHET_LP_BONUS = 1e2; // 1%
 
     /* ============ Immutables ============ */
 
@@ -35,10 +35,10 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
     struct ProphetAttributes {
         uint256 bablLoot;
-        uint256 creatorMultiplier;
-        uint256 lpMultiplier;
-        uint256 voterMultiplier;
-        uint256 strategistMultiplier;
+        uint64 creatorMultiplier;
+        uint64 lpMultiplier;
+        uint64 voterMultiplier;
+        uint64 strategistMultiplier;
     }
 
     /* ============ Private State Variables ============ */
@@ -88,10 +88,10 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
     function setProphetsAttributes(
         uint256[] calldata _ids,
         uint256[] calldata _bablLoots,
-        uint256[] calldata _creatorBonuses,
-        uint256[] calldata _lpBonuses,
-        uint256[] calldata _voterMultipliers,
-        uint256[] calldata _strategistMultipliers
+        uint64[] calldata _creatorBonuses,
+        uint64[] calldata _lpBonuses,
+        uint64[] calldata _voterMultipliers,
+        uint64[] calldata _strategistMultipliers
     ) external onlyOwner {
         for (uint256 i = 0; i < _ids.length; i++) {
             _setProphetAttributes(
@@ -119,12 +119,11 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
         require(!prophetsBABLClaimed[_id] && _id < (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
-        ProphetAttributes memory attrs = prophetsAttributes[_id];
-
-        uint256 lootAmount = attrs.bablLoot;
-
+        uint256 lootAmount = prophetsAttributes[_id].bablLoot;
         require(lootAmount != 0, 'Loot can not be empty');
+
         prophetsBABLClaimed[_id] = true;
+
         bablToken.safeTransfer(msg.sender, lootAmount);
     }
 
@@ -133,22 +132,9 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
     function getProphetAttributes(uint256 _id)
         external
         view
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            uint256
-        )
+        returns (ProphetAttributes memory)
     {
-        ProphetAttributes memory attrs = prophetsAttributes[_id];
-        return (
-            attrs.bablLoot,
-            attrs.creatorMultiplier,
-            attrs.lpMultiplier,
-            attrs.voterMultiplier,
-            attrs.strategistMultiplier
-        );
+        return prophetsAttributes[_id];
     }
 
     function maxSupply() external pure returns (uint256) {
@@ -181,10 +167,10 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
     function _setProphetAttributes(
         uint256 _id,
         uint256 _bablLoot,
-        uint256 _creatorMultiplier,
-        uint256 _lpMultiplier,
-        uint256 _voterMultiplier,
-        uint256 _strategistMultiplier
+        uint64 _creatorMultiplier,
+        uint64 _lpMultiplier,
+        uint64 _voterMultiplier,
+        uint64 _strategistMultiplier
     ) private {
         ProphetAttributes storage attrs = prophetsAttributes[_id];
         attrs.creatorMultiplier = _creatorMultiplier;

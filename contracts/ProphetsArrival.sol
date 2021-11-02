@@ -132,8 +132,8 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     /* ============ External View Functions ============ */
 
     function getStartingPrice(uint256 _id) public view returns (uint256) {
-        (uint256 _loot, , , , ) = prophetsNft.getProphetAttributes(_id);
-        return (_loot * DENOM_FLOOR_PRICE_BABL) / 1e18;
+        Prophets.ProphetAttributes memory attr = prophetsNft.getProphetAttributes(_id);
+        return (attr.bablLoot * DENOM_FLOOR_PRICE_BABL) / 1e18;
     }
 
     /* ============ Internal Write Functions ============ */
