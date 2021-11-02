@@ -129,11 +129,7 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
     /* ============ External View Functions ============ */
 
-    function getProphetAttributes(uint256 _id)
-        external
-        view
-        returns (ProphetAttributes memory)
-    {
+    function getProphetAttributes(uint256 _id) external view returns (ProphetAttributes memory) {
         return prophetsAttributes[_id];
     }
 

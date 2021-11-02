@@ -77,14 +77,7 @@ describe('ProphetsNFT', () => {
 
   describe('setGreatProphetsAttributes', function () {
     it('can set prophet attributes', async function () {
-      await nft.connect(owner).setProphetsAttributes(
-        [1],
-        [unit()],
-        [from(100)],
-        [from(200)],
-        [from(300)],
-        [from(400)],
-      );
+      await nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
 
       const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
       expect(babl).to.eq(unit());
