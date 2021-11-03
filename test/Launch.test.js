@@ -11,11 +11,11 @@ const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
-const SETTLERS_NUM = 10;
-const firsts_NUM = 10;
-const seconds_NUM = 10;
-const PUBLIC_NUM = 10;
-const GREAT_NUM = 10;
+const SETTLERS_NUM = 2000;
+const FIRSTS_NUM = 2000;
+const SECONDS_NUM = 2000;
+const PUBLIC_NUM = 2000;
+const GREAT_NUM = 1000;
 
 describe('Launch', () => {
   let deployer;
@@ -104,15 +104,21 @@ describe('Launch', () => {
 
   it('add settlers, firsts, and seconds to whitelists', async function () {
     settlers = await getWallets(SETTLERS_NUM, 0.1);
-    firsts = await getWallets(firsts_NUM, 0.25);
-    seconds = await getWallets(seconds_NUM, 0.25);
+    firsts = await getWallets(FIRSTS_NUM, 0.25);
+    seconds = await getWallets(SECONDS_NUM, 0.25);
     public = await getWallets(PUBLIC_NUM, 0.25);
 
-    await arrival.connect(owner).addUsersToWhitelist(
-      settlers.map((s) => s.address),
-      firsts.map((f) => f.address),
-      seconds.map((s) => s.address),
-    );
+    const settlersPart = settlers.length / 10;
+    const firstsPart = firsts.length / 10;
+    const secondsPart = seconds.length / 10;
+
+    for (let i = 0; i < 10; i++) {
+      await arrival.connect(owner).addUsersToWhitelist(
+        settlers.slice(i * settlersPart, i * settlersPart + settlersPart).map((s) => s.address),
+        firsts.slice(i * firstsPart, i * firstsPart + firstsPart).map((f) => f.address),
+        seconds.slice(i * secondsPart, i * secondsPart + secondsPart).map((s) => s.address),
+      );
+    }
   });
 
   it('event is open at Nov 15', async function () {
@@ -187,11 +193,12 @@ describe('Launch', () => {
   it('can mint greats by submitted sigs', async function () {
     greats = await getWallets(GREAT_NUM, 0.1);
     for (let i = 0; i < greats.length; i++) {
-      await wethToken.connect(owner).transfer(greats[i].address, unit());
-      await wethToken.connect(greats[i]).approve(arrival.address, unit());
+      const price = await arrival.getStartingPrice(PROPHETS_NUM + 1 + i);
+      await wethToken.connect(owner).transfer(greats[i].address, price);
+      await wethToken.connect(greats[i]).approve(arrival.address, price);
 
-      const sig = await getBidSig(greats[i], arrival.address, unit(), 1);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1 + i, unit(), 1, sig.v, sig.r, sig.s);
+      const sig = await getBidSig(greats[i], arrival.address, price, 1);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1 + i, price, 1, sig.v, sig.r, sig.s);
 
       expect(await nft.balanceOf(greats[i].address)).to.eq(1);
       expect(await nft.ownerOf(PROPHETS_NUM + 1 + i)).to.eq(greats[i].address);
