@@ -151,7 +151,7 @@ describe('ProphetsNFT', () => {
     });
 
     it('creates the correct tokenURIs', async function () {
-      const BASE_URI = 'https://babylon.finance./api/v1/';
+      const BASE_URI = 'https://babylon.finance/api/v1/';
       await nft.connect(minter).mintProphet(ramon.address);
 
       expect(await nft.tokenURI(1)).to.equal(BASE_URI + '1');
@@ -272,7 +272,7 @@ describe('ProphetsNFT', () => {
   describe('tokenURI', function () {
     it('gets correct URI', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
-      expect(await nft.tokenURI(1)).to.eq('https://babylon.finance./api/v1/1');
+      expect(await nft.tokenURI(1)).to.eq('https://babylon.finance/api/v1/1');
     });
   });
 });

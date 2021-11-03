@@ -9,6 +9,7 @@ const SECOND_ROUND_TS = EVENT_STARTS_TS + 24 * 3600;
 const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
+const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
 describe('ProphetsArrival', () => {
   let deployer;
@@ -117,12 +118,26 @@ describe('ProphetsArrival', () => {
       await setTime(EVENT_STARTS_TS);
     });
 
-    it('owner can mint a great prophet', async function () {
+    it('can mint a great prophet by sig', async function () {
       await setTime(EVENT_ENDS_TS);
 
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
-      expect(await wethToken.balanceOf('0xD7AAf4676F0F52993cb33aD36784BF970f0E1259')).to.eq(unit());
+      expect(await wethToken.balanceOf(TREASURY)).to.eq(unit());
+    });
+
+    it('can mint many great prophets by sig', async function () {
+      await setTime(EVENT_ENDS_TS);
+
+      let sig = await getBidSig(ramon, arrival.address, unit(), 1);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
+      sig = await getBidSig(ramon, arrival.address, unit(), 2);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 2, unit(), 2, sig.v, sig.r, sig.s);
+
+      sig = await getBidSig(ramon, arrival.address, unit(), 3);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 3, unit(), 3, sig.v, sig.r, sig.s);
+
+      expect(await wethToken.balanceOf(TREASURY)).to.eq(unit(3));
     });
 
     it('fails if sig is corrupted', async function () {
@@ -183,15 +198,17 @@ describe('ProphetsArrival', () => {
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
+      expect(await ethers.provider.getBalance(arrival.address)).to.eq(unit(0.25));
     });
 
-    it('anyone can mint in the third round', async function () {
+    it('anyone can mint in the public round', async function () {
       await setTime(THIRD_ROUND_TS);
 
       await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
+      expect(await ethers.provider.getBalance(arrival.address)).to.eq(unit(0.25));
     });
 
     it('can to be a settler to mint', async function () {
