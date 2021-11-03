@@ -48,7 +48,7 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
     /* ============ Public State Variables ============ */
 
-    string public baseTokenURI = 'https://babylon.finance./api/v1/';
+    string public baseTokenURI = 'https://babylon.finance/api/v1/';
     mapping(uint256 => bool) public prophetsBABLClaimed;
     address public minter;
 
