@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const fs = require('fs');
-const { onlyFull, unit, from } = require('../lib/helpers');
+const { onlyFull} = require('../lib/test-helpers');
+const { unit, from } = require('../lib/helpers');
 
 // Prophet JSON example
 //{

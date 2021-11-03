@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const fs = require('fs');
-const { onlyFull, unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
+const { onlyFull } = require('../lib/test-helpers');
+const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
 // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
 const EVENT_STARTS_TS = 1636992000;
@@ -47,7 +48,7 @@ describe('ProphetsArrival', () => {
     wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', owner.address, unit(1e10));
 
     const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-    arrival = await arrivalFactory.deploy(nft.address, wethToken.address);
+    arrival = await arrivalFactory.deploy(nft.address, wethToken.address, 1636992000);
     await arrival.transferOwnership(owner.address);
 
     await nft.connect(owner).setMinter(arrival.address);
@@ -67,12 +68,21 @@ describe('ProphetsArrival', () => {
   describe('constructor ', function () {
     it('does NOT allow 0x0 NFT', async function () {
       const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-      await expect(arrivalFactory.deploy(ZERO_ADDRESS, wethToken.address)).to.revertedWith('0x0 NFT address');
+      await expect(arrivalFactory.deploy(ZERO_ADDRESS, wethToken.address, 1636992000)).to.revertedWith(
+        '0x0 NFT address',
+      );
     });
 
     it('does NOT allow 0x0 weth', async function () {
       const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS)).to.revertedWith('0x0 WETH address');
+      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS, 1636992000)).to.revertedWith('0x0 WETH address');
+    });
+
+    it('does NOT allow even int the past', async function () {
+      const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
+      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS, 636992000)).to.revertedWith(
+        'Event should start in the future',
+      );
     });
   });
 

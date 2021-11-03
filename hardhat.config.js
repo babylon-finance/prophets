@@ -1,12 +1,14 @@
 require('dotenv/config');
 
 require('@nomiclabs/hardhat-ethers');
+require('@nomiclabs/hardhat-etherscan');
 require('@nomiclabs/hardhat-waffle');
 require('hardhat-gas-reporter');
 require('solidity-coverage');
 
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
+const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY || '';
 const DEPLOYER_PRIVATE_KEY =
   process.env.DEPLOYER_PRIVATE_KEY || '0000000000000000000000000000000000000000000000000000000000000000';
 
@@ -77,6 +79,10 @@ module.exports = {
 
   mocha: {
     timeout: 9999999,
+  },
+
+  etherscan: {
+    apiKey: ETHERSCAN_KEY,
   },
 
   solidity: {
