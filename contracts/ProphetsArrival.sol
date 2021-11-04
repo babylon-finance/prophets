@@ -128,7 +128,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         address signer = ECDSA.recover(hash, v, r, s);
 
         require(_bid >= _amount, 'Amount is greater than bid');
-        require(_bid >= getStartingPrice(_id), 'Bid is too low');
+        require(_amount >= getStartingPrice(_id), 'Bid is too low');
         require(_nonce > nonces[signer], 'Nonce is too low');
 
         weth.safeTransferFrom(signer, BABYLON_TREASURY, _amount);
