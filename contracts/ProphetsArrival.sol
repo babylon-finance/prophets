@@ -24,7 +24,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     address payable public constant BABYLON_TREASURY = payable(0xD7AAf4676F0F52993cb33aD36784BF970f0E1259); // treasury
 
 
-    bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uin256 _nonce)');
+    bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uint256 _nonce)');
 
     /* ============ Immutables ============ */
 
