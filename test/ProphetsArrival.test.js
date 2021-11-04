@@ -115,57 +115,48 @@ describe('ProphetsArrival', () => {
 
   describe('mintGreat', function () {
     beforeEach(async function () {
-      await setTime(EVENT_STARTS_TS);
+      await setTime(EVENT_ENDS_TS);
+    });
+
+    it('can mint a great prophet by sig with lesser amount than bid', async function () {
+      const sig = await getBidSig(ramon, arrival.address, unit(), 1);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(0.5), unit(), 1, sig.v, sig.r, sig.s);
+
+      expect(await wethToken.balanceOf(TREASURY)).to.eq(unit(0.5));
     });
 
     it('can mint a great prophet by sig', async function () {
-      await setTime(EVENT_ENDS_TS);
-
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s);
       expect(await wethToken.balanceOf(TREASURY)).to.eq(unit());
     });
 
     it('can mint many great prophets by sig', async function () {
-      await setTime(EVENT_ENDS_TS);
-
       let sig = await getBidSig(ramon, arrival.address, unit(), 1);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s);
       sig = await getBidSig(ramon, arrival.address, unit(), 2);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 2, unit(), 2, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 2, unit(), unit(), 2, sig.v, sig.r, sig.s);
 
       sig = await getBidSig(ramon, arrival.address, unit(), 3);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 3, unit(), 3, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 3, unit(), unit(), 3, sig.v, sig.r, sig.s);
 
       expect(await wethToken.balanceOf(TREASURY)).to.eq(unit(3));
     });
 
-    it('fails if sig is corrupted', async function () {
-      await setTime(EVENT_ENDS_TS);
-
-      const sig = await getBidSig(ramon, arrival.address, 100, 1);
-      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
-        'ERC20: transfer amount exceeds balance',
-      );
-    });
-
     it('fails if bid is too low', async function () {
-      await setTime(EVENT_ENDS_TS);
       await nft.connect(owner).setProphetsAttributes([PROPHETS_NUM + 1], [unit(5)], [0], [0], [0], [0]);
       const sig = await getBidSig(ramon, arrival.address, 1, 1);
-      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
+      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, 1, 1, 1, sig.v, sig.r, sig.s)).to.revertedWith(
         'Bid is too low',
       );
     });
 
     it('fails if nonce is too low', async function () {
-      await setTime(EVENT_ENDS_TS);
-
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s);
-      await expect(arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), 1, sig.v, sig.r, sig.s)).to.revertedWith(
-        'Nonce is too low',
-      );
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s);
+      await expect(
+        arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s),
+      ).to.revertedWith('Nonce is too low');
     });
   });
 

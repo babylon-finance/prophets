@@ -117,6 +117,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     function mintGreat(
         uint256 _id,
+        uint256 _amount,
         uint256 _bid,
         uint256 _nonce,
         uint8 v,
@@ -126,10 +127,11 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid, _nonce)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
 
+        require(_bid >= _amount, 'Amount is greater than bid');
         require(_bid >= getStartingPrice(_id), 'Bid is too low');
         require(_nonce > nonces[signer], 'Nonce is too low');
 
-        weth.safeTransferFrom(signer, BABYLON_TREASURY, _bid);
+        weth.safeTransferFrom(signer, BABYLON_TREASURY, _amount);
         prophetsNft.mintGreatProphet(signer, _id);
         nonces[signer] = _nonce;
     }
