@@ -68,11 +68,11 @@ contract Prophets is
 
     /* ============ Modifiers ============ */
 
-    function _onlyMinter() internal {
+    function _onlyMinter() view internal {
         require(msg.sender == minter, 'Caller is not the minter');
     }
 
-    function _onlyOwner() internal {
+    function _onlyOwner() view internal {
         require(owner() == msg.sender, "Caller is not the owner");
     }
     /* ============ Events ============ */

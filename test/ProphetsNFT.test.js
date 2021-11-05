@@ -47,8 +47,6 @@ describe('ProphetsNFT', () => {
       constructorArgs: [bablToken.address],
     });
 
-    // nft = await prophetsFactory.deploy(bablToken.address);
-
     await nft.setMinter(minter.address);
     await nft.transferOwnership(owner.address);
     await bablToken.connect(owner).transfer(nft.address, unit(40000));

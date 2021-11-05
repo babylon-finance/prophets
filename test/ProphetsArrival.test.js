@@ -41,7 +41,10 @@ describe('ProphetsArrival', () => {
 
     const prophetsFactory = await ethers.getContractFactory('Prophets');
 
-    nft = await prophetsFactory.deploy(bablToken.address);
+    nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+      kind: 'uups',
+      constructorArgs: [bablToken.address],
+    });
 
     await nft.transferOwnership(owner.address);
     await bablToken.connect(owner).transfer(nft.address, unit(40000));

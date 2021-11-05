@@ -32,11 +32,11 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     // 1636992000 Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
     uint256 public immutable eventStartsTS;
-    // Monday, 16 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    // 16 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
     uint256 public immutable secondRoundTS;
-    // Monday, 17 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    // 17 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
     uint256 public immutable thirdRoundTS;
-    // Monday, 19 November 2021, 4:00:00 PM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    // 19 November 2021, 4:00:00 PM in Timezone (GMT -8:00) Pacific Time (US & Canada)
     uint256 public immutable eventEndsTS;
 
     /* ============ Structs ============ */
