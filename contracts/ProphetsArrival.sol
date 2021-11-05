@@ -2,20 +2,26 @@
 
 pragma solidity 0.8.9;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import {Address} from '@openzeppelin/contracts/utils/Address.sol';
-import {SafeERC20} from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import {ReentrancyGuard} from '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import {ECDSA} from '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
+
+import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
 import './Prophets.sol';
 
 import 'hardhat/console.sol';
 
-contract ProphetsArrival is ReentrancyGuard, Ownable {
+contract ProphetsArrival is
+    Initializable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable
+{
     using ECDSA for bytes32;
-    using SafeERC20 for IERC20;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
 
     /* ============ Constants ============ */
 
@@ -27,16 +33,22 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     /* ============ Immutables ============ */
 
-    IERC20 public immutable weth;
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    IERC20Upgradeable public immutable weth;
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     Prophets public immutable prophetsNft;
 
     // 1636992000 Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable eventStartsTS;
     // 16 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable secondRoundTS;
     // 17 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable thirdRoundTS;
     // 19 November 2021, 4:00:00 PM in Timezone (GMT -8:00) Pacific Time (US & Canada)
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     uint256 public immutable eventEndsTS;
 
     /* ============ Structs ============ */
@@ -55,11 +67,12 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     /* ============ Constructor ============ */
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         Prophets _prophets,
-        IERC20 _weth,
+        IERC20Upgradeable _weth,
         uint256 _eventStartsTS
-    ) {
+    ) initializer  {
         require(block.timestamp < _eventStartsTS, 'Event should start in the future');
         require(address(_prophets) != address(0), '0x0 NFT address');
         require(address(_weth) != address(0), '0x0 WETH address');
@@ -71,6 +84,12 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
         secondRoundTS = eventStartsTS + 1 days;
         thirdRoundTS = secondRoundTS + 1 days;
         eventEndsTS = thirdRoundTS + 2 days + 8 hours;
+    }
+
+    function initialize() initializer public {
+        __Ownable_init();
+        __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
     }
 
     /* ============ Modifiers ============ */
@@ -142,7 +161,7 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     function withdrawAll() external payable onlyOwner isEventOver {
         require(address(this).balance > 0, 'No funds');
 
-        Address.sendValue(BABYLON_TREASURY, address(this).balance);
+        AddressUpgradeable.sendValue(BABYLON_TREASURY, address(this).balance);
     }
 
     /* ============ External View Functions ============ */
@@ -153,6 +172,9 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     }
 
     /* ============ Internal Write Functions ============ */
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {
+    }
 
     /* ============ Internal View Functions ============ */
 
@@ -175,4 +197,10 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     function isThirdRound() private view returns (bool) {
         return block.timestamp >= thirdRoundTS;
     }
+}
+
+contract ProphetsArrivalV1 is ProphetsArrival {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(Prophets _prophets) ProphetsArrival(_prophets,
+                                                    IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74), 1636992000 ) {}
 }

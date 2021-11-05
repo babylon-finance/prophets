@@ -1,5 +1,7 @@
 const { expect } = require('chai');
+const { ethers, upgrades } = require('hardhat');
 const fs = require('fs');
+
 const { onlyFull } = require('../lib/test-helpers');
 const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
@@ -52,7 +54,10 @@ describe('ProphetsArrival', () => {
     wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', owner.address, unit(1e10));
 
     const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-    arrival = await arrivalFactory.deploy(nft.address, wethToken.address, 1636992000);
+    arrival = await upgrades.deployProxy(arrivalFactory, [], {
+      kind: 'uups',
+      constructorArgs: [nft.address, wethToken.address, 1636992000],
+    });
     await arrival.transferOwnership(owner.address);
 
     await nft.connect(owner).setMinter(arrival.address);
