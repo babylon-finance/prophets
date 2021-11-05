@@ -23,7 +23,6 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
     uint256 public constant DENOM_FLOOR_PRICE_BABL = 5e16; // 0.05 ETH
     address payable public constant BABYLON_TREASURY = payable(0xD7AAf4676F0F52993cb33aD36784BF970f0E1259); // treasury
 
-
     bytes32 private constant BID_TYPEHASH = keccak256('Bid(uint256 _bid,uint256 _nonce)');
 
     /* ============ Immutables ============ */
@@ -56,7 +55,11 @@ contract ProphetsArrival is ReentrancyGuard, Ownable {
 
     /* ============ Constructor ============ */
 
-    constructor(Prophets _prophets, IERC20 _weth, uint256 _eventStartsTS) {
+    constructor(
+        Prophets _prophets,
+        IERC20 _weth,
+        uint256 _eventStartsTS
+    ) {
         require(block.timestamp < _eventStartsTS, 'Event should start in the future');
         require(address(_prophets) != address(0), '0x0 NFT address');
         require(address(_weth) != address(0), '0x0 WETH address');

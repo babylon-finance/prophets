@@ -57,7 +57,6 @@ async function main() {
   const arrival = await arrivalFactory.deploy(nft.address, wethToken.address, arrivalStart);
   console.log(`Arrival ${arrival.address}`);
 
-
   if (chainId !== 31337) {
     await arrival.deployTransaction.wait(6);
     await hre.run('verify:verify', {
