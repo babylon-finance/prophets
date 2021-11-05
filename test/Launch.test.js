@@ -1,5 +1,7 @@
 const { expect } = require('chai');
 const fs = require('fs');
+const { ethers, upgrades } = require('hardhat');
+
 const { onlyFull } = require('../lib/test-helpers');
 const { unit, from, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
 
@@ -67,7 +69,10 @@ describe('Launch', () => {
 
     const prophetsFactory = await ethers.getContractFactory('Prophets');
 
-    nft = await prophetsFactory.deploy(bablToken.address);
+    nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+      kind: 'uups',
+      constructorArgs: [bablToken.address],
+    });
 
     await nft.transferOwnership(owner.address);
     await bablToken.connect(owner).transfer(nft.address, unit(40000));
@@ -75,7 +80,10 @@ describe('Launch', () => {
     wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', owner.address, unit(1e10));
 
     const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-    arrival = await arrivalFactory.deploy(nft.address, wethToken.address, 1636992000);
+    arrival = await upgrades.deployProxy(arrivalFactory, [], {
+      kind: 'uups',
+      constructorArgs: [nft.address, wethToken.address, 1636992000],
+    });
     await arrival.transferOwnership(owner.address);
 
     await nft.connect(owner).setMinter(arrival.address);
@@ -198,7 +206,7 @@ describe('Launch', () => {
       await wethToken.connect(greats[i]).approve(arrival.address, price);
 
       const sig = await getBidSig(greats[i], arrival.address, price, 1);
-      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1 + i, price, 1, sig.v, sig.r, sig.s);
+      await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1 + i, price, price, 1, sig.v, sig.r, sig.s);
 
       expect(await nft.balanceOf(greats[i].address)).to.eq(1);
       expect(await nft.ownerOf(PROPHETS_NUM + 1 + i)).to.eq(greats[i].address);
