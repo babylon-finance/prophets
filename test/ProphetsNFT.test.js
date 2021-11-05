@@ -1,5 +1,7 @@
 const { expect } = require('chai');
 const fs = require('fs');
+const { ethers, upgrades } = require('hardhat');
+
 const { onlyFull } = require('../lib/test-helpers');
 const { unit, from } = require('../lib/helpers');
 
@@ -40,8 +42,12 @@ describe('ProphetsNFT', () => {
     bablToken = await erc20Factory.deploy('Babylon Finance', 'BABL', owner.address, unit(1000000));
 
     const prophetsFactory = await ethers.getContractFactory('Prophets');
+    nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+      kind: 'uups',
+      constructorArgs: [bablToken.address],
+    });
 
-    nft = await prophetsFactory.deploy(bablToken.address);
+    // nft = await prophetsFactory.deploy(bablToken.address);
 
     await nft.setMinter(minter.address);
     await nft.transferOwnership(owner.address);

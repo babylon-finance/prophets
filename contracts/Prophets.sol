@@ -2,21 +2,32 @@
 
 pragma solidity 0.8.9;
 
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol';
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol';
-import '@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol';
-import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
-import '@openzeppelin/contracts/utils/Counters.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 
 import 'hardhat/console.sol';
 
-contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721Burnable {
-    using SafeERC20 for IERC20;
-    using Counters for Counters.Counter;
+// TODO: Clawback BABL from not minted great prophets
+
+contract Prophets is
+    Initializable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    ERC721Upgradeable,
+    ERC721EnumerableUpgradeable,
+    ERC721BurnableUpgradeable,
+    UUPSUpgradeable
+{
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+    using CountersUpgradeable for CountersUpgradeable.Counter;
 
     /* ============ Constants ============ */
 
@@ -31,7 +42,8 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
     /* ============ Immutables ============ */
 
-    IERC20 public immutable bablToken;
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    IERC20Upgradeable public immutable bablToken;
 
     /* ============ Structs ============ */
 
@@ -45,35 +57,50 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
 
     /* ============ Private State Variables ============ */
 
-    Counters.Counter private prophetsMinted;
+    CountersUpgradeable.Counter private prophetsMinted;
     mapping(uint256 => ProphetAttributes) private prophetsAttributes;
 
     /* ============ Public State Variables ============ */
 
-    string public baseTokenURI = 'https://babylon.finance/api/v1/';
+    string public baseTokenURI;
     mapping(uint256 => bool) public prophetsBABLClaimed;
     address public minter;
 
     /* ============ Modifiers ============ */
 
-    modifier onlyMinter() {
+    function _onlyMinter() internal {
         require(msg.sender == minter, 'Caller is not the minter');
-        _;
     }
 
+    function _onlyOwner() internal {
+        require(owner() == msg.sender, "Caller is not the owner");
+    }
     /* ============ Events ============ */
 
     event MintProphet(uint256 indexed id);
 
     /* ============ Constructor ============ */
 
-    constructor(IERC20 _bablToken) ERC721('Babylon Prophets', 'BPP') {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(IERC20Upgradeable _bablToken) initializer {
         bablToken = _bablToken;
+    }
+
+    function initialize(string calldata _uri) initializer public {
+        __ERC721_init('Babylon Prophets', 'BPP');
+        __ERC721Enumerable_init();
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+        __ReentrancyGuard_init();
+        __ERC721Burnable_init();
+
+        baseTokenURI = _uri;
     }
 
     /* ============ External Write Functions ============ */
 
-    function mintProphet(address _to) external onlyMinter {
+    function mintProphet(address _to) external {
+        _onlyMinter();
         require(prophetsMinted.current() < PROPHETS, 'Not a prophet');
 
         prophetsMinted.increment();
@@ -81,7 +108,8 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         _mintProphet(_to, prophetsMinted.current());
     }
 
-    function mintGreatProphet(address _to, uint256 _id) external onlyMinter {
+    function mintGreatProphet(address _to, uint256 _id) external {
+        _onlyMinter();
         require(_id > PROPHETS && _id <= PROPHETS + GREAT_PROPHETS, 'Not a great prophet');
 
         _mintProphet(_to, _id);
@@ -94,7 +122,8 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         uint64[] calldata _lpBonuses,
         uint64[] calldata _voterMultipliers,
         uint64[] calldata _strategistMultipliers
-    ) external onlyOwner {
+    ) external {
+        _onlyOwner();
         for (uint256 i = 0; i < _ids.length; i++) {
             _setProphetAttributes(
                 _ids[i],
@@ -107,11 +136,13 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         }
     }
 
-    function setBaseURI(string memory baseURI) external onlyOwner {
+    function setBaseURI(string memory baseURI) external {
+        _onlyOwner();
         baseTokenURI = baseURI;
     }
 
-    function setMinter(address _minter) external onlyOwner {
+    function setMinter(address _minter) external {
+        _onlyOwner();
         require(address(_minter) != address(0), 'Specify minter');
         minter = _minter;
     }
@@ -147,7 +178,7 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         public
         view
         virtual
-        override(ERC721, ERC721Enumerable)
+        override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -178,6 +209,10 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         attrs.strategistMultiplier = _strategistMultiplier;
     }
 
+    function _authorizeUpgrade(address newImplementation) internal override {
+        _onlyOwner();
+    }
+
     /* ============ Internal View Functions ============ */
 
     function _baseURI() internal view virtual override returns (string memory) {
@@ -188,11 +223,12 @@ contract Prophets is Ownable, ReentrancyGuard, ERC721, ERC721Enumerable, ERC721B
         address from,
         address to,
         uint256 tokenId
-    ) internal virtual override(ERC721, ERC721Enumerable) {
+    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 }
 
 contract ProphetsV1 is Prophets {
-    constructor() Prophets(IERC20(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74)) {}
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() Prophets(IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74)) {}
 }

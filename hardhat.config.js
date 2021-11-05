@@ -3,6 +3,8 @@ require('dotenv/config');
 require('@nomiclabs/hardhat-ethers');
 require('@nomiclabs/hardhat-etherscan');
 require('@nomiclabs/hardhat-waffle');
+require('@openzeppelin/hardhat-upgrades');
+require('hardhat-contract-sizer');
 require('hardhat-gas-reporter');
 require('solidity-coverage');
 
@@ -40,7 +42,7 @@ module.exports = {
     hardhat: {
       chainId: CHAIN_IDS.hardhat,
       blockGasLimit: 0x1fffffffffffff,
-      allowUnlimitedContractSize: false,
+      allowUnlimitedContractSize: true,
       saveDeployments: true,
       gas: 15e6,
       initialBaseFeePerGas: 0,
