@@ -294,6 +294,19 @@ describe('ProphetsArrival', () => {
     });
   });
 
+  describe('upgradeTo', function () {
+    it('upgrades to v2 implementation', async function () {
+      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2Mock');
+      const upgradedArrival = await upgrades.upgradeProxy(arrival, prophetsArrivalV2Mock.connect(owner), {
+        constructorArgs: [bablToken.address],
+      });
+
+      expect(upgradedArrival.address).to.equal(arrival.address);
+      expect(await upgradedArrival.weth()).to.equal('0x0000000000000000000000000000000000000001');
+      expect(await upgradedArrival.eventStartsTS()).to.equal('9000000000');
+    });
+  });
+
   /* ============ External View Functions ============ */
 
   describe('getStartingPrice', function () {

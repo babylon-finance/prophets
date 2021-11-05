@@ -215,6 +215,16 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('upgradeTo', function () {
+    it('upgrades to v2 implementation', async function () {
+      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
+      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2Mock.connect(owner));
+
+      expect(upgradedNFT.address).to.equal(nft.address);
+      expect(await upgradedNFT.bablToken()).to.equal('0x0000000000000000000000000000000000000000');
+    });
+  });
+
   /* ============ External View Functions ============ */
 
   describe('symbol', function () {
@@ -279,4 +289,5 @@ describe('ProphetsNFT', () => {
       expect(await nft.tokenURI(1)).to.eq('https://babylon.finance/api/v1/1');
     });
   });
+
 });
