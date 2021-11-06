@@ -87,7 +87,7 @@ contract Prophets is
     }
 
     function initialize(string calldata _uri) initializer public {
-        __ERC721_init('Babylon Prophets', 'BPP');
+        __ERC721_init('Babylon Prophets', 'BPH');
         __ERC721Enumerable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
