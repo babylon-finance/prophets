@@ -3,7 +3,18 @@ const fs = require('fs');
 const { ethers, upgrades } = require('hardhat');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { unit, from, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
+const {
+  hashUser,
+  getMerkleTree,
+  unit,
+  from,
+  setTime,
+  takeSnapshot,
+  restoreSnapshot,
+  getBidSig,
+  ZERO_ADDRESS,
+  HASH_ZERO,
+} = require('../lib/helpers');
 
 // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
 const EVENT_STARTS_TS = 1636992000;
@@ -13,11 +24,11 @@ const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
-const SETTLERS_NUM = 2000;
-const FIRSTS_NUM = 2000;
-const SECONDS_NUM = 2000;
-const PUBLIC_NUM = 2000;
-const GREAT_NUM = 1000;
+const SETTLERS_NUM = 20;
+const FIRSTS_NUM = 20;
+const SECONDS_NUM = 20;
+const PUBLIC_NUM = 20;
+const GREAT_NUM = 10;
 
 describe('Launch', () => {
   let deployer;
@@ -37,6 +48,9 @@ describe('Launch', () => {
   let seconds;
   let public;
   let greats;
+  let settlersTree;
+  let firstsTree;
+  let secondsTree;
 
   async function getWallets(count, amount) {
     const wallets = [];
@@ -116,17 +130,13 @@ describe('Launch', () => {
     seconds = await getWallets(SECONDS_NUM, 0.25);
     public = await getWallets(PUBLIC_NUM, 0.25);
 
-    const settlersPart = settlers.length / 10;
-    const firstsPart = firsts.length / 10;
-    const secondsPart = seconds.length / 10;
+    settlersTree = getMerkleTree(settlers.map((s) => s.address));
+    firstsTree = getMerkleTree(firsts.map((s) => s.address));
+    secondsTree = getMerkleTree(seconds.map((s) => s.address));
 
-    for (let i = 0; i < 10; i++) {
-      await arrival.connect(owner).addUsersToWhitelist(
-        settlers.slice(i * settlersPart, i * settlersPart + settlersPart).map((s) => s.address),
-        firsts.slice(i * firstsPart, i * firstsPart + firstsPart).map((f) => f.address),
-        seconds.slice(i * secondsPart, i * secondsPart + secondsPart).map((s) => s.address),
-      );
-    }
+    await arrival
+      .connect(owner)
+      .addUsersToWhitelist(settlersTree.getHexRoot(), firstsTree.getHexRoot(), secondsTree.getHexRoot());
   });
 
   it('event is open at Nov 15', async function () {
@@ -136,7 +146,8 @@ describe('Launch', () => {
 
   it('settlers can mint prophets for free', async function () {
     for (let i = 0; i < settlers.length; i++) {
-      await arrival.connect(settlers[i]).mintProphet();
+      proof = settlersTree.getHexProof(hashUser(settlers[i].address));
+      await arrival.connect(settlers[i]).mintProphet(proof);
 
       expect(await nft.balanceOf(settlers[i].address)).to.eq(1);
       expect(await nft.ownerOf(i + 1)).to.eq(settlers[i].address);
@@ -145,7 +156,8 @@ describe('Launch', () => {
 
   it('firsts can mint prophets for 0.25 ETH', async function () {
     for (let i = 0; i < firsts.length; i++) {
-      await arrival.connect(firsts[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
+      proof = firstsTree.getHexProof(hashUser(firsts[i].address));
+      await arrival.connect(firsts[i]).mintProphet(proof, { value: unit(0.25), gasPrice: 0 });
 
       expect(await nft.balanceOf(firsts[i].address)).to.eq(1);
       expect(await nft.ownerOf(i + 1 + settlers.length)).to.eq(firsts[i].address);
@@ -159,7 +171,8 @@ describe('Launch', () => {
 
   it('seconds can mint prophets for 0.25 ETH', async function () {
     for (let i = 0; i < seconds.length; i++) {
-      await arrival.connect(seconds[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
+      proof = secondsTree.getHexProof(hashUser(seconds[i].address));
+      await arrival.connect(seconds[i]).mintProphet(proof, { value: unit(0.25), gasPrice: 0 });
 
       expect(await nft.balanceOf(seconds[i].address)).to.eq(1);
       expect(await nft.ownerOf(i + 1 + settlers.length + firsts.length)).to.eq(seconds[i].address);
@@ -173,7 +186,7 @@ describe('Launch', () => {
 
   it('public can mint prophets for 0.25 ETH', async function () {
     for (let i = 0; i < public.length; i++) {
-      await arrival.connect(public[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
+      await arrival.connect(public[i]).mintProphet([HASH_ZERO], { value: unit(0.25), gasPrice: 0 });
 
       expect(await nft.balanceOf(public[i].address)).to.eq(1);
       expect(await nft.ownerOf(i + 1 + settlers.length + firsts.length + seconds.length)).to.eq(public[i].address);

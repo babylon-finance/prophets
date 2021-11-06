@@ -5,7 +5,7 @@ const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, hashUser, ZERO_ADDRESS, HASH_ZERO } = require('../lib/helpers');
+const { getMerkleTree, unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, hashUser, ZERO_ADDRESS, HASH_ZERO } = require('../lib/helpers');
 
 // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
 const EVENT_STARTS_TS = 1636992000;
@@ -15,13 +15,6 @@ const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
-function getMerkleTree(users) {
-  return new MerkleTree(
-    users.map((user) => hashUser(user)),
-    keccak256,
-    { sortPairs: true },
-  );
-}
 
 describe('ProphetsArrival', () => {
   let deployer;
