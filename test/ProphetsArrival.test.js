@@ -1,9 +1,11 @@
 const { expect } = require('chai');
 const { ethers, upgrades } = require('hardhat');
 const fs = require('fs');
+const { MerkleTree } = require('merkletreejs');
+const keccak256 = require('keccak256');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, ZERO_ADDRESS } = require('../lib/helpers');
+const { unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, hashUser, ZERO_ADDRESS, HASH_ZERO } = require('../lib/helpers');
 
 // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
 const EVENT_STARTS_TS = 1636992000;
@@ -12,6 +14,14 @@ const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
+
+function getMerkleTree(users) {
+  return new MerkleTree(
+    users.map((user) => hashUser(user)),
+    keccak256,
+    { sortPairs: true },
+  );
+}
 
 describe('ProphetsArrival', () => {
   let deployer;
@@ -26,6 +36,9 @@ describe('ProphetsArrival', () => {
   let bablToken;
   let wethToken;
   let snapshotId;
+  let merkleTre;
+  let proof;
+  let root;
 
   before(async () => {
     prophets = JSON.parse(fs.readFileSync('./prophets.json'));
@@ -62,7 +75,12 @@ describe('ProphetsArrival', () => {
 
     await nft.connect(owner).setMinter(arrival.address);
 
-    await arrival.connect(owner).addUsersToWhitelist([ramon.address], [ramon.address], [ramon.address]);
+    merkleTree = getMerkleTree([ramon.address]);
+
+    root = merkleTree.getHexRoot();
+    proof = merkleTree.getHexProof(hashUser(ramon.address));
+
+    await arrival.connect(owner).addUsersToWhitelist(root, root, root);
 
     await wethToken.connect(ramon).approve(arrival.address, unit(1e10));
     await wethToken.connect(owner).transfer(ramon.address, unit(1e3));
@@ -103,7 +121,7 @@ describe('ProphetsArrival', () => {
     });
 
     it('can withdraw runds after event ends', async function () {
-      await arrival.connect(ramon).mintProphet({ value: unit(0.25) });
+      await arrival.connect(ramon).mintProphet(proof, { value: unit(0.25) });
 
       await setTime(EVENT_ENDS_TS);
 
@@ -169,10 +187,13 @@ describe('ProphetsArrival', () => {
   });
 
   describe('mintProphet', function () {
+    beforeEach(async function () {
+    });
+
     it('can mint a prophet', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await arrival.connect(ramon).mintProphet();
+      await arrival.connect(ramon).mintProphet(proof);
 
       expect(await nft.balanceOf(ramon.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(ramon.address);
@@ -181,8 +202,15 @@ describe('ProphetsArrival', () => {
     it('can be in the first round to mint', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await arrival.connect(owner).addUsersToWhitelist([], [tyler.address], []);
-      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+      merkleTree = getMerkleTree([tyler.address]);
+      root = merkleTree.getHexRoot();
+      proof = merkleTree.getHexProof(hashUser(tyler.address));
+
+      await arrival
+        .connect(owner)
+        .addUsersToWhitelist(HASH_ZERO, root, HASH_ZERO);
+
+      await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
@@ -192,8 +220,15 @@ describe('ProphetsArrival', () => {
     it('can be in the second round to mint', async function () {
       await setTime(SECOND_ROUND_TS);
 
-      await arrival.connect(owner).addUsersToWhitelist([], [], [tyler.address]);
-      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+      merkleTree = getMerkleTree([tyler.address]);
+      root = merkleTree.getHexRoot();
+      proof = merkleTree.getHexProof(hashUser(tyler.address));
+
+      await arrival
+        .connect(owner)
+        .addUsersToWhitelist(HASH_ZERO, HASH_ZERO, root);
+
+      await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
@@ -203,17 +238,17 @@ describe('ProphetsArrival', () => {
     it('anyone can mint in the public round', async function () {
       await setTime(THIRD_ROUND_TS);
 
-      await arrival.connect(tyler).mintProphet({ value: unit(0.25) });
+      await arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
       expect(await ethers.provider.getBalance(arrival.address)).to.eq(unit(0.25));
     });
 
-    it('can to be a settler to mint', async function () {
+    it('can be a settler to mint', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await arrival.connect(ramon).mintProphet();
+      await arrival.connect(ramon).mintProphet(proof);
 
       expect(await nft.balanceOf(ramon.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(ramon.address);
@@ -222,15 +257,15 @@ describe('ProphetsArrival', () => {
     it('have to pay 0.25 ETH for a prophet', async function () {
       await setTime(THIRD_ROUND_TS);
 
-      await expect(arrival.connect(tyler).mintProphet()).to.revertedWith('msg.value has to be 0.25');
+      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO])).to.revertedWith('msg.value has to be 0.25');
     });
 
     it('can mint only one prophet per wallet', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await arrival.connect(ramon).mintProphet();
+      await arrival.connect(ramon).mintProphet(proof);
 
-      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('User can only mint 1 prophet');
+      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('User can only mint 1 prophet');
     });
 
     it.skip('can mint all prophets', async function () {
@@ -253,29 +288,29 @@ describe('ProphetsArrival', () => {
       );
 
       for (let i = 0; i < PROPHETS_NUM; i++) {
-        await arrival.connect(wallets[i]).mintProphet({ value: unit(0.25), gasPrice: 0 });
+        await arrival.connect(wallets[i]).mintProphet(proof, { value: unit(0.25), gasPrice: 0 });
 
         expect(await nft.balanceOf(wallets[i].address)).to.eq(1);
         expect(await nft.ownerOf(i + 1)).to.eq(wallets[i].address);
       }
 
-      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('All prophets are minted');
+      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('All prophets are minted');
     });
 
     it('can NOT mint if event has not started yet', async function () {
-      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('Event is not open');
+      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('Event is not open');
     });
 
     it('can NOT mint if event is over', async function () {
       await setTime(EVENT_ENDS_TS);
 
-      await expect(arrival.connect(ramon).mintProphet()).to.revertedWith('Event is not open');
+      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('Event is not open');
     });
 
     it('can NOT mint if not whitelisted', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await expect(arrival.connect(tyler).mintProphet({ value: unit(0.25) })).to.revertedWith('User not whitelisted');
+      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) })).to.revertedWith('User not whitelisted');
     });
   });
 
@@ -285,11 +320,16 @@ describe('ProphetsArrival', () => {
     });
 
     it('can whitelist a user', async function () {
-      await arrival.connect(owner).addUsersToWhitelist([tyler.address], [tyler.address], [tyler.address]);
+      merkleTree = getMerkleTree([tyler.address]);
 
-      expect(await arrival.settlerWhitelist(tyler.address)).to.eq(true);
-      expect(await arrival.firstRoundWhitelist(tyler.address)).to.eq(true);
-      expect(await arrival.secondRoundWhitelist(tyler.address)).to.eq(true);
+      const root = merkleTree.getHexRoot();
+      const proof = merkleTree.getHexProof(hashUser(tyler.address));
+
+      await arrival.connect(owner).addUsersToWhitelist(root, root, root);
+
+      expect(await arrival.settlersRoot()).to.eq(root);
+      expect(await arrival.firstRoot()).to.eq(root);
+      expect(await arrival.secondRoot()).to.eq(root);
       expect(await arrival.mintedProphet(tyler.address)).to.eq(false);
     });
   });
@@ -309,13 +349,13 @@ describe('ProphetsArrival', () => {
 
   /* ============ External View Functions ============ */
 
-  describe('getStartingPrice', function () {
+  describe('etStartingPrice', function () {
     beforeEach(async function () {
       await setTime(EVENT_STARTS_TS);
     });
 
     it('gets starting price for prophet', async function () {
-      await arrival.connect(ramon).mintProphet();
+      await arrival.connect(ramon).mintProphet(proof);
       expect(await arrival.getStartingPrice(1)).to.eq(unit((0.05 * 40000) / PROPHETS_NUM));
     });
   });

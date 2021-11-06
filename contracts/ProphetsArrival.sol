@@ -9,6 +9,7 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol';
 
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import './Prophets.sol';
 
@@ -57,9 +58,9 @@ contract ProphetsArrival is
 
     /* ============ Public State Variables ============ */
 
-    mapping(address => bool) public settlerWhitelist; // Can mint a normal prophet for free
-    mapping(address => bool) public firstRoundWhitelist;
-    mapping(address => bool) public secondRoundWhitelist;
+    bytes32 public settlersRoot;
+    bytes32 public firstRoot;
+    bytes32 public secondRoot;
     mapping(address => bool) public mintedProphet;
     mapping(address => uint256) public nonces;
 
@@ -108,28 +109,24 @@ contract ProphetsArrival is
     /* ============ External Write Functions ============ */
 
     function addUsersToWhitelist(
-        address[] calldata _settlers,
-        address[] calldata _firstRoundUsers,
-        address[] calldata _secondRoundUsers
+        bytes32 _settlers,
+        bytes32 _firstRoundUsers,
+        bytes32 _secondRoundUsers
     ) external onlyOwner {
-        for (uint256 i = 0; i < _settlers.length; i++) {
-            settlerWhitelist[_settlers[i]] = true;
-        }
-        for (uint256 i = 0; i < _firstRoundUsers.length; i++) {
-            firstRoundWhitelist[_firstRoundUsers[i]] = true;
-        }
-        for (uint256 i = 0; i < _secondRoundUsers.length; i++) {
-            secondRoundWhitelist[_secondRoundUsers[i]] = true;
-        }
+      settlersRoot = _settlers;
+      firstRoot = _firstRoundUsers;
+      secondRoot = _secondRoundUsers;
     }
 
-    function mintProphet() external payable isEventOpen nonReentrant {
+    function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
         require(!mintedProphet[msg.sender], 'User can only mint 1 prophet');
+        bool isSettler = MerkleProof.verify(_proof, settlersRoot, _leaf(msg.sender));
+
         require(
-            msg.value == PROPHET_PRICE || (msg.value == 0 && settlerWhitelist[msg.sender]),
+            msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler),
             'msg.value has to be 0.25'
         );
-        require(canMintProphet(msg.sender), 'User not whitelisted');
+        require(isSettler || canMintProphet(msg.sender, _proof), 'User not whitelisted');
 
         // Prevent from minting another one
         mintedProphet[msg.sender] = true;
@@ -178,12 +175,12 @@ contract ProphetsArrival is
 
     /* ============ Internal View Functions ============ */
 
-    function canMintProphet(address _user) private view returns (bool) {
+    function canMintProphet(address _user, bytes32[] calldata _proof) private view returns (bool) {
+        bool isFirst = MerkleProof.verify(_proof, firstRoot, _leaf(_user));
         return
-            settlerWhitelist[_user] ||
-            (isFirstRound() && firstRoundWhitelist[_user]) ||
-            ((isSecondRound() && secondRoundWhitelist[_user]) || firstRoundWhitelist[_user]) ||
-            isThirdRound();
+            isThirdRound() ||
+            (isFirstRound() && isFirst) ||
+            (isSecondRound() && (isFirst || MerkleProof.verify(_proof, secondRoot, _leaf(_user))));
     }
 
     function isFirstRound() private view returns (bool) {
@@ -197,6 +194,12 @@ contract ProphetsArrival is
     function isThirdRound() private view returns (bool) {
         return block.timestamp >= thirdRoundTS;
     }
+
+    function _leaf(address _user) internal pure returns (bytes32)
+    {
+        return keccak256(abi.encodePacked(_user));
+    }
+
 }
 
 contract ProphetsArrivalV1 is ProphetsArrival {
