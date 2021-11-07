@@ -1,3 +1,5 @@
+const { ethers, upgrades } = require('hardhat');
+
 const { unit } = require('../lib/helpers');
 
 async function main() {
@@ -23,7 +25,10 @@ async function main() {
 
   const prophetsFactory = await ethers.getContractFactory('Prophets');
 
-  const nft = await prophetsFactory.deploy(bablToken.address);
+  nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+    kind: 'uups',
+    constructorArgs: [bablToken.address],
+  });
   console.log(`NFT ${nft.address}`);
 
   if (chainId !== 31337) {
@@ -54,7 +59,10 @@ async function main() {
   const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
   const block = await ethers.provider.getBlock();
   const arrivalStart = chainId === 1 ? 1636992000 : block.timestamp + 60;
-  const arrival = await arrivalFactory.deploy(nft.address, wethToken.address, arrivalStart);
+    arrival = await upgrades.deployProxy(arrivalFactory, [], {
+      kind: 'uups',
+      constructorArgs: [nft.address, wethToken.address, arrivalStart],
+    });
   console.log(`Arrival ${arrival.address}`);
 
   if (chainId !== 31337) {
