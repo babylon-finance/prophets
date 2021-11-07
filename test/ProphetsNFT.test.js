@@ -229,7 +229,7 @@ describe('ProphetsNFT', () => {
 
   describe('symbol', function () {
     it('has correct symbol', async function () {
-      expect(await nft.symbol()).to.equal('BPP');
+      expect(await nft.symbol()).to.equal('BPH');
     });
   });
 
