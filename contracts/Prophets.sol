@@ -152,7 +152,7 @@ contract Prophets is
     function claimLoot(uint256 _id) external nonReentrant {
         require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
-        require(!prophetsBABLClaimed[_id] && _id < (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
+        require(!prophetsBABLClaimed[_id] && _id <= (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
         uint256 lootAmount = getProphetAttributes(_id).bablLoot;
         require(lootAmount != 0, 'Loot can not be empty');
