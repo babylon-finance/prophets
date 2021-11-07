@@ -16,11 +16,9 @@ async function main() {
 
     if (chainId !== 31337) {
       await bablToken.deployTransaction.wait(6);
-      await hre.run('verify:verify', {
-        address: bablToken.address,
-        constructorArguments: ['Babylon Finance', 'BABL', owner.address, unit(1000000)],
-      });
     }
+  } else {
+    bablToken = { address: '0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74' };
   }
 
   const prophetsFactory = await ethers.getContractFactory('Prophets');
@@ -33,13 +31,18 @@ async function main() {
 
   if (chainId !== 31337) {
     await nft.deployTransaction.wait(6);
+
+    const impl = await upgrades.erc1967.getImplementationAddress(nft.address);
     await hre.run('verify:verify', {
-      address: nft.address,
+      contract: 'contracts/Prophets.sol:Prophets',
+      address: impl,
       constructorArguments: [bablToken.address],
     });
   }
   await nft.transferOwnership(owner.address);
-  await bablToken.connect(owner).transfer(nft.address, unit(40000));
+  if (chainId !== 1) {
+    await bablToken.connect(owner).transfer(nft.address, unit(40000));
+  }
 
   let wethToken;
   // Rinkeby
@@ -49,26 +52,26 @@ async function main() {
 
     if (chainId !== 31337) {
       await wethToken.deployTransaction.wait(6);
-      await hre.run('verify:verify', {
-        address: wethToken.address,
-        constructorArguments: ['Wrapped ETH', 'WETH', owner.address, unit(1e10)],
-      });
     }
+  } else {
+    wethToken = { address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' };
   }
 
   const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
   const block = await ethers.provider.getBlock();
   const arrivalStart = chainId === 1 ? 1636992000 : block.timestamp + 60;
-    arrival = await upgrades.deployProxy(arrivalFactory, [], {
-      kind: 'uups',
-      constructorArgs: [nft.address, wethToken.address, arrivalStart],
-    });
+  arrival = await upgrades.deployProxy(arrivalFactory, [], {
+    kind: 'uups',
+    constructorArgs: [nft.address, wethToken.address, arrivalStart],
+  });
   console.log(`Arrival ${arrival.address}`);
 
   if (chainId !== 31337) {
     await arrival.deployTransaction.wait(6);
+    const impl = await upgrades.erc1967.getImplementationAddress(arrival.address);
     await hre.run('verify:verify', {
-      address: arrival.address,
+      contract: 'contracts/ProphetsArrival.sol:ProphetsArrival',
+      address: impl,
       constructorArguments: [nft.address, wethToken.address, arrivalStart],
     });
   }
