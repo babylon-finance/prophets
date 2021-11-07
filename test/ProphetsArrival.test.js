@@ -5,7 +5,17 @@ const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { getMerkleTree, unit, setTime, takeSnapshot, restoreSnapshot, getBidSig, hashUser, ZERO_ADDRESS, HASH_ZERO } = require('../lib/helpers');
+const {
+  getMerkleTree,
+  unit,
+  setTime,
+  takeSnapshot,
+  restoreSnapshot,
+  getBidSig,
+  hashUser,
+  ZERO_ADDRESS,
+  HASH_ZERO,
+} = require('../lib/helpers');
 
 // Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
 const EVENT_STARTS_TS = 1636992000;
@@ -14,7 +24,6 @@ const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
-
 
 describe('ProphetsArrival', () => {
   let deployer;
@@ -180,8 +189,7 @@ describe('ProphetsArrival', () => {
   });
 
   describe('mintProphet', function () {
-    beforeEach(async function () {
-    });
+    beforeEach(async function () {});
 
     it('can mint a prophet', async function () {
       await setTime(EVENT_STARTS_TS);
@@ -199,9 +207,7 @@ describe('ProphetsArrival', () => {
       root = merkleTree.getHexRoot();
       proof = merkleTree.getHexProof(hashUser(tyler.address));
 
-      await arrival
-        .connect(owner)
-        .addUsersToWhitelist(HASH_ZERO, root, HASH_ZERO);
+      await arrival.connect(owner).addUsersToWhitelist(HASH_ZERO, root, HASH_ZERO);
 
       await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
 
@@ -217,9 +223,7 @@ describe('ProphetsArrival', () => {
       root = merkleTree.getHexRoot();
       proof = merkleTree.getHexProof(hashUser(tyler.address));
 
-      await arrival
-        .connect(owner)
-        .addUsersToWhitelist(HASH_ZERO, HASH_ZERO, root);
+      await arrival.connect(owner).addUsersToWhitelist(HASH_ZERO, HASH_ZERO, root);
 
       await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
 
@@ -303,7 +307,9 @@ describe('ProphetsArrival', () => {
     it('can NOT mint if not whitelisted', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) })).to.revertedWith('User not whitelisted');
+      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) })).to.revertedWith(
+        'User not whitelisted',
+      );
     });
   });
 

@@ -39,7 +39,7 @@ contract Prophets is
 
     uint256 public constant BABL_SUPPLY = 40_000e18;
     uint256 public constant PROPHET_BABL = BABL_SUPPLY / PROPHETS;
-    uint64  public constant PROPHET_LP_BONUS = 1e2; // 1%
+    uint64 public constant PROPHET_LP_BONUS = 1e2; // 1%
 
     /* ============ Immutables ============ */
 
@@ -69,13 +69,14 @@ contract Prophets is
 
     /* ============ Modifiers ============ */
 
-    function _onlyMinter() view internal {
+    function _onlyMinter() internal view {
         require(msg.sender == minter, 'Caller is not the minter');
     }
 
-    function _onlyOwner() view internal {
-        require(owner() == msg.sender, "Caller is not the owner");
+    function _onlyOwner() internal view {
+        require(owner() == msg.sender, 'Caller is not the owner');
     }
+
     /* ============ Events ============ */
 
     event MintProphet(uint256 indexed id);
@@ -87,7 +88,7 @@ contract Prophets is
         bablToken = _bablToken;
     }
 
-    function initialize(string calldata _uri) initializer public {
+    function initialize(string calldata _uri) public initializer {
         __ERC721_init('Babylon Prophets', 'BPH');
         __ERC721Enumerable_init();
         __Ownable_init();
@@ -164,10 +165,15 @@ contract Prophets is
     /* ============ External View Functions ============ */
 
     function getProphetAttributes(uint256 _id) public view returns (ProphetAttributes memory) {
-        if(_id < PROPHETS) {
-          return ProphetAttributes({
-            bablLoot: PROPHET_BABL, creatorMultiplier: 0, lpMultiplier: PROPHET_LP_BONUS, voterMultiplier:0,
-            strategistMultiplier:0 });
+        if (_id < PROPHETS) {
+            return
+                ProphetAttributes({
+                    bablLoot: PROPHET_BABL,
+                    creatorMultiplier: 0,
+                    lpMultiplier: PROPHET_LP_BONUS,
+                    voterMultiplier: 0,
+                    strategistMultiplier: 0
+                });
         }
 
         return prophetsAttributes[_id];
