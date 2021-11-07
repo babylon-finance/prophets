@@ -81,10 +81,10 @@ describe('ProphetsNFT', () => {
   });
 
   describe('setGreatProphetsAttributes', function () {
-    it('can set prophet attributes', async function () {
-      await nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
+    it('can set great prophet attributes', async function () {
+      await nft.connect(owner).setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
 
-      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
+      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001);
       expect(babl).to.eq(unit());
       expect(creator).to.eq(from(100));
       expect(lp).to.eq(from(200));
@@ -92,7 +92,7 @@ describe('ProphetsNFT', () => {
       expect(strategist).to.eq(from(400));
     });
 
-    it('can set attributes to all 8000 prophets', async function () {
+    it('can set attributes to all great prophets', async function () {
       for (let i = 0; i < 10; i++) {
         const part = great.slice(i * 100, i * 100 + 100);
 
