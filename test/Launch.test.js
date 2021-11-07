@@ -24,11 +24,11 @@ const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
-const SETTLERS_NUM = 20;
-const FIRSTS_NUM = 20;
-const SECONDS_NUM = 20;
-const PUBLIC_NUM = 20;
-const GREAT_NUM = 10;
+const SETTLERS_NUM = 2000;
+const FIRSTS_NUM = 2000;
+const SECONDS_NUM = 2000;
+const PUBLIC_NUM = 2000;
+const GREAT_NUM = 1000;
 
 describe('Launch', () => {
   let deployer;
