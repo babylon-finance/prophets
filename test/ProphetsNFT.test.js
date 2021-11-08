@@ -316,3 +316,24 @@ describe('ProphetsNFT', () => {
     });
   });
 });
+
+describe('ProphetsV1', () => {
+  beforeEach(async function () {
+    [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
+
+    const prophetsFactory = await ethers.getContractFactory('ProphetsV1');
+    nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+      kind: 'uups',
+    });
+
+    await nft.setMinter(minter.address);
+    await nft.transferOwnership(owner.address);
+  });
+
+  describe('construction', function () {
+    it('BABL token is correct', async function () {
+      expect(await nft.bablToken()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
+    });
+  });
+
+});
