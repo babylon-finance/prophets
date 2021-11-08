@@ -179,12 +179,12 @@ describe('ProphetsArrival', () => {
       );
     });
 
-    it('fails if nonce is too low', async function () {
+    it('fails if nonce is already used', async function () {
       const sig = await getBidSig(ramon, arrival.address, unit(), 1);
       await arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s);
       await expect(
         arrival.connect(owner).mintGreat(PROPHETS_NUM + 1, unit(), unit(), 1, sig.v, sig.r, sig.s),
-      ).to.revertedWith('Nonce is too low');
+      ).to.revertedWith('Nonce is used');
     });
   });
 
@@ -388,5 +388,4 @@ describe('ProphetsArrivalV1', () => {
       expect(await arrival.eventStartsTS()).to.equal(1636992000);
     });
   });
-
 });
