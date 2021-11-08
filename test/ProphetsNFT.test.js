@@ -289,5 +289,4 @@ describe('ProphetsNFT', () => {
       expect(await nft.tokenURI(1)).to.eq('https://babylon.finance/api/v1/1');
     });
   });
-
 });
