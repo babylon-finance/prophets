@@ -78,13 +78,19 @@ describe('ProphetsNFT', () => {
         expect(await nft.balanceOf(ramon.address)).to.eq(1 + i);
       }
     });
+
+    it('only minter can mint', async function () {
+      await expect(nft.mintGreatProphet(ramon.address, 8001)).to.be.revertedWith('Caller is not the minter');
+    });
   });
 
   describe('setGreatProphetsAttributes', function () {
-    it('can set prophet attributes', async function () {
-      await nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
+    it('can set great prophet attributes', async function () {
+      await nft
+        .connect(owner)
+        .setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
 
-      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
+      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001);
       expect(babl).to.eq(unit());
       expect(creator).to.eq(from(100));
       expect(lp).to.eq(from(200));
@@ -92,7 +98,19 @@ describe('ProphetsNFT', () => {
       expect(strategist).to.eq(from(400));
     });
 
-    it('can set attributes to all 8000 prophets', async function () {
+    it('only owner can set great prophet attributes', async function () {
+      await expect(
+        nft.setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]),
+      ).to.be.revertedWith('Caller is not the owner');
+    });
+
+    it('can set attributes only to great', async function () {
+      await expect(
+        nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]),
+      ).to.be.revertedWith('Not a great prophet');
+    });
+
+    it('can set attributes to all great prophets', async function () {
       for (let i = 0; i < 10; i++) {
         const part = great.slice(i * 100, i * 100 + 100);
 
@@ -161,15 +179,19 @@ describe('ProphetsNFT', () => {
       expect(await nft.tokenURI(1)).to.equal(BASE_URI + '1');
     });
 
-    it("others can't mint", async function () {
+    it('only minter can mint', async function () {
       await expect(nft.connect(ramon).mintProphet(ramon.address)).to.be.revertedWith('Caller is not the minter');
     });
   });
 
   describe('setBaseURI', function () {
-    it('can set URI', async function () {
+    it('owner can set URI', async function () {
       await nft.connect(owner).setBaseURI('url');
       expect(await nft.baseTokenURI()).to.equal('url');
+    });
+
+    it('only owner can set URI', async function () {
+      await expect(nft.setBaseURI('url')).to.be.revertedWith('Caller is not the owner');
     });
   });
 
@@ -181,6 +203,10 @@ describe('ProphetsNFT', () => {
     it('can set minter', async function () {
       await nft.connect(owner).setMinter(tyler.address);
       expect(await nft.minter()).to.equal(tyler.address);
+    });
+
+    it('only owner can set minter', async function () {
+      await expect(nft.setMinter(tyler.address)).to.be.revertedWith('Caller is not the owner');
     });
   });
 
@@ -229,7 +255,7 @@ describe('ProphetsNFT', () => {
 
   describe('symbol', function () {
     it('has correct symbol', async function () {
-      expect(await nft.symbol()).to.equal('BPP');
+      expect(await nft.symbol()).to.equal('BPH');
     });
   });
 
@@ -289,4 +315,25 @@ describe('ProphetsNFT', () => {
       expect(await nft.tokenURI(1)).to.eq('https://babylon.finance/api/v1/1');
     });
   });
+});
+
+describe('ProphetsV1', () => {
+  beforeEach(async function () {
+    [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
+
+    const prophetsFactory = await ethers.getContractFactory('ProphetsV1');
+    nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+      kind: 'uups',
+    });
+
+    await nft.setMinter(minter.address);
+    await nft.transferOwnership(owner.address);
+  });
+
+  describe('construction', function () {
+    it('BABL token is correct', async function () {
+      expect(await nft.bablToken()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
+    });
+  });
+
 });

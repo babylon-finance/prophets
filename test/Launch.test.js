@@ -24,11 +24,11 @@ const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
 const PROPHETS_NUM = 8000;
 const TREASURY = '0xD7AAf4676F0F52993cb33aD36784BF970f0E1259';
 
-const SETTLERS_NUM = 20;
-const FIRSTS_NUM = 20;
-const SECONDS_NUM = 20;
-const PUBLIC_NUM = 20;
-const GREAT_NUM = 10;
+const SETTLERS_NUM = 2000;
+const FIRSTS_NUM = 2000;
+const SECONDS_NUM = 2000;
+const PUBLIC_NUM = 2000;
+const GREAT_NUM = 1000;
 
 describe('Launch', () => {
   let deployer;
@@ -89,7 +89,7 @@ describe('Launch', () => {
     });
 
     await nft.transferOwnership(owner.address);
-    await bablToken.connect(owner).transfer(nft.address, unit(40000));
+    await bablToken.connect(owner).transfer(nft.address, unit(70000));
 
     wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', owner.address, unit(1e10));
 
@@ -223,6 +223,46 @@ describe('Launch', () => {
 
       expect(await nft.balanceOf(greats[i].address)).to.eq(1);
       expect(await nft.ownerOf(PROPHETS_NUM + 1 + i)).to.eq(greats[i].address);
+    }
+  });
+
+  it('all prophets can claim loot', async function () {
+    for (let i = 0; i < settlers.length; i++) {
+      console.log('calim lot for', i + 1);
+      await nft.connect(settlers[i]).claimLoot(i + 1, { gasPrice: 0 });
+      expect(await bablToken.balanceOf(settlers[i].address)).to.eq((await nft.getProphetAttributes(i + 1)).bablLoot);
+    }
+
+    for (let i = 0; i < firsts.length; i++) {
+      console.log('calim lot for', settlers.length + i + 1);
+      await nft.connect(firsts[i]).claimLoot(settlers.length + i + 1, { gasPrice: 0 });
+      expect(await bablToken.balanceOf(firsts[i].address)).to.eq(
+        (await nft.getProphetAttributes(settlers.length + i + 1)).bablLoot,
+      );
+    }
+
+    for (let i = 0; i < seconds.length; i++) {
+      console.log('calim lot for', settlers.length + firsts.length + i + 1);
+      await nft.connect(seconds[i]).claimLoot(settlers.length + firsts.length + i + 1, { gasPrice: 0 });
+      expect(await bablToken.balanceOf(seconds[i].address)).to.eq(
+        (await nft.getProphetAttributes(settlers.length + firsts.length + i + 1)).bablLoot,
+      );
+    }
+
+    for (let i = 0; i < public.length; i++) {
+      console.log('calim lot for', settlers.length + firsts.length + seconds.length + i + 1);
+      await nft.connect(public[i]).claimLoot(settlers.length + firsts.length + seconds.length + i + 1, { gasPrice: 0 });
+      expect(await bablToken.balanceOf(settlers[i].address)).to.eq(
+        (await nft.getProphetAttributes(settlers.length + firsts.length + seconds.length + i + 1)).bablLoot,
+      );
+    }
+
+    for (let i = 0; i < greats.length; i++) {
+      console.log('calim lot for', PROPHETS_NUM + i + 1);
+      await nft.connect(greats[i]).claimLoot(PROPHETS_NUM + i + 1, { gasPrice: 0 });
+      expect(await bablToken.balanceOf(greats[i].address)).to.eq(
+        (await nft.getProphetAttributes(PROPHETS_NUM + i + 1)).bablLoot,
+      );
     }
   });
 });

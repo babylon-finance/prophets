@@ -38,6 +38,7 @@ contract Prophets is
     uint256 public constant MAX_PROPHETS = PROPHETS + GREAT_PROPHETS + FUTURE_PROPHETS;
 
     uint256 public constant BABL_SUPPLY = 40_000e18;
+    uint256 public constant PROPHET_BABL = BABL_SUPPLY / PROPHETS;
     uint64 public constant PROPHET_LP_BONUS = 1e2; // 1%
 
     /* ============ Immutables ============ */
@@ -105,7 +106,6 @@ contract Prophets is
         require(prophetsMinted.current() < PROPHETS, 'Not a prophet');
 
         prophetsMinted.increment();
-        _setProphetAttributes(prophetsMinted.current(), BABL_SUPPLY / PROPHETS, 0, PROPHET_LP_BONUS, 0, 0);
         _mintProphet(_to, prophetsMinted.current());
     }
 
@@ -126,6 +126,7 @@ contract Prophets is
     ) external {
         _onlyOwner();
         for (uint256 i = 0; i < _ids.length; i++) {
+            require(_ids[i] > PROPHETS, 'Not a great prophet');
             _setProphetAttributes(
                 _ids[i],
                 _bablLoots[i],
@@ -151,9 +152,9 @@ contract Prophets is
     function claimLoot(uint256 _id) external nonReentrant {
         require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
-        require(!prophetsBABLClaimed[_id] && _id < (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
+        require(!prophetsBABLClaimed[_id] && _id <= (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
-        uint256 lootAmount = prophetsAttributes[_id].bablLoot;
+        uint256 lootAmount = getProphetAttributes(_id).bablLoot;
         require(lootAmount != 0, 'Loot can not be empty');
 
         prophetsBABLClaimed[_id] = true;
@@ -163,7 +164,18 @@ contract Prophets is
 
     /* ============ External View Functions ============ */
 
-    function getProphetAttributes(uint256 _id) external view returns (ProphetAttributes memory) {
+    function getProphetAttributes(uint256 _id) public view returns (ProphetAttributes memory) {
+        if (_id < PROPHETS) {
+            return
+                ProphetAttributes({
+                    bablLoot: PROPHET_BABL,
+                    creatorMultiplier: 0,
+                    lpMultiplier: PROPHET_LP_BONUS,
+                    voterMultiplier: 0,
+                    strategistMultiplier: 0
+                });
+        }
+
         return prophetsAttributes[_id];
     }
 
@@ -203,8 +215,10 @@ contract Prophets is
         uint64 _strategistMultiplier
     ) private {
         ProphetAttributes storage attrs = prophetsAttributes[_id];
-        attrs.creatorMultiplier = _creatorMultiplier;
+
         attrs.bablLoot = _bablLoot;
+
+        attrs.creatorMultiplier = _creatorMultiplier;
         attrs.lpMultiplier = _lpMultiplier;
         attrs.voterMultiplier = _voterMultiplier;
         attrs.strategistMultiplier = _strategistMultiplier;
