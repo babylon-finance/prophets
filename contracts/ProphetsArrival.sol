@@ -140,11 +140,12 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
 
         require(_bid >= _amount, 'Amount is greater than bid');
         require(_amount >= getStartingPrice(_id), 'Bid is too low');
-        require(_nonce > nonces[signer], 'Nonce is too low');
+        // Note that bits are 0-indexed, thus bit 1 is at position 0, bit 2 is at position 1, etc.
+        require((nonces[signer] & (1 << (_nonce - 1))) == 0, 'Nonce is used');
 
         weth.safeTransferFrom(signer, BABYLON_TREASURY, _amount);
         prophetsNft.mintGreatProphet(signer, _id);
-        nonces[signer] = _nonce;
+        nonces[signer] = nonces[signer] | (1 << (_nonce - 1));
     }
 
     function withdrawAll() external payable onlyOwner isEventOver {
