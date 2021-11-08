@@ -388,5 +388,4 @@ describe('ProphetsArrivalV1', () => {
       expect(await arrival.eventStartsTS()).to.equal(1636992000);
     });
   });
-
 });
