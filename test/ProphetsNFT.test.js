@@ -79,7 +79,7 @@ describe('ProphetsNFT', () => {
       }
     });
 
-    it("only minter can mint", async function () {
+    it('only minter can mint', async function () {
       await expect(nft.mintGreatProphet(ramon.address, 8001)).to.be.revertedWith('Caller is not the minter');
     });
   });
@@ -99,11 +99,15 @@ describe('ProphetsNFT', () => {
     });
 
     it('only owner can set great prophet attributes', async function () {
-      await expect(nft.setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)])).to.be.revertedWith('Caller is not the owner');
+      await expect(
+        nft.setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]),
+      ).to.be.revertedWith('Caller is not the owner');
     });
 
     it('can set attributes only to great', async function () {
-      await expect(nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)])).to.be.revertedWith('Not a great prophet');
+      await expect(
+        nft.connect(owner).setProphetsAttributes([1], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]),
+      ).to.be.revertedWith('Not a great prophet');
     });
 
     it('can set attributes to all great prophets', async function () {
@@ -175,7 +179,7 @@ describe('ProphetsNFT', () => {
       expect(await nft.tokenURI(1)).to.equal(BASE_URI + '1');
     });
 
-    it("only minter can mint", async function () {
+    it('only minter can mint', async function () {
       await expect(nft.connect(ramon).mintProphet(ramon.address)).to.be.revertedWith('Caller is not the minter');
     });
   });
@@ -204,7 +208,6 @@ describe('ProphetsNFT', () => {
     it('only owner can set minter', async function () {
       await expect(nft.setMinter(tyler.address)).to.be.revertedWith('Caller is not the owner');
     });
-
   });
 
   describe('claimLoot', function () {
