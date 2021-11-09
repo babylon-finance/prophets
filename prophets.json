@@ -97782,7 +97782,7 @@
   },
   {
     "babl": 53,
-    "floorPrice": "2.70",
+    "floorPrice": "2.65",
     "number": 8978,
     "lpBonus": 4.5,
     "voterBonus": 1.5,
@@ -97792,7 +97792,7 @@
   },
   {
     "babl": 53,
-    "floorPrice": "2.70",
+    "floorPrice": "2.65",
     "number": 8979,
     "lpBonus": 4.5,
     "voterBonus": 0.75,
@@ -97832,7 +97832,7 @@
   },
   {
     "babl": 54,
-    "floorPrice": "2.75",
+    "floorPrice": "2.70",
     "number": 8983,
     "lpBonus": 4.5,
     "voterBonus": 1.5,
@@ -97931,7 +97931,7 @@
     "name": "Mulagunnuna IV"
   },
   {
-    "babl": "100",
+    "babl": 100,
     "floorPrice": "5.00",
     "number": 8993,
     "lpBonus": 2.5,
@@ -97941,7 +97941,7 @@
     "name": "Bansir"
   },
   {
-    "babl": "120",
+    "babl": 120,
     "floorPrice": "6.00",
     "number": 8994,
     "lpBonus": 4.5,
@@ -97951,7 +97951,7 @@
     "name": "Rodan"
   },
   {
-    "babl": "145",
+    "babl": 145,
     "floorPrice": "7.25",
     "number": 8995,
     "lpBonus": 4.5,
@@ -97961,8 +97961,8 @@
     "name": "Sharru-Nada"
   },
   {
-    "babl": "325",
-    "floorPrice": "16.25",
+    "babl": 320,
+    "floorPrice": "16.00",
     "number": 8996,
     "lpBonus": 4.5,
     "voterBonus": 0.5,
@@ -97971,7 +97971,7 @@
     "name": "Mathon"
   },
   {
-    "babl": "400",
+    "babl": 400,
     "floorPrice": "20.00",
     "number": 8997,
     "lpBonus": 4.5,
@@ -97981,7 +97981,7 @@
     "name": "Kalabab"
   },
   {
-    "babl": "500",
+    "babl": 500,
     "floorPrice": "25.00",
     "number": 8998,
     "lpBonus": 4.5,
@@ -97991,7 +97991,7 @@
     "name": "Nomasir, Son of Arkad"
   },
   {
-    "babl": "1000",
+    "babl": 1000,
     "floorPrice": "50.00",
     "number": 8999,
     "lpBonus": 4.5,
