@@ -163,7 +163,7 @@ contract Prophets is
     /* ============ External View Functions ============ */
 
     function getProphetAttributes(uint256 _id) public view returns (ProphetAttributes memory) {
-        if (_id < PROPHETS) {
+        if (_id <= PROPHETS) {
             return
                 ProphetAttributes({
                     bablLoot: PROPHET_BABL,
