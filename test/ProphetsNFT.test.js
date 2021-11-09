@@ -30,6 +30,16 @@ describe('ProphetsNFT', () => {
   let great;
   let bablToken;
 
+  async function checkProphetAttrs(id) {
+      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(id);
+
+      expect(babl).to.eq(unit(5));
+      expect(creator).to.eq(0);
+      expect(lp).to.eq(from(100));
+      expect(voter).to.eq(0);
+      expect(strategist).to.eq(0);
+  }
+
   before(async () => {
     prophets = JSON.parse(fs.readFileSync('./prophets.json'));
     great = prophets.slice(8000);
@@ -145,9 +155,11 @@ describe('ProphetsNFT', () => {
     it('minter can mint to themselves', async function () {
       await nft.connect(minter).mintProphet(minter.address);
       expect(await nft.balanceOf(minter.address)).to.equal(1);
+      await checkProphetAttrs(1);
 
       await nft.connect(minter).mintProphet(minter.address);
       expect(await nft.balanceOf(minter.address)).to.equal(2);
+      await checkProphetAttrs(2);
     });
 
     it('minter can mint to others', async function () {
@@ -168,6 +180,7 @@ describe('ProphetsNFT', () => {
         await nft.connect(minter).mintProphet(ramon.address);
         expect(await nft.balanceOf(ramon.address)).to.eq(i + 1);
         expect(await nft.ownerOf(i + 1)).to.eq(ramon.address);
+        await checkProphetAttrs(i + 1);
       }
       await expect(nft.connect(minter).mintProphet(ramon.address)).to.be.revertedWith('Not a prophet');
     });
