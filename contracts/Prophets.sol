@@ -79,8 +79,6 @@ contract Prophets is
 
     /* ============ Events ============ */
 
-    event MintProphet(uint256 indexed id);
-
     /* ============ Constructor ============ */
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -202,8 +200,6 @@ contract Prophets is
     function _mintProphet(address _to, uint256 _id) private {
         require(_to != address(0), 'Recipient is 0x0');
         _mint(_to, _id);
-
-        emit MintProphet(_id);
     }
 
     function _setProphetAttributes(

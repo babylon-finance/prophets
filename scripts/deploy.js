@@ -23,7 +23,7 @@ async function main() {
 
   const prophetsFactory = await ethers.getContractFactory('Prophets');
 
-  nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
+  nft = await upgrades.deployProxy(prophetsFactory, ['https://www.babylon.finance/api/v1/prophet/'], {
     kind: 'uups',
     constructorArgs: [bablToken.address],
   });
