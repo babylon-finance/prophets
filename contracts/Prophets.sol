@@ -13,8 +13,6 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 
-import 'hardhat/console.sol';
-
 // TODO: Clawback BABL from not minted great prophets
 
 contract Prophets is

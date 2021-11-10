@@ -13,8 +13,6 @@ import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 
 import './Prophets.sol';
 
-import 'hardhat/console.sol';
-
 contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable, UUPSUpgradeable {
     using ECDSA for bytes32;
     using SafeERC20Upgradeable for IERC20Upgradeable;
