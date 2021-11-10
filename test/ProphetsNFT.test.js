@@ -31,13 +31,13 @@ describe('ProphetsNFT', () => {
   let bablToken;
 
   async function checkProphetAttrs(id) {
-      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(id);
+    const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(id);
 
-      expect(babl).to.eq(unit(5));
-      expect(creator).to.eq(0);
-      expect(lp).to.eq(from(100));
-      expect(voter).to.eq(0);
-      expect(strategist).to.eq(0);
+    expect(babl).to.eq(unit(5));
+    expect(creator).to.eq(0);
+    expect(lp).to.eq(from(100));
+    expect(voter).to.eq(0);
+    expect(strategist).to.eq(0);
   }
 
   before(async () => {
@@ -262,6 +262,12 @@ describe('ProphetsNFT', () => {
       expect(upgradedNFT.address).to.equal(nft.address);
       expect(await upgradedNFT.bablToken()).to.equal('0x0000000000000000000000000000000000000000');
     });
+
+    it('only owner can upgrade', async function () {
+      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
+      await expect(upgrades.upgradeProxy(nft, prophetsV2Mock.connect(ramon))).to.be.revertedWith('Caller is not the owner');
+    });
+
   });
 
   /* ============ External View Functions ============ */

@@ -344,6 +344,15 @@ describe('ProphetsArrival', () => {
       expect(await upgradedArrival.weth()).to.equal('0x0000000000000000000000000000000000000001');
       expect(await upgradedArrival.eventStartsTS()).to.equal('9000000000');
     });
+
+    it('only owner can upgrade', async function () {
+      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2Mock');
+      await expect(
+        upgrades.upgradeProxy(arrival, prophetsArrivalV2Mock.connect(ramon), {
+          constructorArgs: [bablToken.address],
+        }),
+      ).to.be.revertedWith('Ownable: caller is not the owner');
+    });
   });
 
   /* ============ External View Functions ============ */
