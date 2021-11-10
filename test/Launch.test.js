@@ -226,6 +226,10 @@ describe('Launch', () => {
     }
   });
 
+  it('all the WETH is received at Treasury', async function () {
+    expect(await wethToken.balanceOf(TREASURY)).to.eq(unit(1500));
+  });
+
   it('all prophets can claim loot', async function () {
     for (let i = 0; i < settlers.length; i++) {
       await nft.connect(settlers[i]).claimLoot(i + 1, { gasPrice: 0 });
