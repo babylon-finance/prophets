@@ -9,6 +9,8 @@ require('hardhat-gas-reporter');
 require('solidity-coverage');
 
 require('./tasks/mint');
+require('./tasks/attrs');
+require('./tasks/whitelist');
 
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
