@@ -228,13 +228,11 @@ describe('Launch', () => {
 
   it('all prophets can claim loot', async function () {
     for (let i = 0; i < settlers.length; i++) {
-      console.log('calim lot for', i + 1);
       await nft.connect(settlers[i]).claimLoot(i + 1, { gasPrice: 0 });
       expect(await bablToken.balanceOf(settlers[i].address)).to.eq((await nft.getProphetAttributes(i + 1)).bablLoot);
     }
 
     for (let i = 0; i < firsts.length; i++) {
-      console.log('calim lot for', settlers.length + i + 1);
       await nft.connect(firsts[i]).claimLoot(settlers.length + i + 1, { gasPrice: 0 });
       expect(await bablToken.balanceOf(firsts[i].address)).to.eq(
         (await nft.getProphetAttributes(settlers.length + i + 1)).bablLoot,
@@ -242,7 +240,6 @@ describe('Launch', () => {
     }
 
     for (let i = 0; i < seconds.length; i++) {
-      console.log('calim lot for', settlers.length + firsts.length + i + 1);
       await nft.connect(seconds[i]).claimLoot(settlers.length + firsts.length + i + 1, { gasPrice: 0 });
       expect(await bablToken.balanceOf(seconds[i].address)).to.eq(
         (await nft.getProphetAttributes(settlers.length + firsts.length + i + 1)).bablLoot,
@@ -250,7 +247,6 @@ describe('Launch', () => {
     }
 
     for (let i = 0; i < public.length; i++) {
-      console.log('calim lot for', settlers.length + firsts.length + seconds.length + i + 1);
       await nft.connect(public[i]).claimLoot(settlers.length + firsts.length + seconds.length + i + 1, { gasPrice: 0 });
       expect(await bablToken.balanceOf(settlers[i].address)).to.eq(
         (await nft.getProphetAttributes(settlers.length + firsts.length + seconds.length + i + 1)).bablLoot,
@@ -258,7 +254,6 @@ describe('Launch', () => {
     }
 
     for (let i = 0; i < greats.length; i++) {
-      console.log('calim lot for', PROPHETS_NUM + i + 1);
       await nft.connect(greats[i]).claimLoot(PROPHETS_NUM + i + 1, { gasPrice: 0 });
       expect(await bablToken.balanceOf(greats[i].address)).to.eq(
         (await nft.getProphetAttributes(PROPHETS_NUM + i + 1)).bablLoot,
