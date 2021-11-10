@@ -92291,8 +92291,8 @@
     "name": "Nabu-sha-pik-zir III"
   },
   {
-    "babl": 24,
-    "floorPrice": "1.20",
+    "babl": 23,
+    "floorPrice": "1.15",
     "number": 8429,
     "lpBonus": 2.5,
     "voterBonus": 0,
@@ -92301,8 +92301,8 @@
     "name": "Tir-utur"
   },
   {
-    "babl": 24,
-    "floorPrice": "1.20",
+    "babl": 23,
+    "floorPrice": "1.15",
     "number": 8430,
     "lpBonus": 2,
     "voterBonus": 1,
@@ -97911,8 +97911,8 @@
     "name": "Hea-mukin-zira II"
   },
   {
-    "babl": 59,
-    "floorPrice": "2.95",
+    "babl": 58,
+    "floorPrice": "2.90",
     "number": 8991,
     "lpBonus": 4.5,
     "voterBonus": 3.5,
@@ -97921,8 +97921,8 @@
     "name": "Suzub"
   },
   {
-    "babl": 60,
-    "floorPrice": "3.00",
+    "babl": 59,
+    "floorPrice": "2.95",
     "number": 8992,
     "lpBonus": 4.5,
     "voterBonus": 3.5,
@@ -97931,8 +97931,8 @@
     "name": "Maruduk-sadua V"
   },
   {
-    "babl": 61,
-    "floorPrice": "3.05",
+    "babl": 60,
+    "floorPrice": "3.00",
     "number": 8993,
     "lpBonus": 2.5,
     "voterBonus": 3.5,
