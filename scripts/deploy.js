@@ -2,6 +2,8 @@ const { ethers, upgrades } = require('hardhat');
 
 const { unit } = require('../lib/helpers');
 
+const OWNER = process.env.OWNER || '';
+
 async function main() {
   [deployer, owner] = await ethers.getSigners();
 
@@ -39,8 +41,8 @@ async function main() {
       constructorArguments: [bablToken.address],
     });
   }
-  await nft.transferOwnership(owner.address);
   if (chainId !== 1) {
+    await nft.transferOwnership(owner.address);
     await bablToken.connect(owner).transfer(nft.address, unit(40000));
   }
 
@@ -76,8 +78,16 @@ async function main() {
     });
   }
 
-  await arrival.transferOwnership(owner.address);
-  await nft.connect(owner).setMinter(arrival.address);
+  if (chainId !== 1) {
+    await nft.connect(owner).setMinter(arrival.address);
+    await nft.transferOwnership(owner.address);
+    await arrival.transferOwnership(owner.address);
+  } else {
+    await nft.setMinter(arrival.address);
+    await nft.transferOwnership(OWNER);
+    await arrival.transferOwnership(OWNER);
+  }
+
   console.log(`deployed`);
 }
 
