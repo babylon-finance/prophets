@@ -8,8 +8,11 @@ require('hardhat-contract-sizer');
 require('hardhat-gas-reporter');
 require('solidity-coverage');
 
+require('./tasks/mint');
+
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
+const COINMARKETCAP_KEY = process.env.COINMARKETCAP_KEY || '';
 const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY || '';
 const DEPLOYER_PRIVATE_KEY =
   process.env.DEPLOYER_PRIVATE_KEY || '0000000000000000000000000000000000000000000000000000000000000000';
@@ -34,7 +37,7 @@ module.exports = {
 
   gasReporter: {
     currency: 'USD',
-    coinmarketcap: 'f903b99d-e117-4e55-a7a8-ff5dd8ad5bed',
+    coinmarketcap: COINMARKETCAP_KEY,
     enabled: !!process.env.REPORT_GAS,
   },
 

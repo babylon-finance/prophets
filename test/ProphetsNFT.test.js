@@ -3,7 +3,7 @@ const fs = require('fs');
 const { ethers, upgrades } = require('hardhat');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { unit, from, ZERO_ADDRESS} = require('../lib/helpers');
+const { unit, from, ZERO_ADDRESS } = require('../lib/helpers');
 
 // Prophet JSON example
 //{
@@ -273,7 +273,6 @@ describe('ProphetsNFT', () => {
       await nft.connect(ramon).stake(1, ZERO_ADDRESS);
       expect(await nft.stakeOf(1)).to.eq(ZERO_ADDRESS);
     });
-
   });
 
   describe('upgradeTo', function () {

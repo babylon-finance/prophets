@@ -165,11 +165,10 @@ contract Prophets is
     }
 
     function stake(uint256 _id, address _target) external {
-      require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
+        require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
 
-      stakes[_id] = _target;
+        stakes[_id] = _target;
     }
-
 
     /* ============ External View Functions ============ */
 
