@@ -3,7 +3,7 @@ const fs = require('fs');
 const { ethers, upgrades } = require('hardhat');
 
 const { onlyFull } = require('../lib/test-helpers');
-const { unit, from } = require('../lib/helpers');
+const { unit, from, ZERO_ADDRESS} = require('../lib/helpers');
 
 // Prophet JSON example
 //{
@@ -243,15 +243,37 @@ describe('ProphetsNFT', () => {
       await expect(nft.connect(tyler).claimLoot(1)).to.be.revertedWith('Caller must own the prophet');
     });
 
-    it('Loot can NOT be claimed twice', async function () {
+    it('loot can NOT be claimed twice', async function () {
       await nft.connect(ramon).claimLoot(1);
       await expect(nft.connect(ramon).claimLoot(1)).to.be.revertedWith('Loot already claimed');
     });
 
-    it('Loot can NOT be empty', async function () {
+    it('loot can NOT be empty', async function () {
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       await expect(nft.connect(ramon).claimLoot(8001)).to.be.revertedWith('Loot can not be empty');
     });
+  });
+
+  describe.only('stake', function () {
+    beforeEach(async function () {
+      await nft.connect(minter).mintProphet(ramon.address);
+      expect(await nft.balanceOf(ramon.address)).to.equal(1);
+    });
+
+    it('can stake a prophet', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+      expect(await nft.stakeOf(1)).to.eq(ramon.address);
+    });
+
+    it('can stake only if prophet owner', async function () {
+      await expect(nft.connect(tyler).stake(1, ramon.address)).to.be.revertedWith('Not an owner of the prophet');
+    });
+
+    it('can stake to 0x0', async function () {
+      await nft.connect(ramon).stake(1, ZERO_ADDRESS);
+      expect(await nft.stakeOf(1)).to.eq(ZERO_ADDRESS);
+    });
+
   });
 
   describe('upgradeTo', function () {
@@ -265,9 +287,10 @@ describe('ProphetsNFT', () => {
 
     it('only owner can upgrade', async function () {
       const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
-      await expect(upgrades.upgradeProxy(nft, prophetsV2Mock.connect(ramon))).to.be.revertedWith('Caller is not the owner');
+      await expect(upgrades.upgradeProxy(nft, prophetsV2Mock.connect(ramon))).to.be.revertedWith(
+        'Caller is not the owner',
+      );
     });
-
   });
 
   /* ============ External View Functions ============ */

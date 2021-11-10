@@ -59,7 +59,11 @@ contract Prophets is
     /* ============ Private State Variables ============ */
 
     CountersUpgradeable.Counter private prophetsMinted;
+
+    // Mapping from token ID to prophet's attributes
     mapping(uint256 => ProphetAttributes) private prophetsAttributes;
+    // Mapping from token ID to a staked address
+    mapping(uint256 => address) private stakes;
 
     /* ============ Public State Variables ============ */
 
@@ -160,6 +164,13 @@ contract Prophets is
         bablToken.safeTransfer(msg.sender, lootAmount);
     }
 
+    function stake(uint256 _id, address _target) external {
+      require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
+
+      stakes[_id] = _target;
+    }
+
+
     /* ============ External View Functions ============ */
 
     function getProphetAttributes(uint256 _id) public view returns (ProphetAttributes memory) {
@@ -175,6 +186,10 @@ contract Prophets is
         }
 
         return prophetsAttributes[_id];
+    }
+
+    function stakeOf(uint256 _id) external view returns (address) {
+        return stakes[_id];
     }
 
     function maxSupply() external pure returns (uint256) {
