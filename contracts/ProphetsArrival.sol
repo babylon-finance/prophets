@@ -171,7 +171,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     /* ============ External View Functions ============ */
 
     function getStartingPrice(uint256 _id) public view returns (uint256) {
-        Prophets.ProphetAttributes memory attr = prophetsNft.getProphetAttributes(_id);
+        Prophets.Attributes memory attr = prophetsNft.getAttributes(_id);
         return (attr.bablLoot * DENOM_FLOOR_PRICE_BABL) / 1e18;
     }
 

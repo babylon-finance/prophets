@@ -48,7 +48,7 @@ contract Prophets is
 
     /* ============ Structs ============ */
 
-    struct ProphetAttributes {
+    struct Attributes {
         uint256 bablLoot;
         uint64 creatorMultiplier;
         uint64 lpMultiplier;
@@ -61,7 +61,7 @@ contract Prophets is
     CountersUpgradeable.Counter private prophetsMinted;
 
     // Mapping from token ID to prophet's attributes
-    mapping(uint256 => ProphetAttributes) private prophetsAttributes;
+    mapping(uint256 => Attributes) private prophetsAttributes;
     // Mapping from token ID to a staked address
     mapping(uint256 => address) private stakes;
 
@@ -129,7 +129,7 @@ contract Prophets is
         _onlyOwner();
         for (uint256 i = 0; i < _ids.length; i++) {
             require(_ids[i] > PROPHETS, 'Not a great prophet');
-            _setProphetAttributes(
+            _setAttributes(
                 _ids[i],
                 _bablLoots[i],
                 _creatorBonuses[i],
@@ -156,7 +156,7 @@ contract Prophets is
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
         require(!prophetsBABLClaimed[_id] && _id <= (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
 
-        uint256 lootAmount = getProphetAttributes(_id).bablLoot;
+        uint256 lootAmount = getAttributes(_id).bablLoot;
         require(lootAmount != 0, 'Loot can not be empty');
 
         prophetsBABLClaimed[_id] = true;
@@ -172,10 +172,10 @@ contract Prophets is
 
     /* ============ External View Functions ============ */
 
-    function getProphetAttributes(uint256 _id) public view returns (ProphetAttributes memory) {
+    function getAttributes(uint256 _id) public view returns (Attributes memory) {
         if (_id <= PROPHETS) {
             return
-                ProphetAttributes({
+                Attributes({
                     bablLoot: PROPHET_BABL,
                     creatorMultiplier: 0,
                     lpMultiplier: PROPHET_LP_BONUS,
@@ -216,7 +216,7 @@ contract Prophets is
         _mint(_to, _id);
     }
 
-    function _setProphetAttributes(
+    function _setAttributes(
         uint256 _id,
         uint256 _bablLoot,
         uint64 _creatorMultiplier,
@@ -224,7 +224,7 @@ contract Prophets is
         uint64 _voterMultiplier,
         uint64 _strategistMultiplier
     ) private {
-        ProphetAttributes storage attrs = prophetsAttributes[_id];
+        Attributes storage attrs = prophetsAttributes[_id];
 
         attrs.bablLoot = _bablLoot;
 

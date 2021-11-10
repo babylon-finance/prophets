@@ -31,7 +31,7 @@ describe('ProphetsNFT', () => {
   let bablToken;
 
   async function checkProphetAttrs(id) {
-    const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(id);
+    const [babl, creator, lp, voter, strategist] = await nft.getAttributes(id);
 
     expect(babl).to.eq(unit(5));
     expect(creator).to.eq(0);
@@ -100,7 +100,7 @@ describe('ProphetsNFT', () => {
         .connect(owner)
         .setProphetsAttributes([8001], [unit()], [from(100)], [from(200)], [from(300)], [from(400)]);
 
-      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001);
+      const [babl, creator, lp, voter, strategist] = await nft.getAttributes(8001);
       expect(babl).to.eq(unit());
       expect(creator).to.eq(from(100));
       expect(lp).to.eq(from(200));
@@ -141,7 +141,7 @@ describe('ProphetsNFT', () => {
       }
 
       for (let i = 0; i < 1000; i++) {
-        const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(8001 + i);
+        const [babl, creator, lp, voter, strategist] = await nft.getAttributes(8001 + i);
         expect(babl).to.eq(unit(prophets[8000 + i].babl));
         expect(creator).to.eq(from(+prophets[8000 + i].creatorBonus * 100));
         expect(lp).to.eq(from(+prophets[8000 + i].lpBonus * 100));
@@ -300,11 +300,11 @@ describe('ProphetsNFT', () => {
     });
   });
 
-  describe('getProphetAttributes', function () {
+  describe('getAttributes', function () {
     it('can get prophets attributes', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
 
-      const [babl, creator, lp, voter, strategist] = await nft.getProphetAttributes(1);
+      const [babl, creator, lp, voter, strategist] = await nft.getAttributes(1);
 
       expect(babl).to.eq(unit(5));
       expect(creator).to.eq(0);
