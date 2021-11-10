@@ -62,6 +62,8 @@ contract Prophets is
     mapping(uint256 => Attributes) private attributes;
     // Mapping from token ID to a staked address
     mapping(uint256 => address) private stakes;
+    // User -> SC -> token ID
+    mapping(address => mapping(address => uint256)) private userToStakes;
 
     /* ============ Public State Variables ============ */
 
@@ -80,6 +82,9 @@ contract Prophets is
     }
 
     /* ============ Events ============ */
+
+    event Stake(address indexed _owner, address indexed _target, uint256 _tokenId);
+
 
     /* ============ Constructor ============ */
 
@@ -164,8 +169,17 @@ contract Prophets is
 
     function stake(uint256 _id, address _target) external {
         require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
+        require(userToStakes[msg.sender][_target] == 0, 'Already staked');
+
+        // if was staked then remove old reference
+        if(stakes[_id] != address(0)) {
+            userToStakes[msg.sender][stakes[_id]] = 0;
+        }
 
         stakes[_id] = _target;
+        userToStakes[msg.sender][_target] = _id;
+
+        emit Stake(msg.sender, _target, _id);
     }
 
     /* ============ External View Functions ============ */
@@ -185,8 +199,12 @@ contract Prophets is
         return attributes[_id];
     }
 
-    function stakeOf(uint256 _id) external view returns (address) {
+    function targetOf(uint256 _id) external view returns (address) {
         return stakes[_id];
+    }
+
+    function stakeOf(address _user, address _target) external view returns (uint256) {
+        return userToStakes[_user][_target];
     }
 
     function maxSupply() external pure returns (uint256) {
