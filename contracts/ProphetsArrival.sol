@@ -134,7 +134,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         bytes32[] memory s
     ) public onlyOwner isEventOver {
         for (uint256 i = 0; i < _id.length; i++) {
-          mintGreat(_id[i], _amount[i], _bid[i], _nonce[i], v[i], r[i], s[i]);
+            mintGreat(_id[i], _amount[i], _bid[i], _nonce[i], v[i], r[i], s[i]);
         }
     }
 

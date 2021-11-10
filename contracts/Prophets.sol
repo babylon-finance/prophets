@@ -85,7 +85,6 @@ contract Prophets is
 
     event Stake(address indexed _owner, address indexed _target, uint256 _tokenId);
 
-
     /* ============ Constructor ============ */
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -172,7 +171,7 @@ contract Prophets is
         require(userToStakes[msg.sender][_target] == 0, 'Already staked');
 
         // if was staked then remove old reference
-        if(stakes[_id] != address(0)) {
+        if (stakes[_id] != address(0)) {
             userToStakes[msg.sender][stakes[_id]] = 0;
         }
 

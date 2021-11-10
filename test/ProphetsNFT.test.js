@@ -291,7 +291,6 @@ describe('ProphetsNFT', () => {
       expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
       expect(await nft.stakeOf(ramon.address, ZERO_ADDRESS)).to.eq(1);
     });
-
   });
 
   describe('upgradeTo', function () {
