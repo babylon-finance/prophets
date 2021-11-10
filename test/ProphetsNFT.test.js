@@ -64,7 +64,7 @@ describe('ProphetsNFT', () => {
 
   /* ============ External Write Functions ============ */
 
-  describe('mintGreatProphet', function () {
+  describe('mintGreat', function () {
     it('can mint', async function () {
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       expect(await nft.ownerOf(8001)).to.eq(ramon.address);

@@ -188,6 +188,29 @@ describe('ProphetsArrival', () => {
     });
   });
 
+  describe('batchMintGreat', function () {
+    beforeEach(async function () {
+      await setTime(EVENT_ENDS_TS);
+    });
+
+    it('can batch mint great prophets', async function () {
+      let sigs = [];
+      for (let i = 0; i < 10; i++) {
+        sigs.push(await getBidSig(ramon, arrival.address, unit(), i + 1));
+      }
+      await arrival.connect(owner).batchMintGreat(
+        Array.from(Array(10).keys(), (n) => PROPHETS_NUM + n + 1),
+        Array.from(Array(10).keys(), (n) => unit()),
+        Array.from(Array(10).keys(), (n) => unit()),
+        Array.from(Array(10).keys(), (n) => n + 1),
+        Array.from(Array(10).keys(), (n) => sigs[n].v),
+        Array.from(Array(10).keys(), (n) => sigs[n].r),
+        Array.from(Array(10).keys(), (n) => sigs[n].s),
+      );
+      expect(await wethToken.balanceOf(TREASURY)).to.eq(unit(10));
+    });
+  });
+
   describe('mintProphet', function () {
     beforeEach(async function () {});
 

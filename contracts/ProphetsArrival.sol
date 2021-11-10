@@ -126,6 +126,20 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         prophetsNft.mintProphet(msg.sender);
     }
 
+    function batchMintGreat(
+        uint256[] memory _id,
+        uint256[] memory _amount,
+        uint256[] memory _bid,
+        uint256[] memory _nonce,
+        uint8[] memory v,
+        bytes32[] memory r,
+        bytes32[] memory s
+    ) public onlyOwner isEventOver {
+        for (uint256 i = 0; i < _id.length; i++) {
+          mintGreat(_id[i], _amount[i], _bid[i], _nonce[i], v[i], r[i], s[i]);
+        }
+    }
+
     function mintGreat(
         uint256 _id,
         uint256 _amount,
@@ -134,7 +148,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external payable onlyOwner isEventOver {
+    ) public onlyOwner isEventOver {
         bytes32 hash = keccak256(abi.encode(BID_TYPEHASH, address(this), _bid, _nonce)).toEthSignedMessageHash();
         address signer = ECDSA.recover(hash, v, r, s);
 
