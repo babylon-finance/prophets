@@ -88000,17 +88000,6 @@
     "bonusScore": 200
   },
   {
-    "babl": 5,
-    "floorPrice": 0.25,
-    "number": 8000,
-    "lpBonus": 1,
-    "voterBonus": 0,
-    "strategistBonus": 0,
-    "creatorBonus": 0,
-    "name": "Prophet 8001",
-    "bonusScore": 200
-  },
-  {
     "babl": 8,
     "floorPrice": "0.40",
     "number": 8001,
@@ -97931,8 +97920,8 @@
     "name": "Maruduk-sadua V"
   },
   {
-    "babl": 60,
-    "floorPrice": "3.00",
+    "babl": 65,
+    "floorPrice": "3.25",
     "number": 8993,
     "lpBonus": 2.5,
     "voterBonus": 3.5,
