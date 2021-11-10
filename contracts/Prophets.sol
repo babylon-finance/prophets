@@ -61,7 +61,7 @@ contract Prophets is
     CountersUpgradeable.Counter private prophetsMinted;
 
     // Mapping from token ID to prophet's attributes
-    mapping(uint256 => Attributes) private prophetsAttributes;
+    mapping(uint256 => Attributes) private attributes;
     // Mapping from token ID to a staked address
     mapping(uint256 => address) private stakes;
 
@@ -184,7 +184,7 @@ contract Prophets is
                 });
         }
 
-        return prophetsAttributes[_id];
+        return attributes[_id];
     }
 
     function stakeOf(uint256 _id) external view returns (address) {
@@ -224,7 +224,7 @@ contract Prophets is
         uint64 _voterMultiplier,
         uint64 _strategistMultiplier
     ) private {
-        Attributes storage attrs = prophetsAttributes[_id];
+        Attributes storage attrs = attributes[_id];
 
         attrs.bablLoot = _bablLoot;
 
