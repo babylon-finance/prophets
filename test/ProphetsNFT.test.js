@@ -254,7 +254,7 @@ describe('ProphetsNFT', () => {
     });
   });
 
-  describe.only('stake', function () {
+  describe('stake', function () {
     beforeEach(async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.balanceOf(ramon.address)).to.equal(1);
