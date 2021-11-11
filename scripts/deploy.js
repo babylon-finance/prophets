@@ -44,7 +44,6 @@ async function main() {
   }
 
   let wethToken;
-  // Rinkeby
   if (chainId !== 1) {
     wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', deployer.address, unit(1e10));
     console.log(`WETH ${wethToken.address}`);

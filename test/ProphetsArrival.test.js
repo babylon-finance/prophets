@@ -380,7 +380,7 @@ describe('ProphetsArrival', () => {
 
   /* ============ External View Functions ============ */
 
-  describe('etStartingPrice', function () {
+  describe('getStartingPrice', function () {
     beforeEach(async function () {
       await setTime(EVENT_STARTS_TS);
     });
