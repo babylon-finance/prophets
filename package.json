@@ -8,6 +8,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
     "@openzeppelin/hardhat-upgrades": "^1.12.0",
+    "axios": "^0.24.0",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.4.0",

@@ -55,13 +55,13 @@ module.exports = {
     mainnet: {
       chainId: CHAIN_IDS.mainnet,
       url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-      accounts: [`0x${DEPLOYER_PRIVATE_KEY}`, `0x${OWNER_PRIVATE_KEY}`],
+      accounts: [`0x${DEPLOYER_PRIVATE_KEY}`],
       saveDeployments: true,
     },
     rinkeby: {
       chainId: CHAIN_IDS.rinkeby,
       url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-      accounts: [`0x${DEPLOYER_PRIVATE_KEY}`, `0x${OWNER_PRIVATE_KEY}`],
+      accounts: [`0x${DEPLOYER_PRIVATE_KEY}`],
       saveDeployments: true,
     },
   },
