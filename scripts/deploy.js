@@ -2,10 +2,8 @@ const { ethers, upgrades } = require('hardhat');
 
 const { unit } = require('../lib/helpers');
 
-const OWNER = process.env.OWNER || '';
-
 async function main() {
-  [deployer, owner] = await ethers.getSigners();
+  [deployer] = await ethers.getSigners();
 
   const { chainId } = await ethers.provider.getNetwork();
   console.log('chainId', chainId);
@@ -13,7 +11,7 @@ async function main() {
   const erc20Factory = await ethers.getContractFactory('ERC20Mock');
   let bablToken;
   if (chainId !== 1) {
-    bablToken = await erc20Factory.deploy('Babylon Finance', 'BABL', owner.address, unit(1000000));
+    bablToken = await erc20Factory.deploy('Babylon Finance', 'BABL', deployer.address, unit(1000000));
     console.log(`BABL ${bablToken.address}`);
 
     if (chainId !== 31337) {
@@ -42,14 +40,13 @@ async function main() {
     });
   }
   if (chainId !== 1) {
-    await nft.transferOwnership(owner.address);
-    await bablToken.connect(owner).transfer(nft.address, unit(40000));
+    await bablToken.transfer(nft.address, unit(40000));
   }
 
   let wethToken;
   // Rinkeby
   if (chainId !== 1) {
-    wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', owner.address, unit(1e10));
+    wethToken = await erc20Factory.deploy('Wrapped ETH', 'WETH', deployer.address, unit(1e10));
     console.log(`WETH ${wethToken.address}`);
 
     if (chainId !== 31337) {
@@ -78,15 +75,7 @@ async function main() {
     });
   }
 
-  if (chainId !== 1) {
-    await nft.connect(owner).setMinter(arrival.address);
-    await nft.transferOwnership(owner.address);
-    await arrival.transferOwnership(owner.address);
-  } else {
-    await nft.setMinter(arrival.address);
-    await nft.transferOwnership(OWNER);
-    await arrival.transferOwnership(OWNER);
-  }
+  await (await nft.setMinter(arrival.address)).wait();
 
   console.log(`deployed`);
 }
