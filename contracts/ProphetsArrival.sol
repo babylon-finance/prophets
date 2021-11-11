@@ -113,7 +113,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
 
     function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
         require(!mintedProphet[msg.sender], 'User can only mint 1 prophet');
-        bool isSettler = MerkleProof.verify(_proof, settlersRoot, _leaf(msg.sender));
+        bool isSettler = MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender));
 
         require(msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler), 'msg.value has to be 0.25');
         require(isSettler || canMintProphet(msg.sender, _proof), 'User not whitelisted');
@@ -174,11 +174,11 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     }
 
     function canMintProphet(address _user, bytes32[] calldata _proof) public view returns (bool) {
-        bool isFirst = MerkleProof.verify(_proof, firstRoot, _leaf(_user));
+        bool isFirst = MerkleProof.verify(_proof, firstRoot, leaf(_user));
         return
             isThirdRound() ||
             (isFirstRound() && isFirst) ||
-            (isSecondRound() && (isFirst || MerkleProof.verify(_proof, secondRoot, _leaf(_user))));
+            (isSecondRound() && (isFirst || MerkleProof.verify(_proof, secondRoot, leaf(_user))));
     }
 
     /* ============ Internal Write Functions ============ */
@@ -200,7 +200,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         return block.timestamp >= thirdRoundTS;
     }
 
-    function _leaf(address _user) internal pure returns (bytes32) {
+    function leaf(address _user) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(_user));
     }
 }
