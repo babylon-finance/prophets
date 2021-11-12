@@ -13,6 +13,8 @@ const {
   hashUser,
   ZERO_ADDRESS,
   HASH_ZERO,
+  getPrices,
+  BlockNativePriceProvider
 } = require('../lib/helpers');
 
 function getCount(path) {
@@ -31,8 +33,13 @@ task('whitelist')
   .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
     const { settlers, firsts, seconds, arrival } = args;
+    const { chainId } = await ethers.provider.getNetwork();
+    console.log('chainId', chainId);
 
-    const [deployer, owner] = await ethers.getSigners();
+    const owner =
+      chainId !== 31337
+        ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
+        : (await ethers.getSigners())[0];
 
     const arrivalContract = await ethers.getContractAt('ProphetsArrival', arrival);
     console.log(

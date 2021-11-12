@@ -10,11 +10,9 @@ async function main() {
 
   const url = `https://${chainId === 1 ? 'eth-mainnet' : 'eth-rinkeby'}.alchemyapi.io/v2/${ALCHEMY_KEY}`;
 
-  const blockNativeProvider = new BlockNativePriceProvider(url);
-  await blockNativeProvider.ready;
   const deployer =
     chainId !== 31337
-      ? new ethers.Wallet(`0x${process.env.DEPLOYER_PRIVATE_KEY}`, blockNativeProvider)
+      ? new ethers.Wallet(`0x${process.env.DEPLOYER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
       : (await ethers.getSigners())[0];
 
   let bablToken;
