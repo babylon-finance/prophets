@@ -1,17 +1,48 @@
 const fs = require('fs');
 const { task } = require('hardhat/config');
+const {
+  from,
+  getMerkleTree,
+  unit,
+  setTime,
+  takeSnapshot,
+  restoreSnapshot,
+  getBidSig,
+  hashUser,
+  ZERO_ADDRESS,
+  HASH_ZERO,
+  getPrices,
+  BlockNativePriceProvider,
+} = require('../lib/helpers');
 
 task('mint')
-  .addParam('prophets', '')
+  .addParam('sigs, '')
+  .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
-    const [deployer, owner] = await ethers.getSigners();
+    const { chainId } = await ethers.provider.getNetwork();
+    console.log('chainId', chainId);
 
-    const prophets = JSON.parse(fs.readFileSync('./prophets.json'));
-    const totalBabl = prophets.reduce((sum, cur) => (sum += +cur.babl), 0);
-    const greatsBabl = prophets.slice(8000).reduce((sum, cur) => (sum += +cur.babl), 0);
-    const greatsFloor = prophets.slice(8000).reduce((sum, cur) => (sum += +cur.floorPrice), 0);
+    const owner =
+      chainId !== 31337
+        ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
+        : (await ethers.getSigners())[0];
 
-    console.log(`Greats is ${greatsBabl} BABL`);
-    console.log(`Greats floor is ${greatsFloor} WETH`);
-    console.log(`TotalBabl is ${totalBabl} BABL`);
+    const arrivalContract = await ethers.getContractAt('ProphetsArrival', arrival);
+
+    const sigsJSON = JSON.parse(fs.readFileSync(sigs));
+
+    let sigs = [];
+    for (let i = 0; i < 100; i++) {
+      const part = sigsJSON.slice(i * 10, i * 10 + 10);
+      await arrival.connect(owner).batchMintGreat(
+        Array.from(Array(10).keys(), (n) => PROPHETS_NUM + n + 1),
+        Array.from(Array(10).keys(), (n) => unit()),
+        Array.from(Array(10).keys(), (n) => unit()),
+        Array.from(Array(10).keys(), (n) => n + 1),
+        Array.from(Array(10).keys(), (n) => sigs[n].v),
+        Array.from(Array(10).keys(), (n) => sigs[n].r),
+        Array.from(Array(10).keys(), (n) => sigs[n].s),
+      );
+      sigs.push(await getBidSig(ramon, arrival.address, unit(), i + 1));
+    }
   });

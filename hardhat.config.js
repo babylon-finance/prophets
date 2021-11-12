@@ -9,6 +9,7 @@ require('hardhat-gas-reporter');
 require('solidity-coverage');
 
 require('./tasks/mint');
+require('./tasks/prophets');
 require('./tasks/attrs');
 require('./tasks/whitelist');
 
