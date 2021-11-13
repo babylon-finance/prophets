@@ -16,7 +16,7 @@ const {
 } = require('../lib/helpers');
 
 task('mint')
-  .addParam('sigs, '')
+  .addParam('sigs', '')
   .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
     const { chainId } = await ethers.provider.getNetwork();
