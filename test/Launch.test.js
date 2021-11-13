@@ -68,7 +68,7 @@ describe('Launch', () => {
   }
 
   before(async () => {
-    prophets = JSON.parse(fs.readFileSync('./prophets.json'));
+    prophets = JSON.parse(fs.readFileSync('./data/prophets.json'));
     greatsJSON = prophets.slice(8000);
     snapshotId = await takeSnapshot();
   });

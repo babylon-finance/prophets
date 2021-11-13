@@ -41,7 +41,7 @@ describe('ProphetsNFT', () => {
   }
 
   before(async () => {
-    prophets = JSON.parse(fs.readFileSync('./prophets.json'));
+    prophets = JSON.parse(fs.readFileSync('./data/prophets.json'));
     great = prophets.slice(8000);
   });
 
