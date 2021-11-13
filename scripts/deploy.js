@@ -1,9 +1,9 @@
 const { ethers, upgrades } = require('hardhat');
 
-const { unit } = require('../lib/helpers');
+const { unit, getMerkleTree, hashUser } = require('../lib/helpers');
 
 async function main() {
-  [deployer] = await ethers.getSigners();
+  [deployer, user1, user2, user3] = await ethers.getSigners();
 
   const { chainId } = await ethers.provider.getNetwork();
   console.log('chainId', chainId);
@@ -57,7 +57,7 @@ async function main() {
 
   const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
   const block = await ethers.provider.getBlock();
-  const arrivalStart = chainId === 1 ? 1636992000 : block.timestamp + 60;
+  const arrivalStart = chainId === 1 ? 1636992000 : block.timestamp + 10;
   arrival = await upgrades.deployProxy(arrivalFactory, [], {
     kind: 'uups',
     constructorArgs: [nft.address, wethToken.address, arrivalStart],
@@ -74,9 +74,25 @@ async function main() {
     });
   }
 
+  if (chainId === 31337) {
+    const tree1 = getMerkleTree([user1.address.toLowerCase()]);
+    const root1 = tree1.getHexRoot();
+
+    const tree2 = getMerkleTree([user2.address.toLowerCase()]);
+    const root2 = tree2.getHexRoot();
+
+    const tree3 = getMerkleTree([user3.address.toLowerCase()]);
+    const root3 = tree3.getHexRoot();
+
+    await arrival.addUsersToWhitelist(root1, root2, root3);
+
+    await ethers.provider.send('evm_setAutomine', [false]);
+    await ethers.provider.send('evm_setIntervalMining', [2000]);
+  }
+
   await (await nft.setMinter(arrival.address)).wait();
 
-  console.log(`deployed`);
+  console.log(`----------------------deployed-----------------------`);
 }
 
 main()
