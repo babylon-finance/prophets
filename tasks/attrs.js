@@ -15,6 +15,8 @@ const {
   BlockNativePriceProvider,
 } = require('../lib/helpers');
 
+const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
+
 task('attrs')
   .addParam('prophets', '')
   .addParam('nft', '')
@@ -22,6 +24,9 @@ task('attrs')
     const { prophets, nft } = args;
     const { chainId } = await ethers.provider.getNetwork();
     console.log('chainId', chainId);
+
+    const url = `https://${chainId === 1 ? 'eth-mainnet' : 'eth-rinkeby'}.alchemyapi.io/v2/${ALCHEMY_KEY}`;
+
     const owner =
       chainId !== 31337
         ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))

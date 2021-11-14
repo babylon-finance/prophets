@@ -11,6 +11,8 @@ require('solidity-coverage');
 require('./tasks/mint');
 require('./tasks/prophets');
 require('./tasks/attrs');
+require('./tasks/split');
+require('./tasks/proof');
 require('./tasks/whitelist');
 
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
