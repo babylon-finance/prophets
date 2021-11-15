@@ -57,6 +57,8 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     mapping(address => bool) public mintedProphet;
     mapping(address => uint256) public nonces;
 
+    bytes32 public firstBRoot;
+
     /* ============ Events ============ */
 
     /* ============ Constructor ============ */
@@ -104,11 +106,13 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     function addUsersToWhitelist(
         bytes32 _settlers,
         bytes32 _firstRoundUsers,
-        bytes32 _secondRoundUsers
+        bytes32 _secondRoundUsers,
+        bytes32 _firstRoundBUsers
     ) external onlyOwner {
         settlersRoot = _settlers;
         firstRoot = _firstRoundUsers;
         secondRoot = _secondRoundUsers;
+        firstBRoot = _firstRoundBUsers;
     }
 
     function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
@@ -174,7 +178,8 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     }
 
     function canMintProphet(address _user, bytes32[] calldata _proof) public view returns (bool) {
-        bool isFirst = MerkleProof.verify(_proof, firstRoot, leaf(_user));
+        bool isFirst = MerkleProof.verify(_proof, firstRoot, leaf(_user)) ||
+            MerkleProof.verify(_proof, firstBRoot, leaf(_user));
         return
             isThirdRound() ||
             (isFirstRound() && isFirst) ||
@@ -186,7 +191,6 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     /* ============ Internal View Functions ============ */
-
 
     function isFirstRound() private view returns (bool) {
         return block.timestamp >= eventStartsTS && block.timestamp < secondRoundTS;
