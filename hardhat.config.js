@@ -14,6 +14,7 @@ require('./tasks/attrs');
 require('./tasks/split');
 require('./tasks/proof');
 require('./tasks/whitelist');
+require('./tasks/upgrade');
 
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';

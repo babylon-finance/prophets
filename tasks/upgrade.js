@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { ethers, upgrades } = require('hardhat');
 const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 const { task } = require('hardhat/config');
@@ -22,7 +21,7 @@ const {
 
 task('upgrade')
   .addParam('arrival', '')
-  .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
+  .setAction(async (args, { getContract, ethers, getGasPrice, upgrades }, runSuper) => {
     const { arrival } = args;
     const { chainId } = await ethers.provider.getNetwork();
     console.log('chainId', chainId);
@@ -34,10 +33,9 @@ task('upgrade')
         ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
         : (await ethers.getSigners())[0];
 
-
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2', owner);
     console.log('Upgrading arrival contract...');
-    const upgradedArrival = await upgrades.upgradeProxy(arrival, arrivalFactory.connect(owner), {
+    const upgradedArrival = await upgrades.upgradeProxy(arrival, arrivalFactory, {
       constructorArgs: [
         '0x26231A65EF80706307BbE71F032dc1e5Bf28ce43', // Prophets NFT
         '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
