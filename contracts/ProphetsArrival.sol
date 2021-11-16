@@ -170,32 +170,12 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         return (attr.bablLoot * DENOM_FLOOR_PRICE_BABL) / 1e18;
     }
 
-    function canMintProphet(address _user, bytes32[] calldata _proof) public view returns (bool) {
-        bool isFirst = MerkleProof.verify(_proof, firstRoot, leaf(_user));
-        return
-            isThirdRound() ||
-            (isFirstRound() && isFirst) ||
-            (isSecondRound() && (isFirst || MerkleProof.verify(_proof, secondRoot, leaf(_user))));
-    }
-
     /* ============ Internal Write Functions ============ */
 
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     /* ============ Internal View Functions ============ */
 
-
-    function isFirstRound() private view returns (bool) {
-        return block.timestamp >= eventStartsTS && block.timestamp < secondRoundTS;
-    }
-
-    function isSecondRound() private view returns (bool) {
-        return block.timestamp >= secondRoundTS && block.timestamp < thirdRoundTS;
-    }
-
-    function isThirdRound() private view returns (bool) {
-        return block.timestamp >= thirdRoundTS;
-    }
 
     function leaf(address _user) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(_user));
