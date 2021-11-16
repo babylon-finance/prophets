@@ -67,7 +67,6 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         IERC20Upgradeable _weth,
         uint256 _eventStartsTS
     ) initializer {
-        require(block.timestamp < _eventStartsTS, 'Event should start in the future');
         require(address(_prophets) != address(0), '0x0 NFT address');
         require(address(_weth) != address(0), '0x0 WETH address');
 
@@ -112,14 +111,12 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     }
 
     function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
-        require(!mintedProphet[msg.sender], 'User can only mint 1 prophet');
-        bool isSettler = MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender));
+        bool isSettler = _proof.length != 0 ?  MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender)): false;
+        require(msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler && !mintedProphet[msg.sender] ), 'msg.value has to be 0.25');
 
-        require(msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler), 'msg.value has to be 0.25');
-        require(isSettler || canMintProphet(msg.sender, _proof), 'User not whitelisted');
-
-        // Prevent from minting another one
-        mintedProphet[msg.sender] = true;
+        if(isSettler && msg.value == 0) {
+          mintedProphet[msg.sender] = true;
+        }
 
         prophetsNft.mintProphet(msg.sender);
     }
@@ -205,7 +202,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     }
 }
 
-contract ProphetsArrivalV1 is ProphetsArrival {
+contract ProphetsArrivalV2 is ProphetsArrival {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(Prophets _prophets)
         ProphetsArrival(_prophets, IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74), 1636992000)

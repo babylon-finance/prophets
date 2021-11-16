@@ -17,8 +17,7 @@ const {
   HASH_ZERO,
 } = require('../lib/helpers');
 
-// Monday, 15 November 2021, 8:00:00 AM in Timezone (GMT -8:00) Pacific Time (US & Canada)
-const EVENT_STARTS_TS = 1636992000;
+const EVENT_STARTS_TS = 1736992000;
 const SECOND_ROUND_TS = EVENT_STARTS_TS + 24 * 3600;
 const THIRD_ROUND_TS = SECOND_ROUND_TS + 24 * 3600;
 const EVENT_ENDS_TS = THIRD_ROUND_TS + 86400 * 2 + 8 * 3600;
@@ -71,13 +70,24 @@ describe('ProphetsArrival', () => {
     const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
     arrival = await upgrades.deployProxy(arrivalFactory, [], {
       kind: 'uups',
-      constructorArgs: [nft.address, wethToken.address, 1636992000],
+      constructorArgs: [nft.address, wethToken.address, EVENT_STARTS_TS],
     });
     await arrival.transferOwnership(owner.address);
 
     await nft.connect(owner).setMinter(arrival.address);
 
-    merkleTree = getMerkleTree([ramon.address]);
+    merkleTree = getMerkleTree([
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+      ramon.address,
+    ]);
 
     root = merkleTree.getHexRoot();
     proof = merkleTree.getHexProof(hashUser(ramon.address));
@@ -97,22 +107,18 @@ describe('ProphetsArrival', () => {
   describe('constructor ', function () {
     it('does NOT allow 0x0 NFT', async function () {
       const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-      await expect(arrivalFactory.deploy(ZERO_ADDRESS, wethToken.address, 1636992000)).to.revertedWith(
+      await expect(arrivalFactory.deploy(ZERO_ADDRESS, wethToken.address, EVENT_STARTS_TS)).to.revertedWith(
         '0x0 NFT address',
       );
     });
 
     it('does NOT allow 0x0 weth', async function () {
       const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS, 1636992000)).to.revertedWith('0x0 WETH address');
-    });
-
-    it('does NOT allow even int the past', async function () {
-      const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
-      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS, 636992000)).to.revertedWith(
-        'Event should start in the future',
+      await expect(arrivalFactory.deploy(nft.address, ZERO_ADDRESS, EVENT_STARTS_TS)).to.revertedWith(
+        '0x0 WETH address',
       );
     });
+
   });
 
   /* ============ External Write Functions ============ */
@@ -122,8 +128,8 @@ describe('ProphetsArrival', () => {
       await setTime(EVENT_STARTS_TS);
     });
 
-    it('can withdraw runds after event ends', async function () {
-      await arrival.connect(ramon).mintProphet(proof, { value: unit(0.25) });
+    it('can withdraw funds after event ends', async function () {
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
 
       await setTime(EVENT_ENDS_TS);
 
@@ -217,7 +223,7 @@ describe('ProphetsArrival', () => {
     it('can mint a prophet', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await arrival.connect(ramon).mintProphet(proof);
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
 
       expect(await nft.balanceOf(ramon.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(ramon.address);
@@ -232,7 +238,7 @@ describe('ProphetsArrival', () => {
 
       await arrival.connect(owner).addUsersToWhitelist(HASH_ZERO, root, HASH_ZERO);
 
-      await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
+      await arrival.connect(tyler).mintProphet([], { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
@@ -248,7 +254,7 @@ describe('ProphetsArrival', () => {
 
       await arrival.connect(owner).addUsersToWhitelist(HASH_ZERO, HASH_ZERO, root);
 
-      await arrival.connect(tyler).mintProphet(proof, { value: unit(0.25) });
+      await arrival.connect(tyler).mintProphet([], { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
@@ -258,14 +264,14 @@ describe('ProphetsArrival', () => {
     it('anyone can mint in the public round', async function () {
       await setTime(THIRD_ROUND_TS);
 
-      await arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) });
+      await arrival.connect(tyler).mintProphet([], { value: unit(0.25) });
 
       expect(await nft.balanceOf(tyler.address)).to.eq(1);
       expect(await nft.ownerOf(1)).to.eq(tyler.address);
       expect(await ethers.provider.getBalance(arrival.address)).to.eq(unit(0.25));
     });
 
-    it('can be a settler to mint', async function () {
+    it('settlers can mint a prophet for free', async function () {
       await setTime(EVENT_STARTS_TS);
 
       await arrival.connect(ramon).mintProphet(proof);
@@ -274,18 +280,42 @@ describe('ProphetsArrival', () => {
       expect(await nft.ownerOf(1)).to.eq(ramon.address);
     });
 
-    it('have to pay 0.25 ETH for a prophet', async function () {
-      await setTime(THIRD_ROUND_TS);
-
-      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO])).to.revertedWith('msg.value has to be 0.25');
-    });
-
-    it('can mint only one prophet per wallet', async function () {
+    it('settlers can mint only one prophet for free', async function () {
       await setTime(EVENT_STARTS_TS);
 
       await arrival.connect(ramon).mintProphet(proof);
+      await expect(arrival.connect(tyler).mintProphet([])).to.revertedWith('msg.value has to be 0.25');
+    });
 
-      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('User can only mint 1 prophet');
+    it('settlers can mint a prophet for free and more by paying', async function () {
+      await setTime(EVENT_STARTS_TS);
+      await arrival.connect(ramon).mintProphet(proof);
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(3);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
+      expect(await nft.ownerOf(2)).to.eq(ramon.address);
+      expect(await nft.ownerOf(3)).to.eq(ramon.address);
+    });
+
+    it('have to pay 0.25 ETH for a prophet', async function () {
+      await setTime(THIRD_ROUND_TS);
+
+      await expect(arrival.connect(tyler).mintProphet([])).to.revertedWith('msg.value has to be 0.25');
+    });
+
+    it('can mint many prophets per wallet', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(3);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
+      expect(await nft.ownerOf(2)).to.eq(ramon.address);
+      expect(await nft.ownerOf(3)).to.eq(ramon.address);
     });
 
     it.skip('can mint all prophets', async function () {
@@ -308,29 +338,29 @@ describe('ProphetsArrival', () => {
       );
 
       for (let i = 0; i < PROPHETS_NUM; i++) {
-        await arrival.connect(wallets[i]).mintProphet(proof, { value: unit(0.25), gasPrice: 0 });
+        await arrival.connect(wallets[i]).mintProphet([], { value: unit(0.25), gasPrice: 0 });
 
         expect(await nft.balanceOf(wallets[i].address)).to.eq(1);
         expect(await nft.ownerOf(i + 1)).to.eq(wallets[i].address);
       }
 
-      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('All prophets are minted');
+      await expect(arrival.connect(ramon).mintProphet([])).to.revertedWith('All prophets are minted');
     });
 
     it('can NOT mint if event has not started yet', async function () {
-      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('Event is not open');
+      await expect(arrival.connect(ramon).mintProphet([])).to.revertedWith('Event is not open');
     });
 
     it('can NOT mint if event is over', async function () {
       await setTime(EVENT_ENDS_TS);
 
-      await expect(arrival.connect(ramon).mintProphet(proof)).to.revertedWith('Event is not open');
+      await expect(arrival.connect(ramon).mintProphet([])).to.revertedWith('Event is not open');
     });
 
-    it('can NOT mint if not whitelisted', async function () {
+    it.skip('can NOT mint if not whitelisted', async function () {
       await setTime(EVENT_STARTS_TS);
 
-      await expect(arrival.connect(tyler).mintProphet([HASH_ZERO], { value: unit(0.25) })).to.revertedWith(
+      await expect(arrival.connect(tyler).mintProphet([], { value: unit(0.25) })).to.revertedWith(
         'User not whitelisted',
       );
     });
@@ -386,13 +416,13 @@ describe('ProphetsArrival', () => {
     });
 
     it('gets starting price for prophet', async function () {
-      await arrival.connect(ramon).mintProphet(proof);
+      await arrival.connect(ramon).mintProphet([], { value: unit(0.25) });
       expect(await arrival.getStartingPrice(1)).to.eq(unit((0.05 * 40000) / PROPHETS_NUM));
     });
   });
 });
 
-describe('ProphetsArrivalV1', () => {
+describe('ProphetsArrivalV2', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
@@ -404,7 +434,7 @@ describe('ProphetsArrivalV1', () => {
 
     await nft.transferOwnership(owner.address);
 
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV1');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
     arrival = await upgrades.deployProxy(arrivalFactory, [], {
       kind: 'uups',
       constructorArgs: [nft.address],
