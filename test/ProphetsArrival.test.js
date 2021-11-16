@@ -216,6 +216,36 @@ describe('ProphetsArrival', () => {
     });
   });
 
+  describe('batchMintProphet', function () {
+    beforeEach(async function () {});
+
+    it('can batch mint prophets', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(ramon).batchMintProphet(10, { value: unit(2.5) });
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(10);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
+      expect(await nft.ownerOf(2)).to.eq(ramon.address);
+      expect(await nft.ownerOf(3)).to.eq(ramon.address);
+      expect(await nft.ownerOf(4)).to.eq(ramon.address);
+      expect(await nft.ownerOf(5)).to.eq(ramon.address);
+      expect(await nft.ownerOf(6)).to.eq(ramon.address);
+      expect(await nft.ownerOf(7)).to.eq(ramon.address);
+      expect(await nft.ownerOf(8)).to.eq(ramon.address);
+      expect(await nft.ownerOf(9)).to.eq(ramon.address);
+      expect(await nft.ownerOf(10)).to.eq(ramon.address);
+    });
+
+    it('have to pay correct amount', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await expect(arrival.connect(ramon).batchMintProphet(10, { value: unit(0.5) })).to.revertedWith(
+        'ETH value is wrong',
+      );
+    });
+  });
+
   describe('mintProphet', function () {
     beforeEach(async function () {});
 
