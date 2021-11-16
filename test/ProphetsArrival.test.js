@@ -394,7 +394,7 @@ describe('ProphetsArrival', () => {
 
       expect(upgradedArrival.address).to.equal(arrival.address);
       expect(await upgradedArrival.prophetsNft()).to.equal(nft.address);
-      expect(await upgradedArrival.weth()).to.equal('0x0000000000000000000000000000000000000000');
+      expect(await upgradedArrival.weth()).to.equal('0x0000000000000000000000000000000000000001');
       expect(await upgradedArrival.eventStartsTS()).to.equal('9000000000');
     });
 
