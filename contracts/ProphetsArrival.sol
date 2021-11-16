@@ -110,6 +110,14 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         secondRoot = _secondRoundUsers;
     }
 
+    function batchMintProphet(uint256 count) external payable isEventOpen nonReentrant {
+        require(msg.value == PROPHET_PRICE * count, 'ETH value is wrong');
+
+        for (uint256 i = 0; i < count; i++) {
+          prophetsNft.mintProphet(msg.sender);
+        }
+    }
+
     function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
         bool isSettler = _proof.length != 0 ?  MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender)): false;
         require(msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler && !mintedProphet[msg.sender] ), 'msg.value has to be 0.25');
@@ -182,7 +190,7 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
     }
 }
 
-contract ProphetsArrivalV2 is ProphetsArrival {
+contract ProphetsArrivalV3 is ProphetsArrival {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         Prophets _prophets,

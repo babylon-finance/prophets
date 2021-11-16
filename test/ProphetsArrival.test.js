@@ -216,6 +216,36 @@ describe('ProphetsArrival', () => {
     });
   });
 
+  describe('batchMintProphet', function () {
+    beforeEach(async function () {});
+
+    it('can batch mint prophets', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await arrival.connect(ramon).batchMintProphet(10, { value: unit(2.5) });
+
+      expect(await nft.balanceOf(ramon.address)).to.eq(10);
+      expect(await nft.ownerOf(1)).to.eq(ramon.address);
+      expect(await nft.ownerOf(2)).to.eq(ramon.address);
+      expect(await nft.ownerOf(3)).to.eq(ramon.address);
+      expect(await nft.ownerOf(4)).to.eq(ramon.address);
+      expect(await nft.ownerOf(5)).to.eq(ramon.address);
+      expect(await nft.ownerOf(6)).to.eq(ramon.address);
+      expect(await nft.ownerOf(7)).to.eq(ramon.address);
+      expect(await nft.ownerOf(8)).to.eq(ramon.address);
+      expect(await nft.ownerOf(9)).to.eq(ramon.address);
+      expect(await nft.ownerOf(10)).to.eq(ramon.address);
+    });
+
+    it('have to pay correct amount', async function () {
+      await setTime(EVENT_STARTS_TS);
+
+      await expect(arrival.connect(ramon).batchMintProphet(10, { value: unit(0.5) })).to.revertedWith(
+        'ETH value is wrong',
+      );
+    });
+  });
+
   describe('mintProphet', function () {
     beforeEach(async function () {});
 
@@ -387,7 +417,7 @@ describe('ProphetsArrival', () => {
 
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
-      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2');
+      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV3');
       const upgradedArrival = await upgrades.upgradeProxy(arrival, prophetsArrivalV2Mock.connect(owner), {
         constructorArgs: [nft.address, '0x0000000000000000000000000000000000000001', 9000000000],
       });
@@ -422,7 +452,7 @@ describe('ProphetsArrival', () => {
   });
 });
 
-describe('ProphetsArrivalV2', () => {
+describe('ProphetsArrivalV3', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
@@ -434,7 +464,7 @@ describe('ProphetsArrivalV2', () => {
 
     await nft.transferOwnership(owner.address);
 
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV3');
     arrival = await upgrades.deployProxy(arrivalFactory, [], {
       kind: 'uups',
       constructorArgs: [nft.address, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 1636992000],
