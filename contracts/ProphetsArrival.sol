@@ -184,7 +184,11 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
 
 contract ProphetsArrivalV2 is ProphetsArrival {
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(Prophets _prophets)
-        ProphetsArrival(_prophets, IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74), 1636992000)
+    constructor(
+        Prophets _prophets,
+        IERC20Upgradeable _weth,
+        uint256 _eventStartsTS
+    )
+        ProphetsArrival(_prophets, _weth, _eventStartsTS)
     {}
 }

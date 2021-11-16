@@ -20,7 +20,7 @@ const {
   BlockNativePriceProvider,
 } = require('../lib/helpers');
 
-task('upgarde')
+task('upgrade')
   .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
     const { arrival } = args;
@@ -35,7 +35,7 @@ task('upgarde')
         : (await ethers.getSigners())[0];
 
 
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
     console.log('Upgrading arrival contract...');
     const upgradedArrival = await upgrades.upgradeProxy(arrival, arrivalFactory.connect(owner), {
       constructorArgs: [

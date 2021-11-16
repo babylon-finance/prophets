@@ -387,9 +387,9 @@ describe('ProphetsArrival', () => {
 
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
-      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2Mock');
+      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2');
       const upgradedArrival = await upgrades.upgradeProxy(arrival, prophetsArrivalV2Mock.connect(owner), {
-        constructorArgs: [nft.address],
+        constructorArgs: [nft.address, '0x0000000000000000000000000000000000000001', 9000000000],
       });
 
       expect(upgradedArrival.address).to.equal(arrival.address);
@@ -437,7 +437,7 @@ describe('ProphetsArrivalV2', () => {
     const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
     arrival = await upgrades.deployProxy(arrivalFactory, [], {
       kind: 'uups',
-      constructorArgs: [nft.address],
+      constructorArgs: [nft.address, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 1636992000],
     });
     await arrival.transferOwnership(owner.address);
     await nft.connect(owner).setMinter(arrival.address);
@@ -446,7 +446,7 @@ describe('ProphetsArrivalV2', () => {
   describe('construction', function () {
     it('BABL token is correct', async function () {
       expect(await arrival.prophetsNft()).to.equal(nft.address);
-      expect(await arrival.weth()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
+      expect(await arrival.weth()).to.equal('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2');
       expect(await arrival.eventStartsTS()).to.equal(1636992000);
     });
   });
