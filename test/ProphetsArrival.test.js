@@ -417,7 +417,7 @@ describe('ProphetsArrival', () => {
 
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
-      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV2');
+      const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrivalV3');
       const upgradedArrival = await upgrades.upgradeProxy(arrival, prophetsArrivalV2Mock.connect(owner), {
         constructorArgs: [nft.address, '0x0000000000000000000000000000000000000001', 9000000000],
       });
@@ -452,7 +452,7 @@ describe('ProphetsArrival', () => {
   });
 });
 
-describe('ProphetsArrivalV2', () => {
+describe('ProphetsArrivalV3', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
@@ -464,7 +464,7 @@ describe('ProphetsArrivalV2', () => {
 
     await nft.transferOwnership(owner.address);
 
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV3');
     arrival = await upgrades.deployProxy(arrivalFactory, [], {
       kind: 'uups',
       constructorArgs: [nft.address, '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', 1636992000],
