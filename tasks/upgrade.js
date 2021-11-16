@@ -20,9 +20,10 @@ const {
 } = require('../lib/helpers');
 
 task('upgrade')
+  .addParam('impl', '')
   .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice, upgrades }, runSuper) => {
-    const { arrival } = args;
+    const { arrival, impl } = args;
     const { chainId } = await ethers.provider.getNetwork();
     console.log('chainId', chainId);
 
@@ -33,7 +34,7 @@ task('upgrade')
         ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
         : (await ethers.getSigners())[0];
 
-    const arrivalFactory = await ethers.getContractFactory('ProphetsArrivalV2', owner);
+    const arrivalFactory = await ethers.getContractFactory(impl, owner);
     console.log('Upgrading arrival contract...');
     const upgradedArrival = await upgrades.upgradeProxy(arrival, arrivalFactory, {
       constructorArgs: [
@@ -43,4 +44,16 @@ task('upgrade')
       ],
     });
     console.log('Arrival contract has been upgraded 🚀');
+
+    console.log('Verifying on Etherscan..');
+    await hre.run('verify:verify', {
+      contract: `contracts/ProphetsArrival.sol:${impl}`,
+      address: await upgrades.erc1967.getImplementationAddress(arrival),
+      constructorArguments: [
+        '0x26231A65EF80706307BbE71F032dc1e5Bf28ce43', // Prophets NFT
+        '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+        1636992000, // Start TS
+      ],
+    });
+    console.log('Verified ✅');
   });
