@@ -34,11 +34,10 @@ task('upgarde')
         ? new ethers.Wallet(`0x${process.env.OWNER_PRIVATE_KEY}`, new BlockNativePriceProvider(url))
         : (await ethers.getSigners())[0];
 
-    const arrivalContract = await ethers.getContractAt('ProphetsArrival', arrival);
 
-    const prophetsArrivalV2Mock = await ethers.getContractFactory('ProphetsArrival');
+    const arrivalFactory = await ethers.getContractFactory('ProphetsArrival');
     console.log('Upgrading arrival contract...');
-    const upgradedArrival = await upgrades.upgradeProxy(arrivalContract, prophetsArrivalV2Mock.connect(owner), {
+    const upgradedArrival = await upgrades.upgradeProxy(arrival, arrivalFactory.connect(owner), {
       constructorArgs: [
         '0x26231A65EF80706307BbE71F032dc1e5Bf28ce43', // Prophets NFT
         '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
