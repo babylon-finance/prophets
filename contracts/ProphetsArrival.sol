@@ -114,16 +114,19 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
         require(msg.value == PROPHET_PRICE * count, 'ETH value is wrong');
 
         for (uint256 i = 0; i < count; i++) {
-          prophetsNft.mintProphet(msg.sender);
+            prophetsNft.mintProphet(msg.sender);
         }
     }
 
     function mintProphet(bytes32[] calldata _proof) external payable isEventOpen nonReentrant {
-        bool isSettler = _proof.length != 0 ?  MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender)): false;
-        require(msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler && !mintedProphet[msg.sender] ), 'msg.value has to be 0.25');
+        bool isSettler = _proof.length != 0 ? MerkleProof.verify(_proof, settlersRoot, leaf(msg.sender)) : false;
+        require(
+            msg.value == PROPHET_PRICE || (msg.value == 0 && isSettler && !mintedProphet[msg.sender]),
+            'msg.value has to be 0.25'
+        );
 
-        if(isSettler && msg.value == 0) {
-          mintedProphet[msg.sender] = true;
+        if (isSettler && msg.value == 0) {
+            mintedProphet[msg.sender] = true;
         }
 
         prophetsNft.mintProphet(msg.sender);
@@ -184,7 +187,6 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
 
     /* ============ Internal View Functions ============ */
 
-
     function leaf(address _user) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(_user));
     }
@@ -196,7 +198,5 @@ contract ProphetsArrivalV3 is ProphetsArrival {
         Prophets _prophets,
         IERC20Upgradeable _weth,
         uint256 _eventStartsTS
-    )
-        ProphetsArrival(_prophets, _weth, _eventStartsTS)
-    {}
+    ) ProphetsArrival(_prophets, _weth, _eventStartsTS) {}
 }

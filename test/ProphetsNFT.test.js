@@ -223,6 +223,40 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('batchClaimLoot', function () {
+    beforeEach(async function () {
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+
+      await nft.connect(minter).mintProphet(tyler.address);
+      await nft.connect(minter).mintProphet(tyler.address);
+      await nft.connect(minter).mintProphet(tyler.address);
+      await nft.connect(minter).mintProphet(tyler.address);
+      await nft.connect(minter).mintProphet(tyler.address);
+    });
+
+    it('can claim loot for many prophets', async function () {
+      await nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5]);
+      expect(await bablToken.balanceOf(ramon.address)).to.eq(unit(5 * 5));
+    });
+
+    it('can claim loot only if not claimed before', async function () {
+      await nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5]);
+      await expect(nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5])).to.be.revertedWith(
+        'Loot already claimed',
+      );
+    });
+
+    it('can claim loot only for own prophets', async function () {
+      await expect(nft.connect(ramon).batchClaimLoot([6, 7, 8, 9, 10])).to.be.revertedWith(
+        'Caller must own the prophet',
+      );
+    });
+  });
+
   describe('claimLoot', function () {
     beforeEach(async function () {
       await nft.connect(minter).mintProphet(ramon.address);

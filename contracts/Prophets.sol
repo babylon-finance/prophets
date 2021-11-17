@@ -153,7 +153,24 @@ contract Prophets is
         minter = _minter;
     }
 
-    function claimLoot(uint256 _id) external nonReentrant {
+    function batchClaimLoot(uint256[] memory _ids) external nonReentrant {
+        uint256 totalLoot;
+        for (uint256 i = 0; i < _ids.length; i++) {
+            uint256 id = _ids[i];
+            require(ownerOf(id) == msg.sender, 'Caller must own the prophet');
+            require(!prophetsBABLClaimed[id], 'Loot already claimed');
+
+            uint256 lootAmount = getAttributes(id).bablLoot;
+            require(lootAmount != 0, 'Loot can not be empty');
+
+            prophetsBABLClaimed[id] = true;
+
+            totalLoot += lootAmount;
+        }
+        bablToken.safeTransfer(msg.sender, totalLoot);
+    }
+
+    function claimLoot(uint256 _id) public nonReentrant {
         require(balanceOf(msg.sender) > 0, 'Caller does not own a prophet');
         require(ownerOf(_id) == msg.sender, 'Caller must own the prophet');
         require(!prophetsBABLClaimed[_id] && _id <= (PROPHETS + GREAT_PROPHETS), 'Loot already claimed');
