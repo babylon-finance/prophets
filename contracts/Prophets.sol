@@ -224,13 +224,14 @@ contract Prophets is
         if (id <= PROPHETS) {
             return [id, PROPHET_BABL, 0, 0, PROPHET_LP_BONUS * 1e14, 0];
         }
+        Attributes memory attrs = attributes[id];
         return [
             id,
-            uint256(attributes[id].bablLoot),
-            uint256(attributes[id].strategistMultiplier) * 1e14,
-            uint256(attributes[id].voterMultiplier) * 1e14,
-            uint256(attributes[id].lpMultiplier) * 1e14,
-            uint256(attributes[id].creatorMultiplier) * 1e14
+            uint256(attrs.bablLoot),
+            uint256(attrs.strategistMultiplier) * 1e14,
+            uint256(attrs.voterMultiplier) * 1e14,
+            uint256(attrs.lpMultiplier) * 1e14,
+            uint256(attrs.creatorMultiplier) * 1e14
         ];
     }
 
