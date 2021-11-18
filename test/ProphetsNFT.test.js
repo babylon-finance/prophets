@@ -363,6 +363,7 @@ describe('ProphetsNFT', () => {
       expect(strategist).to.eq(0);
     });
   });
+
   describe('getStakedProphetAttrs', function () {
     it('can get prophets attributes of a given staked NFT', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
