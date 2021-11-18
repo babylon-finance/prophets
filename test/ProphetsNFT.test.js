@@ -404,15 +404,19 @@ describe('ProphetsNFT', () => {
     it('can get prophets attributes of a given staked NFT', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
       expect(id).to.eq(1);
       expect(babl).to.eq(unit(5));
       expect(strategist).to.eq(0);
       expect(voter).to.eq(0);
       expect(lp).to.eq(unit(0.01));
       expect(creator).to.eq(0);
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
     });
+
     it('can get great prophets attributes of a given staked great NFT', async function () {
       // creator, lp, voter, strategist
       await nft
@@ -420,26 +424,36 @@ describe('ProphetsNFT', () => {
         .setProphetsAttributes([8001], [unit(8)], [from(50)], [from(100)], [from(300)], [from(400)]);
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       await nft.connect(ramon).stake(8001, ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(8001);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
       expect(id).to.eq(8001);
       expect(babl).to.eq(unit(8));
       expect(strategist).to.eq(unit(0.04));
       expect(voter).to.eq(unit(0.03));
       expect(lp).to.eq(unit(0.01));
       expect(creator).to.eq(unit(0.005));
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
     });
+
     it('can NOT get prophets attributes (equal zero) if NFT is not staked yet', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
       expect(id).to.eq(0);
       expect(babl).to.eq(0);
       expect(strategist).to.eq(0);
       expect(voter).to.eq(0);
       expect(lp).to.eq(0);
       expect(creator).to.eq(0);
+      expect(ts).to.eq(0);
     });
+
   });
 
   describe('maxSupply', function () {
