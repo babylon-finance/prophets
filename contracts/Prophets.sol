@@ -62,6 +62,8 @@ contract Prophets is
     mapping(uint256 => Attributes) private attributes;
     // Mapping from token ID to a staked address
     mapping(uint256 => address) private stakes;
+    // Mapping from token ID to a stake timestamp
+    mapping(uint256 => uint256) private stakesToTime;
     // User -> SC -> token ID
     mapping(address => mapping(address => uint256)) private userToStakes;
 
@@ -183,7 +185,7 @@ contract Prophets is
         bablToken.safeTransfer(msg.sender, lootAmount);
     }
 
-    function stake(uint256 _id, address _target) external {
+    function stake(uint256 _id, address _target) public {
         require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
         require(userToStakes[msg.sender][_target] == 0, 'Already staked');
 
@@ -194,6 +196,7 @@ contract Prophets is
 
         stakes[_id] = _target;
         userToStakes[msg.sender][_target] = _id;
+        stakesToTime[_id] = block.timestamp;
 
         emit Stake(msg.sender, _target, _id);
     }
@@ -270,18 +273,22 @@ contract Prophets is
         _onlyOwner();
     }
 
+    function _beforeTokenTransfer(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+        // if prophet is staked then unstake before the transfer
+        if(stakes[_tokenId] != address(0)) {
+            stake(_tokenId, address(0));
+        }
+        super._beforeTokenTransfer(_from, _to, _tokenId);
+    }
+
     /* ============ Internal View Functions ============ */
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
-    }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
-        super._beforeTokenTransfer(from, to, tokenId);
     }
 }
 

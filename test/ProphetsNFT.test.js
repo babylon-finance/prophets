@@ -245,9 +245,7 @@ describe('ProphetsNFT', () => {
 
     it('can claim loot only if not claimed before', async function () {
       await nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5]);
-      await expect(nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5])).to.be.revertedWith(
-        'Loot already claimed',
-      );
+      await expect(nft.connect(ramon).batchClaimLoot([1, 2, 3, 4, 5])).to.be.revertedWith('Loot already claimed');
     });
 
     it('can claim loot only for own prophets', async function () {
@@ -288,6 +286,31 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('_beforeTokenTransfer', function () {
+    beforeEach(async function () {
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+    });
+
+    it('unstakes on transfer', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ramon.address);
+
+      await nft.connect(ramon).transferFrom(ramon.address, tyler.address, 1);
+
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+    });
+
+    it('does nothing if not staked', async function () {
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+
+      await nft.connect(ramon).transferFrom(ramon.address, tyler.address, 1);
+
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+    });
+
+  });
+
   describe('stake', function () {
     beforeEach(async function () {
       await nft.connect(minter).mintProphet(ramon.address);
@@ -296,16 +319,26 @@ describe('ProphetsNFT', () => {
 
     it('can stake a prophet', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
+
+      expect(await nft.targetOf(1)).to.eq(ramon.address);
+      expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
+    });
+
+    it('staking a prophet sets timestamp', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.targetOf(1)).to.eq(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
     });
 
     it('can unstake a prophet', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.targetOf(1)).to.eq(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
 
       await nft.connect(ramon).stake(1, ZERO_ADDRESS);
+
       expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
       expect(await nft.stakeOf(ramon.address, ZERO_ADDRESS)).to.eq(1);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
@@ -322,6 +355,7 @@ describe('ProphetsNFT', () => {
 
     it('can stake to 0x0', async function () {
       await nft.connect(ramon).stake(1, ZERO_ADDRESS);
+
       expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
       expect(await nft.stakeOf(ramon.address, ZERO_ADDRESS)).to.eq(1);
     });
