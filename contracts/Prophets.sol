@@ -215,6 +215,25 @@ contract Prophets is
         return attributes[_id];
     }
 
+    function getStakedAndAttributes(address _owner, address _stakedAt) public view returns (uint256[6] memory) {
+        uint256 id = userToStakes[_owner][_stakedAt];
+        if (id == 0) {
+            // not staked
+            return [uint256(0), uint256(0), uint256(0), uint256(0), uint256(0), uint256(0)];
+        }
+        if (id <= PROPHETS) {
+            return [id, PROPHET_BABL, 0, 0, PROPHET_LP_BONUS * 1e14, 0];
+        }
+        return [
+            id,
+            uint256(attributes[id].bablLoot),
+            uint256(attributes[id].strategistMultiplier) * 1e14,
+            uint256(attributes[id].voterMultiplier) * 1e14,
+            uint256(attributes[id].lpMultiplier) * 1e14,
+            uint256(attributes[id].creatorMultiplier) * 1e14
+        ];
+    }
+
     function targetOf(uint256 _id) external view returns (address) {
         return stakes[_id];
     }
