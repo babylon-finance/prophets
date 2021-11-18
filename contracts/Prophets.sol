@@ -301,7 +301,7 @@ contract Prophets is
     ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
         super._beforeTokenTransfer(_from, _to, _tokenId);
         // if prophet is staked then unstake before the transfer
-        if(stakes[_tokenId] != address(0)) {
+        if (stakes[_tokenId] != address(0)) {
             stake(_tokenId, address(0));
         }
     }

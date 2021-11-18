@@ -308,7 +308,6 @@ describe('ProphetsNFT', () => {
 
       expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
     });
-
   });
 
   describe('stake', function () {
@@ -407,7 +406,10 @@ describe('ProphetsNFT', () => {
 
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
 
-      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
       expect(id).to.eq(1);
       expect(babl).to.eq(unit(5));
       expect(strategist).to.eq(0);
@@ -427,7 +429,10 @@ describe('ProphetsNFT', () => {
 
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(8001);
 
-      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
 
       expect(id).to.eq(8001);
       expect(babl).to.eq(unit(8));
@@ -443,7 +448,10 @@ describe('ProphetsNFT', () => {
 
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
 
-      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
 
       expect(id).to.eq(0);
       expect(babl).to.eq(0);
@@ -453,7 +461,6 @@ describe('ProphetsNFT', () => {
       expect(creator).to.eq(0);
       expect(ts).to.eq(0);
     });
-
   });
 
   describe('maxSupply', function () {
