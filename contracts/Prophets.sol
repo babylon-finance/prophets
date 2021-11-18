@@ -62,10 +62,10 @@ contract Prophets is
     mapping(uint256 => Attributes) private attributes;
     // Mapping from token ID to a staked address
     mapping(uint256 => address) private stakes;
-    // Mapping from token ID to a stake timestamp
-    mapping(uint256 => uint256) private stakesToTime;
     // User -> SC -> token ID
     mapping(address => mapping(address => uint256)) private userToStakes;
+    // Mapping from token ID to a stake timestamp
+    mapping(uint256 => uint256) private stakesToTime;
 
     /* ============ Public State Variables ============ */
 
@@ -313,7 +313,7 @@ contract Prophets is
     }
 }
 
-contract ProphetsV1 is Prophets {
+contract ProphetsV2 is Prophets {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() Prophets(IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74)) {}
 }
