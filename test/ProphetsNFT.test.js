@@ -363,12 +363,12 @@ describe('ProphetsNFT', () => {
       expect(strategist).to.eq(0);
     });
   });
-  describe('getStakedAndAttributes', function () {
+  describe('getStakedProphetAttrs', function () {
     it('can get prophets attributes of a given staked NFT', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       await nft.connect(ramon).stake(1, ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedAndAttributes(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
       expect(id).to.eq(1);
       expect(babl).to.eq(unit(5));
       expect(strategist).to.eq(0);
@@ -384,7 +384,7 @@ describe('ProphetsNFT', () => {
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       await nft.connect(ramon).stake(8001, ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(8001);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedAndAttributes(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
       expect(id).to.eq(8001);
       expect(babl).to.eq(unit(8));
       expect(strategist).to.eq(unit(0.04));
@@ -395,7 +395,7 @@ describe('ProphetsNFT', () => {
     it('can NOT get prophets attributes (equal zero) if NFT is not staked yet', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedAndAttributes(ramon.address, ramon.address);
+      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
       expect(id).to.eq(0);
       expect(babl).to.eq(0);
       expect(strategist).to.eq(0);

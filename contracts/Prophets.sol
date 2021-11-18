@@ -215,7 +215,7 @@ contract Prophets is
         return attributes[_id];
     }
 
-    function getStakedAndAttributes(address _owner, address _stakedAt) public view returns (uint256[6] memory) {
+    function getStakedProphetAttrs(address _owner, address _stakedAt) public view returns (uint256[6] memory) {
         uint256 id = userToStakes[_owner][_stakedAt];
         if (id == 0) {
             // not staked
