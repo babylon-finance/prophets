@@ -286,6 +286,30 @@ describe('ProphetsNFT', () => {
     });
   });
 
+  describe('_beforeTokenTransfer', function () {
+    beforeEach(async function () {
+      await nft.connect(minter).mintProphet(ramon.address);
+      await nft.connect(minter).mintProphet(ramon.address);
+    });
+
+    it('unstakes on transfer', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ramon.address);
+
+      await nft.connect(ramon).transferFrom(ramon.address, tyler.address, 1);
+
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+    });
+
+    it('does nothing if not staked', async function () {
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+
+      await nft.connect(ramon).transferFrom(ramon.address, tyler.address, 1);
+
+      expect(await nft.connect(ramon).targetOf(1)).to.eq(ZERO_ADDRESS);
+    });
+  });
+
   describe('stake', function () {
     beforeEach(async function () {
       await nft.connect(minter).mintProphet(ramon.address);
@@ -294,16 +318,32 @@ describe('ProphetsNFT', () => {
 
     it('can stake a prophet', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.targetOf(1)).to.eq(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
     });
 
+    it('staking a prophet sets timestamp', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+
+      expect(await nft.targetOf(1)).to.eq(ramon.address);
+      expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
+    });
+
     it('can unstake a prophet', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.targetOf(1)).to.eq(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
 
       await nft.connect(ramon).stake(1, ZERO_ADDRESS);
+
       expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
       expect(await nft.stakeOf(ramon.address, ZERO_ADDRESS)).to.eq(1);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
@@ -320,6 +360,7 @@ describe('ProphetsNFT', () => {
 
     it('can stake to 0x0', async function () {
       await nft.connect(ramon).stake(1, ZERO_ADDRESS);
+
       expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
       expect(await nft.stakeOf(ramon.address, ZERO_ADDRESS)).to.eq(1);
     });
@@ -327,18 +368,16 @@ describe('ProphetsNFT', () => {
 
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
-      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
-      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2Mock.connect(owner));
+      const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
+      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2.connect(owner));
 
       expect(upgradedNFT.address).to.equal(nft.address);
-      expect(await upgradedNFT.bablToken()).to.equal('0x0000000000000000000000000000000000000000');
+      expect(await upgradedNFT.bablToken()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
     });
 
     it('only owner can upgrade', async function () {
-      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
-      await expect(upgrades.upgradeProxy(nft, prophetsV2Mock.connect(ramon))).to.be.revertedWith(
-        'Caller is not the owner',
-      );
+      const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
+      await expect(upgrades.upgradeProxy(nft, prophetsV2.connect(ramon))).to.be.revertedWith('Caller is not the owner');
     });
   });
 
@@ -368,15 +407,22 @@ describe('ProphetsNFT', () => {
     it('can get prophets attributes of a given staked NFT', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
       await nft.connect(ramon).stake(1, ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
       expect(id).to.eq(1);
       expect(babl).to.eq(unit(5));
       expect(strategist).to.eq(0);
       expect(voter).to.eq(0);
       expect(lp).to.eq(unit(0.01));
       expect(creator).to.eq(0);
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
     });
+
     it('can get great prophets attributes of a given staked great NFT', async function () {
       // creator, lp, voter, strategist
       await nft
@@ -384,25 +430,40 @@ describe('ProphetsNFT', () => {
         .setProphetsAttributes([8001], [unit(8)], [from(50)], [from(100)], [from(300)], [from(400)]);
       await nft.connect(minter).mintGreatProphet(ramon.address, 8001);
       await nft.connect(ramon).stake(8001, ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(8001);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
+
       expect(id).to.eq(8001);
       expect(babl).to.eq(unit(8));
       expect(strategist).to.eq(unit(0.04));
       expect(voter).to.eq(unit(0.03));
       expect(lp).to.eq(unit(0.01));
       expect(creator).to.eq(unit(0.005));
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
     });
+
     it('can NOT get prophets attributes (equal zero) if NFT is not staked yet', async function () {
       await nft.connect(minter).mintProphet(ramon.address);
+
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(0);
-      const [id, babl, strategist, voter, lp, creator] = await nft.getStakedProphetAttrs(ramon.address, ramon.address);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
+
       expect(id).to.eq(0);
       expect(babl).to.eq(0);
       expect(strategist).to.eq(0);
       expect(voter).to.eq(0);
       expect(lp).to.eq(0);
       expect(creator).to.eq(0);
+      expect(ts).to.eq(0);
     });
   });
 
@@ -450,11 +511,11 @@ describe('ProphetsNFT', () => {
   });
 });
 
-describe('ProphetsV1', () => {
+describe('ProphetsV2', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
-    const prophetsFactory = await ethers.getContractFactory('ProphetsV1');
+    const prophetsFactory = await ethers.getContractFactory('ProphetsV2');
     nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
       kind: 'uups',
     });

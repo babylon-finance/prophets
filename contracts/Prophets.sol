@@ -64,6 +64,8 @@ contract Prophets is
     mapping(uint256 => address) private stakes;
     // User -> SC -> token ID
     mapping(address => mapping(address => uint256)) private userToStakes;
+    // Mapping from token ID to a stake timestamp
+    mapping(uint256 => uint256) private stakesToTime;
 
     /* ============ Public State Variables ============ */
 
@@ -183,7 +185,7 @@ contract Prophets is
         bablToken.safeTransfer(msg.sender, lootAmount);
     }
 
-    function stake(uint256 _id, address _target) external {
+    function stake(uint256 _id, address _target) public {
         require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
         require(userToStakes[msg.sender][_target] == 0, 'Already staked');
 
@@ -194,6 +196,7 @@ contract Prophets is
 
         stakes[_id] = _target;
         userToStakes[msg.sender][_target] = _id;
+        stakesToTime[_id] = block.timestamp;
 
         emit Stake(msg.sender, _target, _id);
     }
@@ -215,14 +218,14 @@ contract Prophets is
         return attributes[_id];
     }
 
-    function getStakedProphetAttrs(address _owner, address _stakedAt) public view returns (uint256[6] memory) {
+    function getStakedProphetAttrs(address _owner, address _stakedAt) public view returns (uint256[7] memory) {
         uint256 id = userToStakes[_owner][_stakedAt];
         if (id == 0) {
             // not staked
-            return [uint256(0), uint256(0), uint256(0), uint256(0), uint256(0), uint256(0)];
+            return [uint256(0), uint256(0), uint256(0), uint256(0), uint256(0), uint256(0), uint256(0)];
         }
         if (id <= PROPHETS) {
-            return [id, PROPHET_BABL, 0, 0, PROPHET_LP_BONUS * 1e14, 0];
+            return [id, PROPHET_BABL, 0, 0, PROPHET_LP_BONUS * 1e14, 0, stakesToTime[id]];
         }
         Attributes memory attrs = attributes[id];
         return [
@@ -231,7 +234,8 @@ contract Prophets is
             uint256(attrs.strategistMultiplier) * 1e14,
             uint256(attrs.voterMultiplier) * 1e14,
             uint256(attrs.lpMultiplier) * 1e14,
-            uint256(attrs.creatorMultiplier) * 1e14
+            uint256(attrs.creatorMultiplier) * 1e14,
+            stakesToTime[id]
         ];
     }
 
@@ -290,22 +294,26 @@ contract Prophets is
         _onlyOwner();
     }
 
+    function _beforeTokenTransfer(
+        address _from,
+        address _to,
+        uint256 _tokenId
+    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+        super._beforeTokenTransfer(_from, _to, _tokenId);
+        // if prophet is staked then unstake before the transfer
+        if (stakes[_tokenId] != address(0)) {
+            stake(_tokenId, address(0));
+        }
+    }
+
     /* ============ Internal View Functions ============ */
 
     function _baseURI() internal view virtual override returns (string memory) {
         return baseTokenURI;
     }
-
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
-        super._beforeTokenTransfer(from, to, tokenId);
-    }
 }
 
-contract ProphetsV1 is Prophets {
+contract ProphetsV2 is Prophets {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() Prophets(IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74)) {}
 }
