@@ -369,15 +369,21 @@ describe('ProphetsNFT', () => {
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
       const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
-      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2.connect(owner));
+      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2.connect(owner), {
+        constructorArgs: [bablToken.address],
+      });
 
       expect(upgradedNFT.address).to.equal(nft.address);
-      expect(await upgradedNFT.bablToken()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
+      expect(await upgradedNFT.bablToken()).to.equal(bablToken.address);
     });
 
     it('only owner can upgrade', async function () {
       const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
-      await expect(upgrades.upgradeProxy(nft, prophetsV2.connect(ramon))).to.be.revertedWith('Caller is not the owner');
+      await expect(
+        upgrades.upgradeProxy(nft, prophetsV2.connect(ramon), {
+          constructorArgs: [bablToken.address],
+        }),
+      ).to.be.revertedWith('Caller is not the owner');
     });
   });
 
@@ -518,6 +524,7 @@ describe('ProphetsV2', () => {
     const prophetsFactory = await ethers.getContractFactory('ProphetsV2');
     nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
       kind: 'uups',
+      constructorArgs: ['0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74'],
     });
 
     await nft.setMinter(minter.address);

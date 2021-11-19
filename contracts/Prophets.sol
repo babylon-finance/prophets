@@ -336,5 +336,5 @@ contract Prophets is
 
 contract ProphetsV2 is Prophets {
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() Prophets(IERC20Upgradeable(0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74)) {}
+    constructor(IERC20Upgradeable _bablToken) Prophets(_bablToken) {}
 }

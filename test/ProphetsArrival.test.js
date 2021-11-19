@@ -456,10 +456,11 @@ describe('ProphetsArrivalV3', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
-    const prophetsFactory = await ethers.getContractFactory('ProphetsV2');
+    const prophetsFactory = await ethers.getContractFactory('Prophets');
 
     nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
       kind: 'uups',
+      constructorArgs: ['0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74'],
     });
 
     await nft.transferOwnership(owner.address);
