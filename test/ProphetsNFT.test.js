@@ -328,6 +328,12 @@ describe('ProphetsNFT', () => {
 
       expect(await nft.targetOf(1)).to.eq(ramon.address);
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
+
+      const [id, babl, strategist, voter, lp, creator, ts] = await nft.getStakedProphetAttrs(
+        ramon.address,
+        ramon.address,
+      );
+      expect(ts).to.eq((await ethers.provider.getBlock()).timestamp);
     });
 
     it('can unstake a prophet', async function () {
@@ -362,18 +368,16 @@ describe('ProphetsNFT', () => {
 
   describe('upgradeTo', function () {
     it('upgrades to v2 implementation', async function () {
-      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
-      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2Mock.connect(owner));
+      const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
+      const upgradedNFT = await upgrades.upgradeProxy(nft, prophetsV2.connect(owner));
 
       expect(upgradedNFT.address).to.equal(nft.address);
-      expect(await upgradedNFT.bablToken()).to.equal('0x0000000000000000000000000000000000000000');
+      expect(await upgradedNFT.bablToken()).to.equal('0xF4Dc48D260C93ad6a96c5Ce563E70CA578987c74');
     });
 
     it('only owner can upgrade', async function () {
-      const prophetsV2Mock = await ethers.getContractFactory('ProphetsV2Mock');
-      await expect(upgrades.upgradeProxy(nft, prophetsV2Mock.connect(ramon))).to.be.revertedWith(
-        'Caller is not the owner',
-      );
+      const prophetsV2 = await ethers.getContractFactory('ProphetsV2');
+      await expect(upgrades.upgradeProxy(nft, prophetsV2.connect(ramon))).to.be.revertedWith('Caller is not the owner');
     });
   });
 
@@ -507,11 +511,11 @@ describe('ProphetsNFT', () => {
   });
 });
 
-describe('ProphetsV1', () => {
+describe('ProphetsV2', () => {
   beforeEach(async function () {
     [deployer, owner, minter, ramon, tyler] = await ethers.getSigners();
 
-    const prophetsFactory = await ethers.getContractFactory('ProphetsV1');
+    const prophetsFactory = await ethers.getContractFactory('ProphetsV2');
     nft = await upgrades.deployProxy(prophetsFactory, ['https://babylon.finance/api/v1/'], {
       kind: 'uups',
     });
