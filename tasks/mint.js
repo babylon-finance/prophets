@@ -35,7 +35,8 @@ task('mint')
 
     const arrivalContract = await ethers.getContractAt('ProphetsArrival', arrival);
 
-    const sigsJSON = JSON.parse(fs.readFileSync(mints));
+    const sigsJSON = JSON.parse(fs.readFileSync(mints)).slice(0, 50);
+    console.log('Nubmer to mint', sigsJSON.length);
 
     const calldata = arrivalContract.interface.encodeFunctionData('batchMintGreat', [
       Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].number),
