@@ -14,7 +14,8 @@ require('./tasks/attrs');
 require('./tasks/split');
 require('./tasks/proof');
 require('./tasks/whitelist');
-require('./tasks/upgrade');
+require('./tasks/upgrade-nft');
+require('./tasks/upgrade-arrival');
 
 const OPTIMIZER = !(process.env.OPTIMIZER === 'false');
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
