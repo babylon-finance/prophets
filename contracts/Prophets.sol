@@ -155,7 +155,7 @@ contract Prophets is
         minter = _minter;
     }
 
-    function batchClaimLoot(uint256[] memory _ids) external nonReentrant {
+    function batchClaimLoot(uint256[] calldata _ids) external nonReentrant {
         uint256 totalLoot;
         for (uint256 i = 0; i < _ids.length; i++) {
             uint256 id = _ids[i];
