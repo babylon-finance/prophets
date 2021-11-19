@@ -29,10 +29,11 @@ task('clear')
     const arrival = '0xE9883Aee5828756216FD7DF80eb56Bff90f6E7D7';
 
     const balances = {};
+    const takenProphets = {};
     const weth = await ethers.getContractAt('ERC20', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2');
 
     const sigsJSON = JSON.parse(fs.readFileSync(sigs));
-    const prophetsJSON = JSON.parse(fs.readFileSync(prophets)).slice(8000).reverse();
+    let prophetsJSON = JSON.parse(fs.readFileSync(prophets)).slice(8000).reverse();
 
     // sorted from highest bids to lowest by amount and insertedAt
     let bids = sigsJSON
@@ -94,10 +95,14 @@ task('clear')
       console.log(`With amount ${ethers.utils.formatUnits(bid.amount)} WETH`);
       // get max prophet for the bid
       let j = 0;
-      while (from(bid.amount).lt(unit(prophetsJSON[j].floorPrice))) {
+      while (!!prophetsJSON[j] && from(bid.amount).lt(unit(prophetsJSON[j].floorPrice))) {
         j++;
       }
       let prophet = prophetsJSON[j];
+      if (!prophet) {
+        console.log('No prophets left for the bid.');
+        continue;
+      }
       let secondPrice;
       console.log(`Max prophet for the bid is ${JSON.stringify(prophet, undefined, 2)}`);
       // check if there a second price or use the floor
@@ -110,6 +115,8 @@ task('clear')
         secondPrice = unit(prophet.floorPrice).toString();
       }
       mintsJSON.push({ ...bid, ...prophet, secondPrice });
+      // remove prophet from the list
+      prophetsJSON.splice(j, 1);
       console.log(`                    `);
       console.log(`🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹`);
       console.log(`                    `);
