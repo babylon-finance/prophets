@@ -17,6 +17,7 @@
     "hardhat-contract-sizer": "^2.1.1",
     "hardhat-gas-reporter": "^1.0.4",
     "keccak256": "^1.0.3",
+    "lodash": "^4.17.21",
     "merkletreejs": "^0.2.24",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
