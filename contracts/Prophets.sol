@@ -54,7 +54,29 @@ contract Prophets is
         uint64 strategistMultiplier;
     }
 
-    /* ============ Private State Variables ============ */
+    /* ============ Upgradeable Storage ============ */
+
+    /**
+      This is an upgradeable contract. Do not modify storage vars order or the types. Only appending allowed.
+
+        RRRRRRRRRRRRRRRRR   EEEEEEEEEEEEEEEEEEEEEEKKKKKKKKK    KKKKKKKTTTTTTTTTTTTTTTTTTTTTTT
+    R::::::::::::::::R  E::::::::::::::::::::EK:::::::K    K:::::KT:::::::::::::::::::::T
+    R::::::RRRRRR:::::R E::::::::::::::::::::EK:::::::K    K:::::KT:::::::::::::::::::::T
+    RR:::::R     R:::::REE::::::EEEEEEEEE::::EK:::::::K   K::::::KT:::::TT:::::::TT:::::T
+      R::::R     R:::::R  E:::::E       EEEEEEKK::::::K  K:::::KKKTTTTTT  T:::::T  TTTTTT
+      R::::R     R:::::R  E:::::E               K:::::K K:::::K           T:::::T
+      R::::RRRRRR:::::R   E::::::EEEEEEEEEE     K::::::K:::::K            T:::::T
+      R:::::::::::::RR    E:::::::::::::::E     K:::::::::::K             T:::::T
+      R::::RRRRRR:::::R   E:::::::::::::::E     K:::::::::::K             T:::::T
+      R::::R     R:::::R  E::::::EEEEEEEEEE     K::::::K:::::K            T:::::T
+      R::::R     R:::::R  E:::::E               K:::::K K:::::K           T:::::T
+      R::::R     R:::::R  E:::::E       EEEEEEKK::::::K  K:::::KKK        T:::::T
+    RR:::::R     R:::::REE::::::EEEEEEEE:::::EK:::::::K   K::::::K      TT:::::::TT
+    R::::::R     R:::::RE::::::::::::::::::::EK:::::::K    K:::::K      T:::::::::T
+    R::::::R     R:::::RE::::::::::::::::::::EK:::::::K    K:::::K      T:::::::::T
+    RRRRRRRR     RRRRRRREEEEEEEEEEEEEEEEEEEEEEKKKKKKKKK    KKKKKKK      TTTTTTTTTTT
+
+    **/
 
     CountersUpgradeable.Counter private prophetsMinted;
 
@@ -64,14 +86,13 @@ contract Prophets is
     mapping(uint256 => address) private stakes;
     // User -> SC -> token ID
     mapping(address => mapping(address => uint256)) private userToStakes;
-    // Mapping from token ID to a stake timestamp
-    mapping(uint256 => uint256) private stakesToTime;
-
-    /* ============ Public State Variables ============ */
 
     string public baseTokenURI;
     mapping(uint256 => bool) public prophetsBABLClaimed;
     address public minter;
+
+    // Mapping from token ID to a stake timestamp
+    mapping(uint256 => uint256) private stakesToTime;
 
     /* ============ Modifiers ============ */
 

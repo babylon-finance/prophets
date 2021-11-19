@@ -47,9 +47,29 @@ contract ProphetsArrival is Initializable, OwnableUpgradeable, ReentrancyGuardUp
 
     /* ============ Structs ============ */
 
-    /* ============ Private State Variables ============ */
+    /* ============ Upgradeable Storage ============ */
 
-    /* ============ Public State Variables ============ */
+    /**
+      This is an upgradeable contract. Do not modify storage vars order or the types. Only appending allowed.
+
+        RRRRRRRRRRRRRRRRR   EEEEEEEEEEEEEEEEEEEEEEKKKKKKKKK    KKKKKKKTTTTTTTTTTTTTTTTTTTTTTT
+    R::::::::::::::::R  E::::::::::::::::::::EK:::::::K    K:::::KT:::::::::::::::::::::T
+    R::::::RRRRRR:::::R E::::::::::::::::::::EK:::::::K    K:::::KT:::::::::::::::::::::T
+    RR:::::R     R:::::REE::::::EEEEEEEEE::::EK:::::::K   K::::::KT:::::TT:::::::TT:::::T
+      R::::R     R:::::R  E:::::E       EEEEEEKK::::::K  K:::::KKKTTTTTT  T:::::T  TTTTTT
+      R::::R     R:::::R  E:::::E               K:::::K K:::::K           T:::::T
+      R::::RRRRRR:::::R   E::::::EEEEEEEEEE     K::::::K:::::K            T:::::T
+      R:::::::::::::RR    E:::::::::::::::E     K:::::::::::K             T:::::T
+      R::::RRRRRR:::::R   E:::::::::::::::E     K:::::::::::K             T:::::T
+      R::::R     R:::::R  E::::::EEEEEEEEEE     K::::::K:::::K            T:::::T
+      R::::R     R:::::R  E:::::E               K:::::K K:::::K           T:::::T
+      R::::R     R:::::R  E:::::E       EEEEEEKK::::::K  K:::::KKK        T:::::T
+    RR:::::R     R:::::REE::::::EEEEEEEE:::::EK:::::::K   K::::::K      TT:::::::TT
+    R::::::R     R:::::RE::::::::::::::::::::EK:::::::K    K:::::K      T:::::::::T
+    R::::::R     R:::::RE::::::::::::::::::::EK:::::::K    K:::::K      T:::::::::T
+    RRRRRRRR     RRRRRRREEEEEEEEEEEEEEEEEEEEEEKKKKKKKKK    KKKKKKK      TTTTTTTTTTT
+
+    **/
 
     bytes32 public settlersRoot;
     bytes32 public firstRoot;
