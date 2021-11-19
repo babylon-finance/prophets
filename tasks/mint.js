@@ -15,12 +15,18 @@ const {
   BlockNativePriceProvider,
 } = require('../lib/helpers');
 
+const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
+
 task('mint')
-  .addParam('sigs', '')
+  .addParam('mints', '')
   .addParam('arrival', '')
   .setAction(async (args, { getContract, ethers, getGasPrice }, runSuper) => {
+    const { arrival, mints } = args;
+
     const { chainId } = await ethers.provider.getNetwork();
     console.log('chainId', chainId);
+
+    const url = `https://${chainId === 1 ? 'eth-mainnet' : 'eth-rinkeby'}.alchemyapi.io/v2/${ALCHEMY_KEY}`;
 
     const owner =
       chainId !== 31337
@@ -29,20 +35,27 @@ task('mint')
 
     const arrivalContract = await ethers.getContractAt('ProphetsArrival', arrival);
 
-    const sigsJSON = JSON.parse(fs.readFileSync(sigs));
+    const sigsJSON = JSON.parse(fs.readFileSync(mints));
 
-    let sigs = [];
-    for (let i = 0; i < 100; i++) {
-      const part = sigsJSON.slice(i * 10, i * 10 + 10);
-      await arrival.connect(owner).batchMintGreat(
-        Array.from(Array(10).keys(), (n) => PROPHETS_NUM + n + 1),
-        Array.from(Array(10).keys(), (n) => unit()),
-        Array.from(Array(10).keys(), (n) => unit()),
-        Array.from(Array(10).keys(), (n) => n + 1),
-        Array.from(Array(10).keys(), (n) => sigs[n].v),
-        Array.from(Array(10).keys(), (n) => sigs[n].r),
-        Array.from(Array(10).keys(), (n) => sigs[n].s),
-      );
-      sigs.push(await getBidSig(ramon, arrival.address, unit(), i + 1));
-    }
+    const calldata = arrivalContract.interface.encodeFunctionData('batchMintGreat', [
+      Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].number),
+      Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].secondPrice),
+      Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].amount),
+      Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].nonce),
+      Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).v),
+      Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).r),
+      Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).s),
+    ]);
+
+    console.log('calldata', calldata);
+
+    // await arrival.connect().batchMintGreat(
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].number),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].secondPrice),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].amount),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].nonce),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).v),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).r),
+    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).s),
+    // );
   });
