@@ -4,8 +4,12 @@ Allowance 200.00 WETH
 Bid 30.00 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x8da0a15786008f543a760701e2021f992e1c1cc5
 Allowance 200.00 WETH
 Bid 20.00 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x8da0a15786008f543a760701e2021f992e1c1cc5
+Allowance 0.00 WETH
+Bid 4.63 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0xdc3ab52e036e7555742389621a1c9bf9ddb36e83
 Allowance 200.00 WETH
 Bid 2.65 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x83e84cc194e595b43dcedfbffc3e0358366307f1
+Allowance 2.30 WETH
+Bid 1.50 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x61f6a32485d47298d23ad40b62faf6dafdb4745d
 Allowance 200.00 WETH
 Bid 1.40 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x1a616dae57382a9084c026d3f475aed59c2668cb
 Allowance 200.00 WETH
@@ -16,13 +20,15 @@ Allowance 200.00 WETH
 Bid 0.81 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x0240a7d46749ef5ec3d5b75e72b8d02bbcb39a33
 Allowance 200.00 WETH
 Bid 0.80 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x76149d87a6ba9ea3c864d0643210e71393dd7777
+Allowance 2.30 WETH
+Bid 0.80 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x61f6a32485d47298d23ad40b62faf6dafdb4745d
 Allowance 2.00 WETH
 Bid 0.53 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x0b690597e5e5cb82b174283c7c528ce673ac1f65
 Allowance 200.00 WETH
 Bid 0.45 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0xe3a5b8bc2408aa6c5bea809664cd946ae5492636
 Allowance 2.00 WETH
 Bid 0.42 WETH plus other bids (0.00 WETH) has not enough balance (0.00) WETH for and is removed. Address 0x0b690597e5e5cb82b174283c7c528ce673ac1f65
-Removed 11 bids
+Removed 14 bids
                     
 ####################
          0          
@@ -145,7 +151,7 @@ Max prophet for the bid is {
   "creatorBonus": 0.75,
   "name": "Maruduk-sadua V"
 }
-using second bid price 4.63 WETH 🥈
+using second bid price 4.0 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
@@ -153,13 +159,13 @@ using second bid price 4.63 WETH 🥈
          5          
 ####################
 Resolving bid #5: {
-  "wallet": "0xdc3ab52e036e7555742389621a1c9bf9ddb36e83",
+  "wallet": "0x4cde172c23d6771a1ea6338203b1949026f01fa2",
   "nonce": "1",
-  "amount": "4630000000000000000",
-  "signature": "0x2ce7f5842d1883f6fcbf58e02189bd1ded0d5c3c22785dd5d88dc44506900eb152571d7319ce558a1b2ff6879aeaa0e4a5e224460bcc9935ca8bd2a333f35c9800",
-  "insertedAt": 1637366192423
+  "amount": "4000000000000000000",
+  "signature": "0x7e896c8aa419c6f55b923bd81d2adc4fea2291376baf19047a274545056fbd8f5b041ba3dd5f94146973588dc685c7775dcbe1bb6c05fbe38b588475b8d812951b",
+  "insertedAt": 1637352681310
 }
-With amount 4.63 WETH
+With amount 4.0 WETH
 Max prophet for the bid is {
   "babl": 58,
   "floorPrice": "2.90",
@@ -170,7 +176,7 @@ Max prophet for the bid is {
   "creatorBonus": 0.5,
   "name": "Suzub"
 }
-using second bid price 4.0 WETH 🥈
+using second bid price 3.3 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
@@ -178,31 +184,6 @@ using second bid price 4.0 WETH 🥈
          6          
 ####################
 Resolving bid #6: {
-  "wallet": "0x4cde172c23d6771a1ea6338203b1949026f01fa2",
-  "nonce": "1",
-  "amount": "4000000000000000000",
-  "signature": "0x7e896c8aa419c6f55b923bd81d2adc4fea2291376baf19047a274545056fbd8f5b041ba3dd5f94146973588dc685c7775dcbe1bb6c05fbe38b588475b8d812951b",
-  "insertedAt": 1637352681310
-}
-With amount 4.0 WETH
-Max prophet for the bid is {
-  "babl": 57,
-  "floorPrice": "2.85",
-  "number": 8990,
-  "lpBonus": 2,
-  "voterBonus": 3.5,
-  "strategistBonus": 3.5,
-  "creatorBonus": 3.5,
-  "name": "Hea-mukin-zira II"
-}
-using second bid price 3.3 WETH 🥈
-                    
-🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
-                    
-####################
-         7          
-####################
-Resolving bid #7: {
   "wallet": "0xbe0bfa8da7f0602bcfe24c72e5e265ae204f5983",
   "nonce": "1",
   "amount": "3300000000000000000",
@@ -213,21 +194,21 @@ With amount 3.3 WETH
 Max prophet for the bid is {
   "babl": 57,
   "floorPrice": "2.85",
-  "number": 8989,
-  "lpBonus": 4.5,
+  "number": 8990,
+  "lpBonus": 2,
   "voterBonus": 3.5,
-  "strategistBonus": 1.5,
+  "strategistBonus": 3.5,
   "creatorBonus": 3.5,
-  "name": "Nergal-edir-ukin"
+  "name": "Hea-mukin-zira II"
 }
 using second bid price 3.05 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         8          
+         7          
 ####################
-Resolving bid #8: {
+Resolving bid #7: {
   "wallet": "0x71535aae1b6c0c51db317b54d5eee72d1ab843c1",
   "nonce": "1",
   "amount": "3050000000000000000",
@@ -238,21 +219,21 @@ With amount 3.05 WETH
 Max prophet for the bid is {
   "babl": 57,
   "floorPrice": "2.85",
-  "number": 8988,
+  "number": 8989,
   "lpBonus": 4.5,
   "voterBonus": 3.5,
-  "strategistBonus": 3.5,
-  "creatorBonus": 0,
-  "name": "Zikar-sin"
+  "strategistBonus": 1.5,
+  "creatorBonus": 3.5,
+  "name": "Nergal-edir-ukin"
 }
 using second bid price 2.9999999 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         9          
+         8          
 ####################
-Resolving bid #9: {
+Resolving bid #8: {
   "wallet": "0x26fcbd3afebbe28d0a8684f790c48368d21665b5",
   "nonce": "1",
   "amount": "2999999900000000000",
@@ -260,6 +241,31 @@ Resolving bid #9: {
   "insertedAt": 1637342499177
 }
 With amount 2.9999999 WETH
+Max prophet for the bid is {
+  "babl": 57,
+  "floorPrice": "2.85",
+  "number": 8988,
+  "lpBonus": 4.5,
+  "voterBonus": 3.5,
+  "strategistBonus": 3.5,
+  "creatorBonus": 0,
+  "name": "Zikar-sin"
+}
+using second bid price 2.96 WETH 🥈
+                    
+🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
+                    
+####################
+         9          
+####################
+Resolving bid #9: {
+  "wallet": "0x2f8aa20f6a042af0e696a53ade86f55cc5c06eb2",
+  "nonce": "1",
+  "amount": "2960000000000000000",
+  "signature": "0x34d28c6f9e88f965b5e52fc153286540d2d983534e103879de5d3b8ac01014e76375cc51305710df63b8b7aa7fe0cc2bc008463bd390faa15c0654a13542c4c31b",
+  "insertedAt": 1637364968758
+}
+With amount 2.96 WETH
 Max prophet for the bid is {
   "babl": 56,
   "floorPrice": "2.80",
@@ -270,7 +276,7 @@ Max prophet for the bid is {
   "creatorBonus": 3.5,
   "name": "Ninib X"
 }
-using second bid price 2.96 WETH 🥈
+using second bid price 2.95 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
@@ -278,31 +284,6 @@ using second bid price 2.96 WETH 🥈
          10          
 ####################
 Resolving bid #10: {
-  "wallet": "0x2f8aa20f6a042af0e696a53ade86f55cc5c06eb2",
-  "nonce": "1",
-  "amount": "2960000000000000000",
-  "signature": "0x34d28c6f9e88f965b5e52fc153286540d2d983534e103879de5d3b8ac01014e76375cc51305710df63b8b7aa7fe0cc2bc008463bd390faa15c0654a13542c4c31b",
-  "insertedAt": 1637364968758
-}
-With amount 2.96 WETH
-Max prophet for the bid is {
-  "babl": 55,
-  "floorPrice": "2.75",
-  "number": 8986,
-  "lpBonus": 4.5,
-  "voterBonus": 1.5,
-  "strategistBonus": 3.5,
-  "creatorBonus": 1,
-  "name": "Nabonahid X"
-}
-using second bid price 2.95 WETH 🥈
-                    
-🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
-                    
-####################
-         11          
-####################
-Resolving bid #11: {
   "wallet": "0x1cc972ff969689873f8010bdd0cf3dc30618397e",
   "nonce": "1",
   "amount": "2950000000000000000",
@@ -313,21 +294,21 @@ With amount 2.95 WETH
 Max prophet for the bid is {
   "babl": 55,
   "floorPrice": "2.75",
-  "number": 8985,
-  "lpBonus": 1.5,
-  "voterBonus": 3.5,
+  "number": 8986,
+  "lpBonus": 4.5,
+  "voterBonus": 1.5,
   "strategistBonus": 3.5,
-  "creatorBonus": 3.5,
-  "name": "Abil-ilishu-ubni"
+  "creatorBonus": 1,
+  "name": "Nabonahid X"
 }
 using second bid price 2.8999999 WETH 🥈
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         12          
+         11          
 ####################
-Resolving bid #12: {
+Resolving bid #11: {
   "wallet": "0xa73bcaf34cf97c860a60edf84d73611f8a4f03da",
   "nonce": "1",
   "amount": "2899999900000000000",
@@ -338,21 +319,21 @@ With amount 2.8999999 WETH
 Max prophet for the bid is {
   "babl": 55,
   "floorPrice": "2.75",
-  "number": 8984,
-  "lpBonus": 2.5,
-  "voterBonus": 1.5,
+  "number": 8985,
+  "lpBonus": 1.5,
+  "voterBonus": 3.5,
   "strategistBonus": 3.5,
   "creatorBonus": 3.5,
-  "name": "Chosmasbelus III"
+  "name": "Abil-ilishu-ubni"
 }
 using floor price 2.75 WETH 🦀
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         13          
+         12          
 ####################
-Resolving bid #13: {
+Resolving bid #12: {
   "wallet": "0xa73bcaf34cf97c860a60edf84d73611f8a4f03da",
   "nonce": "2",
   "amount": "2749999900000000000",
@@ -375,9 +356,9 @@ using floor price 2.70 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         14          
+         13          
 ####################
-Resolving bid #14: {
+Resolving bid #13: {
   "wallet": "0xcd313c5dacbb197ada1cdf948be3e1361a81c9ea",
   "nonce": "1",
   "amount": "2650000000000000000",
@@ -400,9 +381,9 @@ using floor price 2.65 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         15          
+         14          
 ####################
-Resolving bid #15: {
+Resolving bid #14: {
   "wallet": "0xfcf2d8dbe2a5ed88739b4658ed8eb10fb3512c7f",
   "nonce": "1",
   "amount": "2460000000000000000",
@@ -425,9 +406,9 @@ using floor price 2.45 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         16          
+         15          
 ####################
-Resolving bid #16: {
+Resolving bid #15: {
   "wallet": "0x6f805005aaa1350074a6654a03f32a6ff79351fc",
   "nonce": "1",
   "amount": "2430000000000000000",
@@ -450,9 +431,9 @@ using second bid price 2.4 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         17          
+         16          
 ####################
-Resolving bid #17: {
+Resolving bid #16: {
   "wallet": "0xde3baaea1799338349c50e0f80d37a8bae79cc54",
   "nonce": "1",
   "amount": "2400000000000000000",
@@ -475,9 +456,9 @@ using floor price 2.40 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         18          
+         17          
 ####################
-Resolving bid #18: {
+Resolving bid #17: {
   "wallet": "0x8625afdbf3744d433d850c681ba881d028253c8a",
   "nonce": "1",
   "amount": "2260000000000000000",
@@ -500,9 +481,9 @@ using floor price 2.25 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         19          
+         18          
 ####################
-Resolving bid #19: {
+Resolving bid #18: {
   "wallet": "0x7db7da086318462a46327b8f2d46f457008cc111",
   "nonce": "3",
   "amount": "2249999900000000000",
@@ -525,9 +506,9 @@ using second bid price 2.2 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         20          
+         19          
 ####################
-Resolving bid #20: {
+Resolving bid #19: {
   "wallet": "0xec9d209252fe238037021e6e6b1ac99cf7f46df6",
   "nonce": "1",
   "amount": "2200000000000000000",
@@ -550,9 +531,9 @@ using floor price 2.20 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         21          
+         20          
 ####################
-Resolving bid #21: {
+Resolving bid #20: {
   "wallet": "0x7db7da086318462a46327b8f2d46f457008cc111",
   "nonce": "2",
   "amount": "2149999900000000000",
@@ -575,9 +556,9 @@ using second bid price 2.111 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         22          
+         21          
 ####################
-Resolving bid #22: {
+Resolving bid #21: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "12",
   "amount": "2111000000000000000",
@@ -600,9 +581,9 @@ using floor price 2.10 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         23          
+         22          
 ####################
-Resolving bid #23: {
+Resolving bid #22: {
   "wallet": "0x7db7da086318462a46327b8f2d46f457008cc111",
   "nonce": "1",
   "amount": "2049999900000000000",
@@ -625,9 +606,9 @@ using second bid price 2.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         24          
+         23          
 ####################
-Resolving bid #24: {
+Resolving bid #23: {
   "wallet": "0xeec38a8835bf98eb8f4abee900455a5175d836a3",
   "nonce": "1",
   "amount": "2000000000000000000",
@@ -650,9 +631,9 @@ using floor price 2.00 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         25          
+         24          
 ####################
-Resolving bid #25: {
+Resolving bid #24: {
   "wallet": "0xeeebdeaec2c87ee38fa8aa3a148f49a87990d30c",
   "nonce": "1",
   "amount": "1957000000000000000",
@@ -675,9 +656,9 @@ using second bid price 1.955 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         26          
+         25          
 ####################
-Resolving bid #26: {
+Resolving bid #25: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "8",
   "amount": "1955000000000000000",
@@ -700,9 +681,9 @@ using second bid price 1.951 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         27          
+         26          
 ####################
-Resolving bid #27: {
+Resolving bid #26: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "9",
   "amount": "1951000000000000000",
@@ -725,9 +706,9 @@ using floor price 1.95 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         28          
+         27          
 ####################
-Resolving bid #28: {
+Resolving bid #27: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "10",
   "amount": "1909000000000000000",
@@ -750,9 +731,9 @@ using floor price 1.90 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         29          
+         28          
 ####################
-Resolving bid #29: {
+Resolving bid #28: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "1",
   "amount": "1805000000000000000",
@@ -775,9 +756,9 @@ using floor price 1.80 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         30          
+         29          
 ####################
-Resolving bid #30: {
+Resolving bid #29: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "2",
   "amount": "1751000000000000000",
@@ -800,9 +781,9 @@ using second bid price 1.75 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         31          
+         30          
 ####################
-Resolving bid #31: {
+Resolving bid #30: {
   "wallet": "0x47547895218274e121e4219a3fd23235377a9903",
   "nonce": "1",
   "amount": "1750000000000000000",
@@ -825,9 +806,9 @@ using floor price 1.75 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         32          
+         31          
 ####################
-Resolving bid #32: {
+Resolving bid #31: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "3",
   "amount": "1701000000000000000",
@@ -850,9 +831,9 @@ using second bid price 1.7 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         33          
+         32          
 ####################
-Resolving bid #33: {
+Resolving bid #32: {
   "wallet": "0x90bf0aba1831bee5380a53cebaf443f8dce7330c",
   "nonce": "1",
   "amount": "1700000000000000000",
@@ -875,9 +856,9 @@ using floor price 1.70 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         34          
+         33          
 ####################
-Resolving bid #34: {
+Resolving bid #33: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "4",
   "amount": "1651000000000000000",
@@ -900,9 +881,9 @@ using floor price 1.65 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         35          
+         34          
 ####################
-Resolving bid #35: {
+Resolving bid #34: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "5",
   "amount": "1603000000000000000",
@@ -925,9 +906,9 @@ using floor price 1.60 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         36          
+         35          
 ####################
-Resolving bid #36: {
+Resolving bid #35: {
   "wallet": "0xf56c68872e941c341025d9907d4821f9c8087166",
   "nonce": "1",
   "amount": "1560000000000000000",
@@ -950,14 +931,14 @@ using floor price 1.55 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         37          
+         36          
 ####################
-Resolving bid #37: {
-  "wallet": "0x61f6a32485d47298d23ad40b62faf6dafdb4745d",
+Resolving bid #36: {
+  "wallet": "0x12b0e1b718b33d16512bd7a81c3680faee3c7e3f",
   "nonce": "1",
   "amount": "1500000000000000000",
-  "signature": "0xadcbecba5c6df7af8bf69a6b74e2e63bffe805510d65b21ee0c5098c81e1be621078158aa0f395e6095f5d9a7ebe8186f6385d100e9889e97a9d535eee24e4c801",
-  "insertedAt": 1637331825024
+  "signature": "0x97d44982bb6fa158124128e861253e001464378d8cf8b2d351d9498e3b9dbb3700c90a39b63cd0cd6747032f2ff5877882e1f3b80e6175f4bb244f146c95bd0901",
+  "insertedAt": 1637336648573
 }
 With amount 1.5 WETH
 Max prophet for the bid is {
@@ -975,14 +956,14 @@ using second bid price 1.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         38          
+         37          
 ####################
-Resolving bid #38: {
-  "wallet": "0x12b0e1b718b33d16512bd7a81c3680faee3c7e3f",
+Resolving bid #37: {
+  "wallet": "0x1e2fce2e2a821c254fc4e53b373586af07ed0008",
   "nonce": "1",
   "amount": "1500000000000000000",
-  "signature": "0x97d44982bb6fa158124128e861253e001464378d8cf8b2d351d9498e3b9dbb3700c90a39b63cd0cd6747032f2ff5877882e1f3b80e6175f4bb244f146c95bd0901",
-  "insertedAt": 1637336648573
+  "signature": "0xa620b3fd4dae354e1f6af70e707d074986dcb222259a515e89a3ad62c41b971c3f30e89c4b9bbcd8f1655f027587de3896bd3b403a7757c80783c04f1ecbd49f1c",
+  "insertedAt": 1637341533005
 }
 With amount 1.5 WETH
 Max prophet for the bid is {
@@ -995,39 +976,14 @@ Max prophet for the bid is {
   "creatorBonus": 1.5,
   "name": "Sarkimuna-ukin"
 }
-using second bid price 1.5 WETH 🥈
-                    
-🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
-                    
-####################
-         39          
-####################
-Resolving bid #39: {
-  "wallet": "0x1e2fce2e2a821c254fc4e53b373586af07ed0008",
-  "nonce": "1",
-  "amount": "1500000000000000000",
-  "signature": "0xa620b3fd4dae354e1f6af70e707d074986dcb222259a515e89a3ad62c41b971c3f30e89c4b9bbcd8f1655f027587de3896bd3b403a7757c80783c04f1ecbd49f1c",
-  "insertedAt": 1637341533005
-}
-With amount 1.5 WETH
-Max prophet for the bid is {
-  "babl": 30,
-  "floorPrice": "1.50",
-  "number": 8643,
-  "lpBonus": 4.5,
-  "voterBonus": 0,
-  "strategistBonus": 0,
-  "creatorBonus": 1.5,
-  "name": "Boktnassar V"
-}
 using floor price 1.50 WETH 🦀
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         40          
+         38          
 ####################
-Resolving bid #40: {
+Resolving bid #38: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "11",
   "amount": "1412200000000000000",
@@ -1050,9 +1006,9 @@ using floor price 1.40 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         41          
+         39          
 ####################
-Resolving bid #41: {
+Resolving bid #39: {
   "wallet": "0xb58f9800f74fea404b58f94ca3685d97e4fdfbed",
   "nonce": "1",
   "amount": "1330000000000000000",
@@ -1075,9 +1031,9 @@ using second bid price 1.3 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         42          
+         40          
 ####################
-Resolving bid #42: {
+Resolving bid #40: {
   "wallet": "0xcf50fb42926b255747fb8b0ea8e26d4e66952ca4",
   "nonce": "2",
   "amount": "1300000000000000000",
@@ -1100,9 +1056,9 @@ using second bid price 1.3 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         43          
+         41          
 ####################
-Resolving bid #43: {
+Resolving bid #41: {
   "wallet": "0xc305646001ae0ca4ecce83bbaf94deab2077f86d",
   "nonce": "1",
   "amount": "1300000000000000000",
@@ -1125,9 +1081,9 @@ using floor price 1.30 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         44          
+         42          
 ####################
-Resolving bid #44: {
+Resolving bid #42: {
   "wallet": "0xbe0bfa8da7f0602bcfe24c72e5e265ae204f5983",
   "nonce": "2",
   "amount": "1210000000000000000",
@@ -1150,9 +1106,9 @@ using second bid price 1.2 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         45          
+         43          
 ####################
-Resolving bid #45: {
+Resolving bid #43: {
   "wallet": "0x39794c3171d4d82eb9c6fbb764749eb7ed92881d",
   "nonce": "1",
   "amount": "1200000000000000000",
@@ -1175,9 +1131,9 @@ using second bid price 1.2 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         46          
+         44          
 ####################
-Resolving bid #46: {
+Resolving bid #44: {
   "wallet": "0xcf50fb42926b255747fb8b0ea8e26d4e66952ca4",
   "nonce": "1",
   "amount": "1200000000000000000",
@@ -1200,9 +1156,9 @@ using floor price 1.20 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         47          
+         45          
 ####################
-Resolving bid #47: {
+Resolving bid #45: {
   "wallet": "0x2ad2768f84765464725e2c4d9d848b422ba44663",
   "nonce": "1",
   "amount": "1155000000000000000",
@@ -1225,9 +1181,9 @@ using second bid price 1.15 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         48          
+         46          
 ####################
-Resolving bid #48: {
+Resolving bid #46: {
   "wallet": "0x5b4df1aa89d8683f56667bfa59150b80e6923740",
   "nonce": "1",
   "amount": "1150000000000000000",
@@ -1250,9 +1206,9 @@ using floor price 1.15 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         49          
+         47          
 ####################
-Resolving bid #49: {
+Resolving bid #47: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "6",
   "amount": "1051000000000000000",
@@ -1275,9 +1231,9 @@ using second bid price 1.051 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         50          
+         48          
 ####################
-Resolving bid #50: {
+Resolving bid #48: {
   "wallet": "0xea1f8b85b4cef4077812dd3d3a43d831928927b1",
   "nonce": "7",
   "amount": "1051000000000000000",
@@ -1300,9 +1256,9 @@ using second bid price 1.05 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         51          
+         49          
 ####################
-Resolving bid #51: {
+Resolving bid #49: {
   "wallet": "0x280a8675cf1d930c638f4f9eb9dbe75823801d5a",
   "nonce": "1",
   "amount": "1050000000000000000",
@@ -1325,9 +1281,9 @@ using floor price 1.05 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         52          
+         50          
 ####################
-Resolving bid #52: {
+Resolving bid #50: {
   "wallet": "0x7215f4af8f0076796fdec5f1f2508b1a2367634c",
   "nonce": "1",
   "amount": "1005000000000000000",
@@ -1350,9 +1306,9 @@ using second bid price 1.003 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         53          
+         51          
 ####################
-Resolving bid #53: {
+Resolving bid #51: {
   "wallet": "0x7ee85ec0744fab13ae27d21695338d08e55f0039",
   "nonce": "1",
   "amount": "1003000000000000000",
@@ -1375,9 +1331,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         54          
+         52          
 ####################
-Resolving bid #54: {
+Resolving bid #52: {
   "wallet": "0x5c4d8cee7de74e31ce69e76276d862180545c307",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1400,9 +1356,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         55          
+         53          
 ####################
-Resolving bid #55: {
+Resolving bid #53: {
   "wallet": "0x81d98c8fda0410ee3e9d7586cb949cd19fa4cf38",
   "nonce": "2",
   "amount": "1000000000000000000",
@@ -1425,9 +1381,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         56          
+         54          
 ####################
-Resolving bid #56: {
+Resolving bid #54: {
   "wallet": "0x5e86f18d50597a0c75de91972fc8261b46749fad",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1450,9 +1406,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         57          
+         55          
 ####################
-Resolving bid #57: {
+Resolving bid #55: {
   "wallet": "0xb635fa1a4e7f1f2edf5fbe4630040cb6db0b40af",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1475,9 +1431,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         58          
+         56          
 ####################
-Resolving bid #58: {
+Resolving bid #56: {
   "wallet": "0x57a0d3f04500d04151f55efbe69f762d2f2b371a",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1500,9 +1456,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         59          
+         57          
 ####################
-Resolving bid #59: {
+Resolving bid #57: {
   "wallet": "0xaae296e3370e12a7a655e22f237e959336779988",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1525,9 +1481,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         60          
+         58          
 ####################
-Resolving bid #60: {
+Resolving bid #58: {
   "wallet": "0xa2fa6144168751d116336b58c5288feaf8bb12c1",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1550,9 +1506,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         61          
+         59          
 ####################
-Resolving bid #61: {
+Resolving bid #59: {
   "wallet": "0x69a905fa175201a79f12046292e4e7121f81c7b9",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1575,9 +1531,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         62          
+         60          
 ####################
-Resolving bid #62: {
+Resolving bid #60: {
   "wallet": "0x36220d1fc55d0afb0c3c58b6c1224875547c9f36",
   "nonce": "1",
   "amount": "1000000000000000000",
@@ -1600,9 +1556,9 @@ using second bid price 1.0 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         63          
+         61          
 ####################
-Resolving bid #63: {
+Resolving bid #61: {
   "wallet": "0x36220d1fc55d0afb0c3c58b6c1224875547c9f36",
   "nonce": "2",
   "amount": "1000000000000000000",
@@ -1625,9 +1581,9 @@ using floor price 1.00 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         64          
+         62          
 ####################
-Resolving bid #64: {
+Resolving bid #62: {
   "wallet": "0x8d56bf499968cde8b7ed974d45afbfab7ee4addf",
   "nonce": "1",
   "amount": "999900000000000000",
@@ -1650,9 +1606,9 @@ using second bid price 0.99 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         65          
+         63          
 ####################
-Resolving bid #65: {
+Resolving bid #63: {
   "wallet": "0x64df7af696e0977771a0e1e1b1a8dd22ded3cf4b",
   "nonce": "1",
   "amount": "990000000000000000",
@@ -1675,9 +1631,9 @@ using second bid price 0.95 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         66          
+         64          
 ####################
-Resolving bid #66: {
+Resolving bid #64: {
   "wallet": "0x1d7685772a0578a049c9bcbe3f8bab9446c5e6e8",
   "nonce": "1",
   "amount": "950000000000000000",
@@ -1700,9 +1656,9 @@ using second bid price 0.95 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         67          
+         65          
 ####################
-Resolving bid #67: {
+Resolving bid #65: {
   "wallet": "0xba5828da5bbd7503f1e15a08c54bed651c314168",
   "nonce": "1",
   "amount": "950000000000000000",
@@ -1725,9 +1681,9 @@ using floor price 0.95 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         68          
+         66          
 ####################
-Resolving bid #68: {
+Resolving bid #66: {
   "wallet": "0x9497533ff3719ab01f0a3709fcae8c056e040e41",
   "nonce": "1",
   "amount": "900000000000000000",
@@ -1750,9 +1706,9 @@ using second bid price 0.9 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         69          
+         67          
 ####################
-Resolving bid #69: {
+Resolving bid #67: {
   "wallet": "0x12e612c8fa50dbc9816321910f2d45e82573523b",
   "nonce": "2",
   "amount": "900000000000000000",
@@ -1775,9 +1731,9 @@ using floor price 0.90 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         70          
+         68          
 ####################
-Resolving bid #70: {
+Resolving bid #68: {
   "wallet": "0x88884e35d7006ae84efef09ee6bc6a43dd8e2bb8",
   "nonce": "1",
   "amount": "850800000000000000",
@@ -1800,9 +1756,9 @@ using second bid price 0.85 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         71          
+         69          
 ####################
-Resolving bid #71: {
+Resolving bid #69: {
   "wallet": "0x327e6859a0356967a421d688bbbad92764d2b186",
   "nonce": "1",
   "amount": "850000000000000000",
@@ -1825,9 +1781,9 @@ using floor price 0.85 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         72          
+         70          
 ####################
-Resolving bid #72: {
+Resolving bid #70: {
   "wallet": "0xce871a64939ab41e89b35cb8b5bfa919c43d9965",
   "nonce": "1",
   "amount": "810000000000000000",
@@ -1850,9 +1806,9 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         73          
+         71          
 ####################
-Resolving bid #73: {
+Resolving bid #71: {
   "wallet": "0xf0d9331bab8382a47ec9bf9dbdf3911257975663",
   "nonce": "1",
   "amount": "800000000000000000",
@@ -1875,9 +1831,9 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         74          
+         72          
 ####################
-Resolving bid #74: {
+Resolving bid #72: {
   "wallet": "0x7810cc5b2ea5f7a5862c9a30dfab2512e30b80f0",
   "nonce": "1",
   "amount": "800000000000000000",
@@ -1900,9 +1856,9 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         75          
+         73          
 ####################
-Resolving bid #75: {
+Resolving bid #73: {
   "wallet": "0x2669a693ebdf20b1333dcc8ef892fd9ae52d3ae9",
   "nonce": "1",
   "amount": "800000000000000000",
@@ -1925,9 +1881,9 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         76          
+         74          
 ####################
-Resolving bid #76: {
+Resolving bid #74: {
   "wallet": "0xe0439a04e238022ad7a9d1b6a2e3ecdc6dd50a89",
   "nonce": "1",
   "amount": "800000000000000000",
@@ -1950,9 +1906,9 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         77          
+         75          
 ####################
-Resolving bid #77: {
+Resolving bid #75: {
   "wallet": "0x32cb4d6093b854061c63c1d3f243347a45a17e0b",
   "nonce": "1",
   "amount": "800000000000000000",
@@ -1975,14 +1931,14 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         78          
+         76          
 ####################
-Resolving bid #78: {
-  "wallet": "0x61f6a32485d47298d23ad40b62faf6dafdb4745d",
-  "nonce": "2",
+Resolving bid #76: {
+  "wallet": "0x86d74fa4c8e753fdcb44bcb044dcc0d12b1be353",
+  "nonce": "1",
   "amount": "800000000000000000",
-  "signature": "0x275c9f37e0960f5a97ca99a769058cd1b2993f3db621096beb5092a01ce232de7e174971d27db3f0a412b93d9408eb6fd3fbf7bb7c0cc31cc7539fd72c581c0900",
-  "insertedAt": 1637331919813
+  "signature": "0xd67ffa0cba5c00bca4775339bdf91ec98a793e841a53854ab3cff272948c9ccf6874265dd8e27090f28f474b76ec380d94fef2c5a4e6d297919b4c5f96a5b2121c",
+  "insertedAt": 1637346959788
 }
 With amount 0.8 WETH
 Max prophet for the bid is {
@@ -2000,14 +1956,14 @@ using second bid price 0.8 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         79          
+         77          
 ####################
-Resolving bid #79: {
-  "wallet": "0x86d74fa4c8e753fdcb44bcb044dcc0d12b1be353",
+Resolving bid #77: {
+  "wallet": "0x4cad21d92896b28c2ede39794a68d001f0b44e0d",
   "nonce": "1",
   "amount": "800000000000000000",
-  "signature": "0xd67ffa0cba5c00bca4775339bdf91ec98a793e841a53854ab3cff272948c9ccf6874265dd8e27090f28f474b76ec380d94fef2c5a4e6d297919b4c5f96a5b2121c",
-  "insertedAt": 1637346959788
+  "signature": "0x0dc5712343e9d13253d6d1bd0091cc413f75356975ad4174ba65b43f49e5a207385273d94f344ff99230adf4e5e21102630d2bb27c8a5845891114db3750f16b1b",
+  "insertedAt": 1637365293233
 }
 With amount 0.8 WETH
 Max prophet for the bid is {
@@ -2020,39 +1976,14 @@ Max prophet for the bid is {
   "creatorBonus": 0.75,
   "name": "Bel-sum-iscun V"
 }
-using second bid price 0.8 WETH 🥈
-                    
-🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
-                    
-####################
-         80          
-####################
-Resolving bid #80: {
-  "wallet": "0x4cad21d92896b28c2ede39794a68d001f0b44e0d",
-  "nonce": "1",
-  "amount": "800000000000000000",
-  "signature": "0x0dc5712343e9d13253d6d1bd0091cc413f75356975ad4174ba65b43f49e5a207385273d94f344ff99230adf4e5e21102630d2bb27c8a5845891114db3750f16b1b",
-  "insertedAt": 1637365293233
-}
-With amount 0.8 WETH
-Max prophet for the bid is {
-  "babl": 16,
-  "floorPrice": "0.80",
-  "number": 8107,
-  "lpBonus": 1,
-  "voterBonus": 0.75,
-  "strategistBonus": 1,
-  "creatorBonus": 0.5,
-  "name": "Merodach-bal-uzur X"
-}
 using floor price 0.80 WETH 🦀
                     
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         81          
+         78          
 ####################
-Resolving bid #81: {
+Resolving bid #78: {
   "wallet": "0xeef3125ff571194a7fca71862baa425727eb3703",
   "nonce": "1",
   "amount": "790000000000000000",
@@ -2075,9 +2006,9 @@ using second bid price 0.75 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         82          
+         79          
 ####################
-Resolving bid #82: {
+Resolving bid #79: {
   "wallet": "0xe8f138d802d4d0ea5a2d6d67edaf2cfabb1ad8fc",
   "nonce": "1",
   "amount": "750000000000000000",
@@ -2100,9 +2031,9 @@ using floor price 0.75 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         83          
+         80          
 ####################
-Resolving bid #83: {
+Resolving bid #80: {
   "wallet": "0x81d98c8fda0410ee3e9d7586cb949cd19fa4cf38",
   "nonce": "1",
   "amount": "700000000000000000",
@@ -2125,9 +2056,9 @@ using second bid price 0.7 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         84          
+         81          
 ####################
-Resolving bid #84: {
+Resolving bid #81: {
   "wallet": "0x635561afe9a914c58fc2544a2afcccbdf30adb87",
   "nonce": "1",
   "amount": "700000000000000000",
@@ -2150,9 +2081,9 @@ using second bid price 0.7 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         85          
+         82          
 ####################
-Resolving bid #85: {
+Resolving bid #82: {
   "wallet": "0xf34263bc8480abc0fa9815de381522eb228301e1",
   "nonce": "1",
   "amount": "700000000000000000",
@@ -2175,9 +2106,9 @@ using second bid price 0.7 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         86          
+         83          
 ####################
-Resolving bid #86: {
+Resolving bid #83: {
   "wallet": "0x8f9be4310f9abb0e5843cc6363908c9b01dfeb3f",
   "nonce": "1",
   "amount": "700000000000000000",
@@ -2200,9 +2131,9 @@ using floor price 0.70 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         87          
+         84          
 ####################
-Resolving bid #87: {
+Resolving bid #84: {
   "wallet": "0xe2fe92598ff55c829d3a869a6b55c59f51b3b032",
   "nonce": "1",
   "amount": "696969000000000000",
@@ -2225,9 +2156,9 @@ using second bid price 0.662111 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         88          
+         85          
 ####################
-Resolving bid #88: {
+Resolving bid #85: {
   "wallet": "0xbd3cef9f27c764c58899d0cd3d78eba6cac1ca9e",
   "nonce": "1",
   "amount": "662111000000000000",
@@ -2250,9 +2181,9 @@ using floor price 0.65 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         89          
+         86          
 ####################
-Resolving bid #89: {
+Resolving bid #86: {
   "wallet": "0xf9107317b0ff77ed5b7adea15e50514a3564002b",
   "nonce": "1",
   "amount": "600000000000000000",
@@ -2275,9 +2206,9 @@ using floor price 0.60 WETH 🦀
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         90          
+         87          
 ####################
-Resolving bid #90: {
+Resolving bid #87: {
   "wallet": "0x6c26fd9796669948aacdd7e8bacc67c3d50a9fc0",
   "nonce": "1",
   "amount": "510000000000000000",
@@ -2300,9 +2231,9 @@ using second bid price 0.502 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         91          
+         88          
 ####################
-Resolving bid #91: {
+Resolving bid #88: {
   "wallet": "0xd0115134f39d541195406752d9405e1c0c14eee1",
   "nonce": "1",
   "amount": "502000000000000000",
@@ -2325,9 +2256,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         92          
+         89          
 ####################
-Resolving bid #92: {
+Resolving bid #89: {
   "wallet": "0x12e612c8fa50dbc9816321910f2d45e82573523b",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2350,9 +2281,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         93          
+         90          
 ####################
-Resolving bid #93: {
+Resolving bid #90: {
   "wallet": "0x3d42f3561c5beff78d3d2bd08b2ac59f8d82c26a",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2375,9 +2306,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         94          
+         91          
 ####################
-Resolving bid #94: {
+Resolving bid #91: {
   "wallet": "0x2fb7e2a682dfd678f31ef75d8ad455d86836bfba",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2400,9 +2331,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         95          
+         92          
 ####################
-Resolving bid #95: {
+Resolving bid #92: {
   "wallet": "0xd2eba951bf4bcbfcb8ae1456a4671ff5a87bb782",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2425,9 +2356,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         96          
+         93          
 ####################
-Resolving bid #96: {
+Resolving bid #93: {
   "wallet": "0xaa98c7afabbc0ea3acdc029a9d71b9ac83ff8cef",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2450,9 +2381,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         97          
+         94          
 ####################
-Resolving bid #97: {
+Resolving bid #94: {
   "wallet": "0x9d616e9d0b074a4aa1106c68f13f54054ed22382",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2475,9 +2406,9 @@ using second bid price 0.5 WETH 🥈
 🧹🧹🧹🧹🧹🧹🧹🧹🧹🧹
                     
 ####################
-         98          
+         95          
 ####################
-Resolving bid #98: {
+Resolving bid #95: {
   "wallet": "0x3a529617384a3e044cd08ac0a45a687105d49316",
   "nonce": "1",
   "amount": "500000000000000000",
@@ -2487,9 +2418,9 @@ Resolving bid #98: {
 With amount 0.5 WETH
 No prophets left for the bid.
 ####################
-         99          
+         96          
 ####################
-Resolving bid #99: {
+Resolving bid #96: {
   "wallet": "0xbcc44956d70536bed17c146a4d9e66261bb701dd",
   "nonce": "1",
   "amount": "450000000000000000",
@@ -2499,9 +2430,9 @@ Resolving bid #99: {
 With amount 0.45 WETH
 No prophets left for the bid.
 ####################
-         100          
+         97          
 ####################
-Resolving bid #100: {
+Resolving bid #97: {
   "wallet": "0x4a464b20b54de000b9a6ec08e3432b388e3ebc15",
   "nonce": "1",
   "amount": "424242000000000000",
@@ -2511,9 +2442,9 @@ Resolving bid #100: {
 With amount 0.424242 WETH
 No prophets left for the bid.
 ####################
-         101          
+         98          
 ####################
-Resolving bid #101: {
+Resolving bid #98: {
   "wallet": "0xbe93d14c5defb8f41af8fb092f58e3c71c712b85",
   "nonce": "1",
   "amount": "410000000000000000",
@@ -2523,9 +2454,9 @@ Resolving bid #101: {
 With amount 0.41 WETH
 No prophets left for the bid.
 ####################
-         102          
+         99          
 ####################
-Resolving bid #102: {
+Resolving bid #99: {
   "wallet": "0x060253f772bb050ad5439e5c980356df02cf0725",
   "nonce": "1",
   "amount": "400000000000000000",
@@ -2535,9 +2466,9 @@ Resolving bid #102: {
 With amount 0.4 WETH
 No prophets left for the bid.
 ####################
-         103          
+         100          
 ####################
-Resolving bid #103: {
+Resolving bid #100: {
   "wallet": "0x15a49498e2399c8fd523fa25da850e024f99aa15",
   "nonce": "1",
   "amount": "400000000000000000",
@@ -2547,9 +2478,9 @@ Resolving bid #103: {
 With amount 0.4 WETH
 No prophets left for the bid.
 ####################
-         104          
+         101          
 ####################
-Resolving bid #104: {
+Resolving bid #101: {
   "wallet": "0x22aa3f5d1daffe1a9df298e79a0cf2f98c1b92ff",
   "nonce": "1",
   "amount": "400000000000000000",
@@ -2559,9 +2490,9 @@ Resolving bid #104: {
 With amount 0.4 WETH
 No prophets left for the bid.
 ####################
-         105          
+         102          
 ####################
-Resolving bid #105: {
+Resolving bid #102: {
   "wallet": "0x22aa3f5d1daffe1a9df298e79a0cf2f98c1b92ff",
   "nonce": "2",
   "amount": "400000000000000000",
@@ -2570,4 +2501,4 @@ Resolving bid #105: {
 }
 With amount 0.4 WETH
 No prophets left for the bid.
-Total amount 157.12 WETH
+Total amount 150.19 WETH

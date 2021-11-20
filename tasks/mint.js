@@ -50,13 +50,23 @@ task('mint')
 
     console.log('calldata', calldata);
 
-    // await arrival.connect().batchMintGreat(
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].number),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].secondPrice),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].amount),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].nonce),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).v),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).r),
-    //   Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).s),
-    // );
+    try {
+      const tx = await arrivalContract.connect(owner).batchMintGreat(
+        Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].number),
+        Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].secondPrice),
+        Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].amount),
+        Array.from(Array(sigsJSON.length).keys(), (n) => sigsJSON[n].nonce),
+        Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).v),
+        Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).r),
+        Array.from(Array(sigsJSON.length).keys(), (n) => ethers.utils.splitSignature(sigsJSON[n].signature).s),
+        {
+          gasLimit: 20000000,
+        },
+      );
+      console.log('hash', tx.hash);
+      await tx.wait();
+      console.log('done');
+    } catch (e) {
+      console.log(e.message);
+    }
   });
