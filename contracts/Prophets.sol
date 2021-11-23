@@ -181,14 +181,14 @@ contract Prophets is
         for (uint256 i = 0; i < _ids.length; i++) {
             uint256 id = _ids[i];
             require(ownerOf(id) == msg.sender, 'Caller must own the prophet');
-            require(!prophetsBABLClaimed[id], 'Loot already claimed');
+            if (!prophetsBABLClaimed[id]) {
+              uint256 lootAmount = getAttributes(id).bablLoot;
+              require(lootAmount != 0, 'Loot can not be empty');
 
-            uint256 lootAmount = getAttributes(id).bablLoot;
-            require(lootAmount != 0, 'Loot can not be empty');
+              prophetsBABLClaimed[id] = true;
 
-            prophetsBABLClaimed[id] = true;
-
-            totalLoot += lootAmount;
+              totalLoot += lootAmount;
+            }
         }
         bablToken.safeTransfer(msg.sender, totalLoot);
     }
