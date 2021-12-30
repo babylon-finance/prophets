@@ -208,12 +208,12 @@ contract Prophets is
 
     function stake(uint256 _id, address _target) public {
         require(ownerOf(_id) == msg.sender, 'Not an owner of the prophet');
-        uint256 previousProphetStakedInTarget = userToStakes[msg.sender][_target];
-        require(previousProphetStakedInTarget != _id, 'Already staked');
+        uint256 prevProphet = userToStakes[msg.sender][_target];
+        require(prevProphet != _id, 'Already staked');
 
-        // if there was another prophet staked, set to 0
-        if (previousProphetStakedInTarget != 0) {
-            stakes[previousProphetStakedInTarget] = 0;
+        // if there was another prophet staked then unstake it
+        if (prevProphet != 0) {
+            stakes[prevProphet] = address(0);
         }
 
         // if was staked then remove old reference

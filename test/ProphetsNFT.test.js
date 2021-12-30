@@ -323,6 +323,16 @@ describe('ProphetsNFT', () => {
       expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(1);
     });
 
+    it('prev prophet is unstaked on stake', async function () {
+      await nft.connect(ramon).stake(1, ramon.address);
+
+      await nft.connect(ramon).stake(2, ramon.address);
+
+      expect(await nft.targetOf(1)).to.eq(ZERO_ADDRESS);
+      expect(await nft.targetOf(2)).to.eq(ramon.address);
+      expect(await nft.stakeOf(ramon.address, ramon.address)).to.eq(2);
+    });
+
     it('staking a prophet sets timestamp', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
 
@@ -353,9 +363,9 @@ describe('ProphetsNFT', () => {
       await expect(nft.connect(tyler).stake(1, ramon.address)).to.be.revertedWith('Not an owner of the prophet');
     });
 
-    it('can NOT double stake ', async function () {
+    it('can NOT stake twice ', async function () {
       await nft.connect(ramon).stake(1, ramon.address);
-      await expect(nft.connect(ramon).stake(2, ramon.address)).to.be.revertedWith('Already staked');
+      await expect(nft.connect(ramon).stake(1, ramon.address)).to.be.revertedWith('Already staked');
     });
 
     it('can stake to 0x0', async function () {
